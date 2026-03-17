@@ -1,18 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## User stories
+**Som användare vill jag:**
+ - lätt kunna  till annonser genom att klistra in länk och få info om annonsen per automatik
+ - kunna lägga till annons manuellt om info inte hämtas per automatik
+ - kunna redigera/ändra info på annonser jag lägger till
+ - lätt kunna  se/ändra status på annonser  som jag lagt till
+ - 
+**Nice to haves:**
+ - kunna se trend på hur långt jag kom  ansöknings processen
+ - kunna exportera annons  till en PDF fil baserat på period, status som jag valt
+ - kunna se annons baserat på status
+ - kunna skapa olika boards baserat på karriär mål
+ - bli påmind om annonser jag lägger till baserat på status/önskemål
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
