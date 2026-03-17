@@ -1,0 +1,157 @@
+{
+  "1": {
+    "title": "UI Developer",
+    "company": "PixelForge",
+    "location": "Stockholm / Remote",
+    "employmentType": "Tillsvidare",
+    "workload": "Heltid",
+    "jobUrl": "https://jobs.acmelabs.com/roles/412",
+    "contactPerson": {
+      "name": "Anna Berg (rekryterare)",
+      "email": "anna.berg@pixelforge.com",
+      "phone": "070-123 45 67"
+    },
+    "timeline": [
+      {
+        "date": "5 mar 2026",
+        "event": "Ansökan skickad"
+      },
+      {
+        "date": "12 mar 2026",
+        "event": "Följde upp via e-post"
+      },
+      {
+        "date": "15 mar 2026",
+        "event": "Intervju bokad"
+      },
+      {
+        "date": "30 apr 2026",
+        "event": "Sista ansökningsdag - 14 dagar kvar"
+      }
+    ]
+  },
+  "2": {
+    "title": "Product Designer",
+    "company": "Craft Studio",
+    "location": "Göteborg / Hybrid",
+    "employmentType": "Tillsvidare",
+    "workload": "Heltid",
+    "jobUrl": "https://careers.craftstudio.se/jobs/991",
+    "contactPerson": {
+      "name": "Mikael Sundin (hiring manager)",
+      "email": "mikael.sundin@craftstudio.se",
+      "phone": "031-456 78 90"
+    },
+    "timeline": [
+      {
+        "date": "2 mar 2026",
+        "event": "Ansökan skickad"
+      },
+      {
+        "date": "8 mar 2026",
+        "event": "Portfolio granskad"
+      },
+      {
+        "date": "14 mar 2026",
+        "event": "Första intervju genomförd"
+      },
+      {
+        "date": "21 mar 2026",
+        "event": "Case skickat av rekryterare"
+      }
+    ]
+  },
+  "3": {
+    "title": "Frontend Developer",
+    "company": "Northstar Tech",
+    "location": "Malmö / Remote",
+    "employmentType": "Konsultuppdrag",
+    "workload": "Heltid",
+    "jobUrl": "https://northstar.tech/openings/frontend-developer",
+    "contactPerson": {
+      "name": "Sara Lindholm (talent partner)",
+      "email": "sara.lindholm@northstar.tech",
+      "phone": "040-222 11 33"
+    },
+    "timeline": [
+      {
+        "date": "27 feb 2026",
+        "event": "Ansökan skickad"
+      },
+      {
+        "date": "5 mar 2026",
+        "event": "Teknisk screening bokad"
+      },
+      {
+        "date": "11 mar 2026",
+        "event": "Kodtest genomfört"
+      },
+      {
+        "date": "18 mar 2026",
+        "event": "Väntar på återkoppling"
+      }
+    ]
+  },
+  "4": {
+    "title": "UX Researcher",
+    "company": "Signal Health",
+    "location": "Stockholm / Hybrid",
+    "employmentType": "Tillsvidare",
+    "workload": "75%",
+    "jobUrl": "https://jobs.signalhealth.io/ux-researcher",
+    "contactPerson": {
+      "name": "Nora Eklund (research lead)",
+      "email": "nora.eklund@signalhealth.io",
+      "phone": "08-998 76 54"
+    },
+    "timeline": [
+      {
+        "date": "1 mar 2026",
+        "event": "Ansökan skickad"
+      },
+      {
+        "date": "7 mar 2026",
+        "event": "Intervju med team lead"
+      },
+      {
+        "date": "10 mar 2026",
+        "event": "Referenser efterfrågade"
+      },
+      {
+        "date": "19 mar 2026",
+        "event": "Slutintervju planerad"
+      }
+    ]
+  },
+  "5": {
+    "title": "Design Systems Lead",
+    "company": "Atlas Commerce",
+    "location": "Uppsala / Remote",
+    "employmentType": "Tillsvidare",
+    "workload": "Heltid",
+    "jobUrl": "https://atlascommerce.com/careers/design-systems-lead",
+    "contactPerson": {
+      "name": "Erik Nyström (design director)",
+      "email": "erik.nystrom@atlascommerce.com",
+      "phone": "018-345 67 89"
+    },
+    "timeline": [
+      {
+        "date": "25 feb 2026",
+        "event": "Ansökan skickad"
+      },
+      {
+        "date": "4 mar 2026",
+        "event": "Intro med rekryterare"
+      },
+      {
+        "date": "9 mar 2026",
+        "event": "Presentation av design system-case"
+      },
+      {
+        "date": "17 mar 2026",
+        "event": "Erbjudande under diskussion"
+      }
+    ]
+  }
+}

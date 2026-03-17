@@ -23,7 +23,7 @@ export default function Home() {
             <h3 className="mb-2 text-xl font-display">Ansökt</h3>
             <Link
               className="block rounded-2xl border border-app-stroke bg-white p-4"
-              href="/jobb/edit"
+              href="/jobb/1"
             >
               <strong className="text-lg">UI Developer</strong>
               <span className="mt-1 block text-base text-app-muted">PixelForge</span>

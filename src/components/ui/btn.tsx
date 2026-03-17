@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-type BtnVariant = "primary" | "secondary" | "muted";
+type BtnVariant = "primary" | "secondary" | "tertiary" | "muted";
 
 type SharedProps = {
   children: React.ReactNode;
@@ -30,6 +30,8 @@ const variantClassNames: Record<BtnVariant, string> = {
     "bg-gradient-to-r from-app-primary to-app-primary-strong text-white shadow-lg visited:text-white",
   secondary:
     "border border-app-stroke bg-white/70 text-app-ink",
+  tertiary:
+    "bg-gradient-to-r from-app-green-strong to-app-green-strong text-white shadow-lg visited:text-white",
   muted:
     "border border-app-stroke bg-app-muted-surface text-app-muted-ink hover:bg-app-muted-hover",
 };
