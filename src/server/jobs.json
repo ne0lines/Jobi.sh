@@ -1,0 +1,33 @@
+{
+  "1": {
+    "title": "UI Developer",
+    "company": "PixelForge",
+    "location": "Stockholm / Remote",
+    "employmentType": "Tillsvidare",
+    "workload": "Heltid",
+    "jobUrl": "https://jobs.acmelabs.com/roles/412",
+    "contactPerson": {
+      "name": "Anna Berg (rekryterare)",
+      "email": "anna.berg@pixelforge.com",
+      "phone": "070-123 45 67"
+    },
+    "timeline": [
+      {
+        "date": "5 mar 2026",
+        "event": "Ansökan skickad"
+      },
+      {
+        "date": "12 mar 2026",
+        "event": "Följde upp via e-post"
+      },
+      {
+        "date": "15 mar 2026",
+        "event": "Intervju bokad"
+      },
+      {
+        "date": "30 apr 2026",
+        "event": "Sista ansökningsdag - 14 dagar kvar"
+      }
+    ]
+  }
+}
