@@ -1,3 +1,12 @@
+export enum JobStatus {
+  SAVED = "saved",
+  APPLIED = "applied",
+  IN_PROCESS = "in process",
+  INTERVIEW = "interview",
+  OFFER = "offer",
+  CLOSED = "closed",
+}
+
 export type Job = {
   id: string;
   title: string;
@@ -16,6 +25,7 @@ export type Job = {
     date: string;
     event: string;
   }>;
+  status: JobStatus;
 };
 
 export type Db = {

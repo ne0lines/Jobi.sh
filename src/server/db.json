@@ -31,7 +31,8 @@
           "date": "30 apr 2026",
           "event": "Sista ansökningsdag - 14 dagar kvar"
         }
-      ]
+      ],
+      "status": "interview"
     },
     {
       "id": "2",
@@ -64,7 +65,8 @@
           "date": "21 mar 2026",
           "event": "Case skickat av rekryterare"
         }
-      ]
+      ],
+      "status": "interview"
     },
     {
       "id": "3",
@@ -97,7 +99,8 @@
           "date": "18 mar 2026",
           "event": "Väntar på återkoppling"
         }
-      ]
+      ],
+      "status": "in process"
     },
     {
       "id": "4",
@@ -130,7 +133,8 @@
           "date": "19 mar 2026",
           "event": "Slutintervju planerad"
         }
-      ]
+      ],
+      "status": "interview"
     },
     {
       "id": "5",
@@ -163,7 +167,68 @@
           "date": "17 mar 2026",
           "event": "Erbjudande under diskussion"
         }
-      ]
+      ],
+      "status": "offer"
+    },
+    {
+      "id": "6",
+      "title": "Senior UI/UX Designer",
+      "company": "Flowbyte AB",
+      "location": "Stockholm / Hybrid",
+      "employmentType": "Tillsvidare",
+      "workload": "Heltid",
+      "jobUrl": "https://flowbyte.se/karriar/senior-ui-ux-designer-2026",
+      "contactPerson": {
+        "name": "",
+        "role": "",
+        "email": "",
+        "phone": ""
+      },
+      "timeline": [
+        {
+          "date": "10 mar 2026",
+          "event": "Jobbet sparat / research påbörjad"
+        },
+        {
+          "date": "15 mar 2026",
+          "event": "Läst JD och sparat länken"
+        }
+      ],
+      "status": "saved"
+    },
+    {
+      "id": "7",
+      "title": "Digital Product Designer",
+      "company": "Vividly",
+      "location": "Linköping / Remote",
+      "employmentType": "Tillsvidare",
+      "workload": "Heltid",
+      "jobUrl": "https://vividly.io/jobs/digital-product-designer",
+      "contactPerson": {
+        "name": "Lisa Holm",
+        "role": "rekryterare",
+        "email": "lisa.holm@vividly.io",
+        "phone": "013-555 12 34"
+      },
+      "timeline": [
+        {
+          "date": "20 feb 2026",
+          "event": "Ansökan skickad"
+        },
+        {
+          "date": "28 feb 2026",
+          "event": "Telefonintervju genomförd"
+        },
+        {
+          "date": "6 mar 2026",
+          "event": "Andra intervjun (team) genomförd"
+        },
+        {
+          "date": "12 mar 2026",
+          "event": "Fick besked: ej vald"
+        }
+      ],
+      "status": "closed"
     }
   ]
 }
