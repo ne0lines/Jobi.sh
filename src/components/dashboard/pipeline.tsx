@@ -19,42 +19,41 @@ export default async function Pipeline() {
     <section className="w-full">
       <h2 className="mt-6 mb-3 font-display text-4xl">Pipeline</h2>
       <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
-        <Board jobs={saved} label={"Sparat"} />
+        {saved.length > 0 && <Board jobs={saved} label={"Sparat"} />}
+        {applied.length > 0 && (
+          <Board
+            jobs={applied}
+            label={"Ansökt"}
+            borderColor="border-blue-400"
+            bgColor="bg-blue-100"
+          />
+        )}
 
-        <Board
-          jobs={applied}
-          label={"Ansökt"}
-          borderColor="border-blue-400"
-          bgColor="bg-blue-100"
-        />
+        {inProcess.length > 0 && (
+          <Board
+            jobs={inProcess}
+            label={"Pågår"}
+            borderColor="border-amber-400"
+            bgColor="bg-amber-100"
+          />
+        )}
 
-        <Board
-          jobs={inProcess}
-          label={"Pågår"}
-          borderColor="border-amber-400"
-          bgColor="bg-amber-100"
-        />
-
-        <Board
-          jobs={interviewed}
-          label={"Intervju"}
-          borderColor="border-cyan-400"
-          bgColor="bg-cyan-100"
-        />
-
-        <Board
-          jobs={offers}
-          label={"Erbjudande"}
-          borderColor="border-green-400"
-          bgColor="bg-green-100"
-        />
-
-        <Board
-          jobs={closed}
-          label={"Avslutad"}
-          borderColor="border-red-400"
-          bgColor="bg-red-100"
-        />
+        {interviewed.length > 0 && (
+          <Board
+            jobs={interviewed}
+            label={"Intervju"}
+            borderColor="border-cyan-400"
+            bgColor="bg-cyan-100"
+          />
+        )}
+        {offers.length > 0 && (
+          <Board
+            jobs={offers}
+            label={"Erbjudande"}
+            borderColor="border-green-400"
+            bgColor="bg-green-100"
+          />
+        )}
       </div>
 
       <article className="mt-3 rounded-2xl border border-app-stroke bg-app-card p-4">
