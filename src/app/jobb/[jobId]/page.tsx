@@ -1,4 +1,5 @@
 import { Btn } from "@/components/ui/btn";
+import { StatusSelect } from "@/components/ui/status-select";
 import type { Db, Job } from "@/app/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -58,10 +59,7 @@ export default async function JobDetailPage({
               </ul>
             </div>
           </article>
-        </div>
-        <div className="bottom-0 flex w-full gap-4">
-          <Btn type="button" className="w-full">Markera som uppföljt</Btn>
-          <Btn href="/" variant="tertiary" className="w-full">Flytta till erbjudande</Btn>
+          <StatusSelect jobId={job.id} initialStatus={job.status} />
         </div>
         <Btn variant="secondary" href="/">Tillbaka</Btn>
       </section>

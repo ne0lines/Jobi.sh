@@ -32,7 +32,7 @@
           "event": "Sista ansökningsdag - 14 dagar kvar"
         }
       ],
-      "status": "interview"
+      "status": "offer"
     },
     {
       "id": "2",
@@ -230,5 +230,6 @@
       ],
       "status": "closed"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
