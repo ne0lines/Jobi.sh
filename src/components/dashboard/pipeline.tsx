@@ -15,7 +15,7 @@ export default async function Pipeline() {
   return (
     <section>
       <h2 className="mt-6 mb-3 font-display text-4xl">Pipeline</h2>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:min-w-40">
         <Board jobs={saved} label={"Sparat"} />
 
         <Board

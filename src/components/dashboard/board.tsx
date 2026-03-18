@@ -16,7 +16,7 @@ export default function({
 }) {
   return (
     <div
-      className={`${className} ${bgColor} ${borderColor} rounded-2xl border p-4`}
+      className={`${className} ${bgColor} ${borderColor} rounded-2xl border p-4 lg:min-w-40`}
     >
       <h3 className="mb-2 text-xl font-display">{label}</h3>
       <ul className="space-y-4">
