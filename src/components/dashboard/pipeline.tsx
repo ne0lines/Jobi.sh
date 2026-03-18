@@ -11,18 +11,45 @@ export default async function Pipeline() {
   const saved = jobs.filter((j) => j.status === JobStatus.SAVED);
   const applied = jobs.filter((j) => j.status === JobStatus.APPLIED);
   const interviewed = jobs.filter((j) => j.status === JobStatus.INTERVIEW);
+  const inProcess = jobs.filter((j) => j.status === JobStatus.IN_PROCESS);
+  const offers = jobs.filter((j) => j.status === JobStatus.OFFER);
+  const closed = jobs.filter((j) => j.status === JobStatus.CLOSED);
 
   return (
-    <section>
+    <section className="w-full">
       <h2 className="mt-6 mb-3 font-display text-4xl">Pipeline</h2>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         <Board jobs={saved} label={"Sparat"} />
 
+        <Board
+          jobs={applied}
+          label={"Ansökt"}
+          borderColor="border-blue-400"
+          bgColor="bg-blue-100"
+        />
+        <Board
+          jobs={inProcess}
+          label={"Pågår"}
+          borderColor="border-amber-400"
+          bgColor="bg-amber-100"
+        />
         <Board
           jobs={interviewed}
           label={"Intervju"}
           borderColor="border-cyan-400"
           bgColor="bg-cyan-100"
+        />
+        <Board
+          jobs={offers}
+          label={"Erbjudanden"}
+          borderColor="border-red-400"
+          bgColor="bg-red-100"
+        />
+        <Board
+          jobs={closed}
+          label={"Avslutad"}
+          borderColor="border-green-400"
+          bgColor="bg-green-100"
         />
       </div>
 

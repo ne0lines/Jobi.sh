@@ -13,12 +13,17 @@ type StatisticsProps = {
 
 export function Statistics({ applications }: StatisticsProps) {
   const totalApplications = applications.length;
-  const interviews = applications.filter(job => job.status === JobStatus.INTERVIEW).length;
-  const offers = applications.filter(job => job.status === JobStatus.OFFER).length;
-  const successRate = totalApplications > 0 ? Math.round((offers / totalApplications) * 100) : 0;
+  const interviews = applications.filter(
+    (job) => job.status === JobStatus.INTERVIEW,
+  ).length;
+  const offers = applications.filter(
+    (job) => job.status === JobStatus.OFFER,
+  ).length;
+  const successRate =
+    totalApplications > 0 ? Math.round((offers / totalApplications) * 100) : 0;
 
   return (
-    <>
+    <section className="w-full">
       <h2 className="mt-6 mb-3 font-display text-4xl">Statistik</h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <article className="rounded-2xl bg-slate-200 p-5">
@@ -84,6 +89,6 @@ export function Statistics({ applications }: StatisticsProps) {
           <span>30 apr</span>
         </div>
       </article>
-    </>
+    </section>
   );
 }
