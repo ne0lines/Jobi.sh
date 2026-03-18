@@ -27,29 +27,33 @@ export default async function Pipeline() {
           borderColor="border-blue-400"
           bgColor="bg-blue-100"
         />
+
         <Board
           jobs={inProcess}
           label={"Pågår"}
           borderColor="border-amber-400"
           bgColor="bg-amber-100"
         />
+
         <Board
           jobs={interviewed}
           label={"Intervju"}
           borderColor="border-cyan-400"
           bgColor="bg-cyan-100"
         />
+
         <Board
           jobs={offers}
           label={"Erbjudanden"}
-          borderColor="border-red-400"
-          bgColor="bg-red-100"
+          borderColor="border-green-400"
+          bgColor="bg-green-100"
         />
+
         <Board
           jobs={closed}
           label={"Avslutad"}
-          borderColor="border-green-400"
-          bgColor="bg-green-100"
+          borderColor="border-red-400"
+          bgColor="bg-red-100"
         />
       </div>
 
