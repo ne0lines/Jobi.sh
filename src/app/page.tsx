@@ -6,18 +6,18 @@ export default function Home() {
     <main className="grid min-h-screen place-items-center p-4 sm:p-5">
       <section className="w-full max-w-3xl rounded-3xl border border-app-stroke bg-app-surface p-5 shadow-sm sm:p-8">
         <div className="flex items-center justify-between gap-3">
-          <div>
-            <h1 className="font-display text-5xl leading-none sm:text-6xl">
-              ApplyTrack
-            </h1>
-            <p className="mt-2 text-lg text-app-muted">Översikt över sökta jobb</p>
-          </div>
+          <h1 className="grid">
+            <span className="font-display text-5xl leading-none sm:text-6xl">
+              ApplyTrack{" "}
+            </span>
+            <span className="mt-2 text-lg text-app-muted font-normal">
+              Översikt över sökta jobb
+            </span>
+          </h1>
           <Btn href="/jobb/new">Lägg till ansökan</Btn>
         </div>
 
-        <h2 className="mt-6 mb-3 font-display text-4xl">
-          Pipeline
-        </h2>
+        <h2 className="mt-6 mb-3 font-display text-4xl">Pipeline</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <article className="rounded-2xl border border-app-stroke bg-app-card p-4">
             <h3 className="mb-2 text-xl font-display">Ansökt</h3>
@@ -26,7 +26,9 @@ export default function Home() {
               href="/jobb/1"
             >
               <strong className="text-lg">UI Developer</strong>
-              <span className="mt-1 block text-base text-app-muted">PixelForge</span>
+              <span className="mt-1 block text-base text-app-muted">
+                PixelForge
+              </span>
             </Link>
           </article>
 
@@ -34,7 +36,9 @@ export default function Home() {
             <h3 className="mb-2 text-xl font-display">Intervju</h3>
             <div className="rounded-2xl border border-app-stroke bg-white p-4">
               <strong className="text-lg">Product Designer</strong>
-              <span className="mt-1 block text-base text-app-muted">Craft Studio</span>
+              <span className="mt-1 block text-base text-app-muted">
+                Craft Studio
+              </span>
             </div>
           </article>
         </div>
@@ -46,24 +50,30 @@ export default function Home() {
           </p>
         </article>
 
-        <h2 className="mt-6 mb-3 font-display text-4xl">
-          Statistik
-        </h2>
+        <h2 className="mt-6 mb-3 font-display text-4xl">Statistik</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <article className="rounded-2xl bg-slate-200 p-5">
-            <strong className="block font-display text-4xl leading-none">23</strong>
+            <strong className="block font-display text-4xl leading-none">
+              23
+            </strong>
             <span className="text-base text-app-muted">Ansökningar</span>
           </article>
           <article className="rounded-2xl bg-app-cyan p-5 text-app-cyan-strong">
-            <strong className="block font-display text-4xl leading-none">4</strong>
+            <strong className="block font-display text-4xl leading-none">
+              4
+            </strong>
             <span className="text-base text-app-muted">Intervjuer</span>
           </article>
           <article className="rounded-2xl bg-app-green p-5 text-app-green-strong">
-            <strong className="block font-display text-4xl leading-none">1</strong>
+            <strong className="block font-display text-4xl leading-none">
+              1
+            </strong>
             <span className="text-base text-app-muted">Jobberbjudanden</span>
           </article>
           <article className="rounded-2xl bg-app-sand p-5 text-app-sand-strong">
-            <strong className="block font-display text-4xl leading-none">17%</strong>
+            <strong className="block font-display text-4xl leading-none">
+              17%
+            </strong>
             <span className="text-base text-app-muted">Framgång</span>
           </article>
         </div>
