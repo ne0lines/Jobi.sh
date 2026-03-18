@@ -1,4 +1,5 @@
 export type Job = {
+  id: string;
   title: string;
   company: string;
   location: string;
@@ -7,6 +8,7 @@ export type Job = {
   jobUrl: string;
   contactPerson: {
     name: string;
+    role: string;
     email: string;
     phone: string;
   };
@@ -14,4 +16,8 @@ export type Job = {
     date: string;
     event: string;
   }>;
+};
+
+export type Db = {
+  applications: Job[];
 };

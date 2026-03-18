@@ -1,10 +1,10 @@
 import { Btn } from "@/components/ui/btn";
-import type { Job } from "@/app/types";
+import type { Db, Job } from "@/app/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import jobsData from "../../../server/jobs.json";
+import dbData from "../../../server/db.json";
 
-const jobs = jobsData as Record<string, Job>;
+const db = dbData as Db;
 
 export default async function JobDetailPage({
   params,
@@ -12,7 +12,7 @@ export default async function JobDetailPage({
   params: Promise<{ jobId: string }>;
 }>) {
   const { jobId } = await params;
-  const job = jobs[jobId];
+  const job = db.applications.find((application: Job) => application.id === jobId);
 
   if (!job) {
     notFound();
@@ -35,7 +35,7 @@ export default async function JobDetailPage({
               <p className="w-full text-base text-app-muted"><strong>Omfattning</strong><br />{job.workload}</p>
             </div>
             <h3 className="mt-3 font-display text-xl">Kontaktperson</h3>
-            <p className="text-base text-app-muted"><strong>{job.contactPerson.name}</strong></p>
+            <p className="text-base text-app-muted"><strong>{job.contactPerson.name}</strong> ({job.contactPerson.role})</p>
             <p className="text-base text-app-muted"><strong>E-post:</strong> <Link href={`mailto:${job.contactPerson.email}`} className="font-medium text-app-cyan-strong">{job.contactPerson.email}</Link></p>
             <p className="text-base text-app-muted"><strong>Telefon:</strong> <Link href={`tel:${job.contactPerson.phone}`} className="font-medium text-app-cyan-strong">{job.contactPerson.phone}</Link></p>
             <Btn className="mt-3" fullWidth href={job.jobUrl} rel="noreferrer" target="_blank">Besök annons</Btn>
