@@ -13,7 +13,6 @@ export default async function Pipeline() {
   const interviewed = jobs.filter((j) => j.status === JobStatus.INTERVIEW);
   const inProcess = jobs.filter((j) => j.status === JobStatus.IN_PROCESS);
   const offers = jobs.filter((j) => j.status === JobStatus.OFFER);
-  const closed = jobs.filter((j) => j.status === JobStatus.CLOSED);
 
   return (
     <section className="w-full">
