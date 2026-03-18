@@ -19,14 +19,17 @@ export function Statistics({ applications }: StatisticsProps) {
   const offers = applications.filter(
     (job) => job.status === JobStatus.OFFER,
   ).length;
+  const closed = applications.filter(
+    (job) => job.status === JobStatus.CLOSED,
+  ).length;
   const successRate =
     totalApplications > 0 ? Math.round((offers / totalApplications) * 100) : 0;
 
   return (
     <section className="w-full">
       <h2 className="mt-6 mb-3 font-display text-4xl">Statistik</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-3 h-fit">
           <article className="rounded-2xl bg-slate-200 p-5">
             <strong className="block font-display text-4xl leading-none">
               {totalApplications}
@@ -44,6 +47,12 @@ export function Statistics({ applications }: StatisticsProps) {
               {offers}
             </strong>
             <span className="text-base text-app-muted">Jobberbjudanden</span>
+          </article>
+          <article className="rounded-2xl bg-red-200 p-5 text-red-700">
+            <strong className="block font-display text-4xl leading-none">
+              {closed}
+            </strong>
+            <span className="text-base text-app-muted">Avslutade</span>
           </article>
           <article className="rounded-2xl bg-app-sand p-5 text-app-sand-strong">
             <strong className="block font-display text-4xl leading-none">
