@@ -19,7 +19,9 @@ export default async function Home() {
                 Översikt över sökta jobb
               </span>
             </h1>
-            <Btn href="/jobb/new">Lägg till jobb</Btn>
+            <Btn href="/jobb/new" className="text-sm sm:text-base">
+              Lägg till jobb
+            </Btn>
           </div>
         </section>
         <Pipeline />
