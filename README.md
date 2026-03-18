@@ -16,7 +16,7 @@
   ApplyTrack hjälper dig att hålla ihop hela jobbsökarflödet på ett ställe: från ny ansökan till intervju, uppföljning och nästa steg. Fokus ligger på tydlighet, tempo och ett gränssnitt som fungerar lika bra i mobilen som på större skärmar. ✨
 </p>
 
-![ApplyTrack Screens](public/ApplyTrack%20Screens.png)
+![ApplyTrack Screens](public/ApplyTrack%20Screens-2.png)
 
 ## Innehåll
 
