@@ -82,6 +82,22 @@ export default function NewJobPage() {
             />
           </label>
 
+          <label className="mb-3 block font-semibold text-app-muted">
+            Status
+            <select
+              className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink"
+              name="status"
+              required
+            >
+              <option value="">Välj status</option>
+              <option value="Sparad">Sparad</option>
+              <option value="Ansökt">Ansökt</option>
+              <option value="Intervju">Intervju</option>
+              <option value="Erbjudande">Erbjudande</option>
+              <option value="Avslag">Avslag</option>
+            </select>
+          </label>
+
           <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className="block font-semibold text-app-muted">
               Datum för ansökan
