@@ -1,15 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import type { Job, UpdateJobInput } from "@/app/types";
-import { readDb, writeDb } from "@/server/db";
+import { readDbForUser, writeDb } from "@/server/db";
+import { getUserIdFromRequest } from "@/server/auth-session";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ jobId: string }> },
 ): Promise<NextResponse<Job | { error: string }>> {
   const { jobId } = await context.params;
-  const db = await readDb();
-  const job = db.applications.find((application) => application.id === jobId);
+  const userId = await getUserIdFromRequest(request);
+
+  if (!userId) {
+    return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 400 });
+  }
+
+  const db = await readDbForUser(userId);
+  const job = db.applications.find(
+    (application) => application.id === jobId && application.userId === userId,
+  );
 
   if (!job) {
     return NextResponse.json({ error: "Jobbet kunde inte hittas." }, { status: 404 });
@@ -23,9 +32,17 @@ export async function PATCH(
   context: { params: Promise<{ jobId: string }> },
 ): Promise<NextResponse<Job | { error: string }>> {
   const { jobId } = await context.params;
+  const userId = await getUserIdFromRequest(request);
+
+  if (!userId) {
+    return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 400 });
+  }
+
   const updates = (await request.json()) as UpdateJobInput;
-  const db = await readDb();
-  const jobIndex = db.applications.findIndex((application) => application.id === jobId);
+  const db = await readDbForUser(userId);
+  const jobIndex = db.applications.findIndex(
+    (application) => application.id === jobId && application.userId === userId,
+  );
 
   if (jobIndex === -1) {
     return NextResponse.json({ error: "Jobbet kunde inte hittas." }, { status: 404 });
@@ -49,12 +66,20 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ jobId: string }> },
 ): Promise<NextResponse<{ success: boolean } | { error: string }>> {
   const { jobId } = await context.params;
-  const db = await readDb();
-  const nextApplications = db.applications.filter((application) => application.id !== jobId);
+  const userId = await getUserIdFromRequest(request);
+
+  if (!userId) {
+    return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 400 });
+  }
+
+  const db = await readDbForUser(userId);
+  const nextApplications = db.applications.filter(
+    (application) => application.id !== jobId || application.userId !== userId,
+  );
 
   if (nextApplications.length === db.applications.length) {
     return NextResponse.json({ error: "Jobbet kunde inte hittas." }, { status: 404 });

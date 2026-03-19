@@ -1,6 +1,7 @@
 "use client";
 
-import { createJob } from "@/app/services/services";
+import { createJob, getJobs } from "@/app/services/services";
+import { LogoutBtn } from "@/components/auth/logout-btn";
 import { Btn } from "@/components/ui/btn";
 import { type AutofillPayload, type CreateJobInput, type JobFormState, JobStatus } from "@/app/types";
 import { useRouter } from "next/navigation";
@@ -98,6 +99,7 @@ function buildTimeline(form: JobFormState) {
 export default function NewJobPage() {
   const router = useRouter();
   const [form, setForm] = useState<JobFormState>(initialState);
+  const [hasExistingJobs, setHasExistingJobs] = useState(false);
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -105,6 +107,30 @@ export default function NewJobPage() {
   const lastFetchedJobId = useRef<string | null>(null);
 
   const jobId = useMemo(() => extractAfJobId(form.jobUrl), [form.jobUrl]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadJobs() {
+      try {
+        const jobs = await getJobs();
+
+        if (isMounted) {
+          setHasExistingJobs(jobs.length > 0);
+        }
+      } catch {
+        if (isMounted) {
+          setHasExistingJobs(false);
+        }
+      }
+    }
+
+    void loadJobs();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!jobId || lastFetchedJobId.current === jobId) {
@@ -444,11 +470,26 @@ export default function NewJobPage() {
               </div>
 
               <div className="flex w-full gap-4">
-                <Btn variant="secondary" className="w-1/2" href="/">Tillbaka</Btn>
-                <Btn type="button" className="w-full" icon="/LucideTextCursorInput.svg" iconHex="#FFFFFF" onClick={() => setShowManualFields(true)}>
+                {hasExistingJobs ? <Btn variant="secondary" className="w-1/2" href="/">Tillbaka</Btn> : null}
+                <Btn
+                  type="button"
+                  className="w-full"
+                  icon="/LucideTextCursorInput.svg"
+                  iconHex="#FFFFFF"
+                  onClick={() => setShowManualFields(true)}
+                >
                   Lägg till manuellt
                 </Btn>
               </div>
+
+              {hasExistingJobs ? null : (
+                <div className="mt-3 grid w-full grid-cols-2 gap-3">
+                  <Btn href="/konto" variant="secondary" className="w-full">
+                    Konto
+                  </Btn>
+                  <LogoutBtn className="w-full" />
+                </div>
+              )}
             </>
           )}
         </form>

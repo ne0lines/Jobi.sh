@@ -21,6 +21,7 @@ export type JobContactPerson = {
 
 export type Job = {
   id: string;
+  userId: string;
   title: string;
   company: string;
   location: string;
@@ -33,7 +34,7 @@ export type Job = {
   status: JobStatus;
 };
 
-export type CreateJobInput = Omit<Job, "id">;
+export type CreateJobInput = Omit<Job, "id" | "userId">;
 
 export type UpdateJobInput = Partial<CreateJobInput>;
 
@@ -72,4 +73,16 @@ export type AutofillPayload = {
 
 export type Db = {
   applications: Job[];
+};
+
+export type AppUser = {
+  id: string;
+  email: string;
+  passwordHash: string;
+  passwordSalt: string;
+  createdAt: string;
+};
+
+export type UsersDb = {
+  users: AppUser[];
 };
