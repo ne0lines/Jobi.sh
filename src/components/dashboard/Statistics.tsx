@@ -11,7 +11,7 @@ type StatisticsProps = {
   }>;
 };
 
-export function Statistics({ applications }: StatisticsProps) {
+export function Statistics({ applications }: Readonly<StatisticsProps>) {
   const totalApplications = applications.length;
   const interviews = applications.filter(
     (job) => job.status === JobStatus.INTERVIEW,
@@ -27,35 +27,35 @@ export function Statistics({ applications }: StatisticsProps) {
 
   return (
     <section className="w-full">
-      <h2 className="mt-6 mb-3 font-display text-4xl">Statistik</h2>
+      <h2 className="mt-6 mb-3 font-display text-3xl sm:text-4xl">Statistik</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-3 h-fit">
           <article className="rounded-2xl bg-slate-200 p-5">
-            <strong className="block font-display text-4xl leading-none">
+            <strong className="block font-display text-3xl leading-none sm:text-4xl">
               {totalApplications}
             </strong>
             <span className="text-base text-app-muted">Ansökningar</span>
           </article>
           <article className="rounded-2xl bg-app-cyan p-5 text-app-cyan-strong">
-            <strong className="block font-display text-4xl leading-none">
+            <strong className="block font-display text-3xl leading-none sm:text-4xl">
               {interviews}
             </strong>
             <span className="text-base text-app-muted">Intervjuer</span>
           </article>
           <article className="rounded-2xl bg-app-green p-5 text-app-green-strong">
-            <strong className="block font-display text-4xl leading-none">
+            <strong className="block font-display text-3xl leading-none sm:text-4xl">
               {offers}
             </strong>
             <span className="text-base text-app-muted">Jobberbjudanden</span>
           </article>
           <article className="rounded-2xl bg-red-200 p-5 text-red-700">
-            <strong className="block font-display text-4xl leading-none">
+            <strong className="block font-display text-3xl leading-none sm:text-4xl">
               {closed}
             </strong>
             <span className="text-base text-app-muted">Avslutade</span>
           </article>
           <article className="rounded-2xl bg-app-sand p-5 text-app-sand-strong col-span-2">
-            <strong className="block font-display text-4xl leading-none">
+            <strong className="block font-display text-3xl leading-none sm:text-4xl">
               {successRate}%
             </strong>
             <span className="text-base text-app-muted">Framgång</span>
@@ -68,10 +68,10 @@ export function Statistics({ applications }: StatisticsProps) {
           </h3>
           <svg
             viewBox="0 0 336 190"
-            role="img"
-            aria-label="Ansökningstrend de senaste 30 dagarna"
+            aria-labelledby="applications-trend-title"
             className="block h-auto w-full"
           >
+            <title id="applications-trend-title">Ansökningstrend de senaste 30 dagarna</title>
             <defs>
               <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#7f43ff" stopOpacity="0.5" />

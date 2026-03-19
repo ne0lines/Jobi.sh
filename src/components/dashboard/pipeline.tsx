@@ -16,7 +16,7 @@ export default async function Pipeline() {
 
   return (
     <section className="w-full">
-      <h2 className="mt-6 mb-3 font-display text-4xl">Pipeline</h2>
+      <h2 className="mt-6 mb-3 font-display text-3xl sm:text-4xl">Pipeline</h2>
       <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         {saved.length > 0 && <Board jobs={saved} label={"Sparat"} />}
         {applied.length > 0 && (
