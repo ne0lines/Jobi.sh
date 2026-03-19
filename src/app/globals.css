@@ -15,6 +15,8 @@
 	--app-green-strong: #1f7a43;
 	--app-sand: #f3e8df;
 	--app-sand-strong: #c34a16;
+	--app-red: #ff4d4f;
+	--app-red-strong: #d32f2f;
 	--app-muted-surface: #e8eaf0;
 	--app-muted-hover: #dfe3ec;
 	--app-muted-ink: #4a5267;
@@ -40,6 +42,8 @@
 	--color-app-green-strong: var(--app-green-strong);
 	--color-app-sand: var(--app-sand);
 	--color-app-sand-strong: var(--app-sand-strong);
+  --color-app-red: var(--app-red);
+  --color-app-red-strong: var(--app-red-strong);
 	--color-app-muted-surface: var(--app-muted-surface);
 	--color-app-muted-hover: var(--app-muted-hover);
 	--color-app-muted-ink: var(--app-muted-ink);
@@ -53,6 +57,11 @@
 }
 
 @layer base {
+	html {
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
 	body {
 		@apply bg-app-bg font-sans text-app-ink;
 	}

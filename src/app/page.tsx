@@ -2,7 +2,9 @@ import { Btn } from "@/components/ui/btn";
 import { Pipeline, Statistics } from "@/components/dashboard";
 
 export default async function Home() {
-  const res = await fetch("http://localhost:3000/api/jobs");
+  const res = await fetch("http://localhost:3000/api/jobs", {
+    cache: "no-store",
+  });
   const data = await res.json();
   const applications = data.applications;
 
@@ -19,13 +21,14 @@ export default async function Home() {
                 Översikt över sökta jobb
               </span>
             </h1>
-            <Btn href="/jobb/new" className="text-sm sm:text-base">
-              Lägg till jobb
-            </Btn>
+            <Btn href="/jobb/new" icon="/MaterialSymbolsAdd.svg" iconHex="#FFFFFF">Lägg till jobb</Btn>
           </div>
         </section>
         <Pipeline />
         <Statistics applications={applications} />
+        <Btn href="/report" className="mt-5 w-full" icon="/ams-logo.svg" hex="#00005A">
+          Aktivitetsrapportera
+        </Btn>
       </div>
     </main>
   );

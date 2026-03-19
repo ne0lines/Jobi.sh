@@ -7,6 +7,18 @@ export enum JobStatus {
   CLOSED = "closed",
 }
 
+export type JobTimelineItem = {
+  date: string;
+  event: string;
+};
+
+export type JobContactPerson = {
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+};
+
 export type Job = {
   id: string;
   title: string;
@@ -15,16 +27,46 @@ export type Job = {
   employmentType: string;
   workload: string;
   jobUrl: string;
-  contactPerson: {
-    name: string;
-    role: string;
-    email: string;
-    phone: string;
-  };
-  timeline: Array<{
-    date: string;
-    event: string;
-  }>;
+  contactPerson: JobContactPerson;
+  timeline: JobTimelineItem[];
+  notes?: string;
+  status: JobStatus;
+};
+
+export type CreateJobInput = Omit<Job, "id">;
+
+export type UpdateJobInput = Partial<CreateJobInput>;
+
+export type JobFormState = {
+  title: string;
+  company: string;
+  location: string;
+  employmentType: string;
+  workload: string;
+  jobUrl: string;
+  status: JobStatus;
+  applicationDate: string;
+  deadline: string;
+  contactName: string;
+  contactRole: string;
+  contactEmail: string;
+  contactPhone: string;
+  notes: string;
+};
+
+export type AutofillPayload = {
+  title: string;
+  company: string;
+  location: string;
+  employmentType: string;
+  workload: string;
+  applicationDate: string;
+  deadline: string;
+  contactName: string;
+  contactRole: string;
+  contactEmail: string;
+  contactPhone: string;
+  notes: string;
   status: JobStatus;
 };
 
