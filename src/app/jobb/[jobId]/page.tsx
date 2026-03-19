@@ -70,8 +70,8 @@ export default function JobDetailPage({
     return (
       <main className="min-h-screen p-4 pt-20 sm:p-5">
         <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8">
-          <h1 className="font-display text-5xl sm:text-6xl">Jobbdetaljer</h1>
-          <p className="text-lg text-app-muted">Laddar jobb...</p>
+          <h1 className="font-display text-4xl sm:text-6xl">Jobbdetaljer</h1>
+          <p className="text-base text-app-muted sm:text-lg">Laddar jobb...</p>
         </section>
       </main>
     );
@@ -81,8 +81,8 @@ export default function JobDetailPage({
     return (
       <main className="min-h-screen p-4 pt-20 sm:p-5">
         <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8">
-          <h1 className="font-display text-5xl sm:text-6xl">Jobbdetaljer</h1>
-          <p className="text-lg text-app-muted">{error}</p>
+          <h1 className="font-display text-4xl sm:text-6xl">Jobbdetaljer</h1>
+          <p className="text-base text-app-muted sm:text-lg">{error}</p>
           <Btn href="/" variant="secondary">
             Tillbaka
           </Btn>
@@ -92,10 +92,10 @@ export default function JobDetailPage({
   }
 
   return (
-    <main className="min-h-screen p-4 sm:p-5 pt-20">
-      <section className="flex flex-col gap-4 w-full max-w-3xl p-5 sm:p-8">
-        <h1 className="font-display text-5xl sm:text-6xl">Jobbdetaljer</h1>
-        <p className="text-lg text-app-muted">Följ status, historik och nästa steg</p>
+    <main className="min-h-screen p-4 pt-0">
+      <section className="flex flex-col gap-4 w-full">
+        <h1 className="font-display text-4xl sm:text-6xl">Jobbdetaljer</h1>
+        <p className="text-base text-app-muted sm:text-lg">Följ status, historik och nästa steg</p>
         <div className="flex flex-col gap-4">
           <article className="rounded-2xl border border-app-stroke bg-app-card p-4">
             <h2 className="font-display text-xl">{job.title}</h2>

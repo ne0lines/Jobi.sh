@@ -213,10 +213,10 @@ export default function NewJobPage() {
   };
 
   return (
-    <main className="min-h-screen p-4 pt-20 sm:p-5">
-      <section className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-3xl flex-col p-5 sm:p-8">
+    <main className="min-h-dvh px-4 pb-4 pt-0">
+      <section className="mx-auto flex min-h-dvh w-full flex-col gap-4">
         <div>
-          <h1 className="font-display text-5xl sm:text-6xl">Lägg till jobb</h1>
+          <h1 className="font-display text-4xl sm:text-6xl">Lägg till jobb</h1>
           {feedback ? (
             <p className="mt-4 rounded-2xl border border-app-stroke bg-app-card px-4 py-3 text-sm text-app-muted">
               {isAutofilling ? "⏳ " : ""}

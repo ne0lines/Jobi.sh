@@ -9,15 +9,15 @@ export default async function Home() {
   const applications = data.applications;
 
   return (
-    <main className="container mx-auto mt-5 grid min-h-screen place-items-center px-5 sm:px-0">
-      <div className="w-full rounded-3xl border border-app-stroke bg-app-surface p-5 shadow-sm sm:p-5">
+    <main className="min-h-screen p-4 pt-0">
+      <div className="w-full rounded-3xl">
         <section className="w-full">
           <div className="flex items-center justify-between gap-3">
             <h1 className="grid">
-              <span className="font-display text-5xl leading-none sm:text-6xl">
+              <span className="font-display text-4xl leading-none sm:text-6xl">
                 ApplyTrack{" "}
               </span>
-              <span className="mt-2 text-lg font-normal text-app-muted">
+              <span className="mt-2 text-base font-normal text-app-muted sm:text-lg">
                 Översikt över sökta jobb
               </span>
             </h1>
