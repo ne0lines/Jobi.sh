@@ -2,6 +2,7 @@
 
 import { updateJob } from "@/app/services/services";
 import { JobStatus } from "@/app/types";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const statusOptions: Array<{ value: JobStatus; label: string }> = [
@@ -23,6 +24,7 @@ type StatusSelectProps = {
 };
 
 export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProps>) {
+  const router = useRouter();
   const [status, setStatus] = useState<JobStatus>(initialStatus);
   const [message, setMessage] = useState<string>("");
 
@@ -33,9 +35,10 @@ export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProp
 
     try {
       await updateJob(jobId, { status: nextStatus });
+      router.refresh();
     } catch {
       setMessage(
-        `Status ändrad till ${statusLabelByValue[nextStatus].toLowerCase()} lokalt. Mock-servern kunde inte uppdateras just nu.`,
+        `Status ändrad till ${statusLabelByValue[nextStatus].toLowerCase()} lokalt. Jobbet kunde inte uppdateras just nu.`,
       );
     }
   }
