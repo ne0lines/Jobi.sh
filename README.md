@@ -5,111 +5,71 @@
   <img src="https://img.shields.io/badge/React-19-149eca" alt="React 19" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178c6" alt="TypeScript 5" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-4-06b6d4" alt="Tailwind CSS 4" />
-  <img src="https://img.shields.io/badge/json--server-mock_api-fc427b" alt="json-server" />
 </p>
 
 <p align="center">
-  <strong>En mobile-first jobbtracker för ansökningar, uppföljning och pipeline-överblick.</strong>
+  <strong>En mobile-first jobbtracker för att spara annonser, följa status och hålla koll på uppföljning.</strong>
 </p>
 
 <p align="center">
-  ApplyTrack hjälper dig att hålla ihop hela jobbsökarflödet på ett ställe: från ny ansökan till intervju, uppföljning och nästa steg. Fokus ligger på tydlighet, tempo och ett gränssnitt som fungerar lika bra i mobilen som på större skärmar. ✨
+  ApplyTrack samlar hela jobbsökarflödet i en och samma app: från sparad annons till ansökan, intervju, rapportering och nästa steg.
 </p>
 
 ![ApplyTrack Screens](public/ApplyTrack%20Screens.png)
 
 ## Innehåll
 
-- [Vad appen gör](#vad-appen-gör)
-- [Highlights](#highlights)
+- [Översikt](#översikt)
+- [Nuvarande funktionalitet](#nuvarande-funktionalitet)
 - [Teknikstack](#teknikstack)
 - [Kom igång](#kom-igång)
 - [Scripts](#scripts)
 - [Rutter](#rutter)
-- [Datamodell](#datamodell)
+- [API-rutter](#api-rutter)
+- [Datalagring](#datalagring)
 - [Projektstruktur](#projektstruktur)
-- [Designsystem](#designsystem)
-- [Produktidé](#produktidé)
-- [Roadmap](#roadmap)
+- [Kända begränsningar](#kända-begränsningar)
 
-## Vad appen gör
+## Översikt
 
-ApplyTrack är byggd för att ge en snabb och tydlig överblick över aktiva jobbansökningar.
+ApplyTrack är byggd för att ge en snabb och tydlig överblick över jobb du har sparat, sökt eller är i dialog om.
+
+Appen fokuserar på tre saker:
+
+- snabb registrering av nya jobb
+- tydlig pipeline för status och historik
+- praktisk uppföljning med rapportering och att-göra-punkter
+
+## Nuvarande funktionalitet
 
 I nuvarande version kan du:
 
-- se en dashboard med pipeline, statistik och påminnelser
-- öppna en detaljvy för varje jobb via dynamisk route
-- lägga till nya jobb via ett formulär
-- använda lokal mock-data för att utveckla UI och flöden utan riktig backend
-
-## Highlights
-
-- 📱 Mobile-first från grunden
-- 🧭 Tydlig pipeline för jobbstatus
-- 📝 Detaljvy med kontaktperson, annonslänk och historik
-- 🎯 Återanvändbara UI-komponenter med Tailwind
-- 🗃️ Mock-backend via `json-server`
-- 🔤 Inter som grundfont och Bricolage Grotesque för rubriker
+- se en dashboard med att göra, pipeline, statistik och ApexChart
+- lägga till jobb manuellt eller autofylla från Arbetsförmedlingen/Platsbanken via annonslänk
+- förhindra dubbletter när samma annons redan finns sparad
+- öppna en detaljvy för varje jobb
+- uppdatera jobbstatus från detaljsidan
+- ta bort jobb
+- se aktivitetsrapport per månad på en separat rapportsida
+- kopiera titel, företag och plats från rapporten till urklipp
+- använda appen i ett mobile-first-gränssnitt med iOS-anpassade formulärfält
 
 ## Teknikstack
 
 | Område | Val |
 | --- | --- |
-| Ramverk | Next.js 16 |
+| Ramverk | Next.js 16 App Router |
 | UI | React 19 |
 | Språk | TypeScript |
 | Styling | Tailwind CSS 4 |
-| Mock-API | json-server |
-| Datakälla | `src/server/db.json` |
+| Diagram | ApexCharts + react-apexcharts |
+| Datalagring | Lokala JSON-filer |
+| Serverlogik | Next.js Route Handlers |
 
 ## Kom igång
-
-Installera beroenden:
-
-```bash
-npm install
-```
-
-Starta frontend:
-
-```bash
-npm run dev
-```
-
-Starta frontend och mock-server samtidigt:
-
-```bash
-npm run dev:mock
-```
-
-Mock-servern kör på `http://localhost:3001` och använder data från `src/server/db.json`.
-
-Bygg för produktion:
-
-```bash
-npm run build
-```
-
-Starta produktionsserver:
-
-```bash
-npm run start
-```
-
-Kör lint:
-
-```bash
-npm run lint
-```
-
-## Scripts
-
 | Script | Beskrivning |
 | --- | --- |
 | `npm run dev` | Startar Next.js i utvecklingsläge |
-| `npm run mock-server` | Startar `json-server` med `src/server/db.json` |
-| `npm run dev:mock` | Startar både Next.js och mock-servern samtidigt |
 | `npm run build` | Skapar produktionsbuild |
 | `npm run start` | Startar produktionsservern |
 | `npm run lint` | Kör ESLint |
@@ -118,17 +78,32 @@ npm run lint
 
 | Route | Syfte |
 | --- | --- |
-| `/` | Dashboard med översikt, pipeline och statistik |
-| `/jobb/new` | Formulär för att lägga till ett nytt jobb |
-| `/jobb/[jobId]` | Dynamisk detaljsida för ett specifikt jobb |
+| `/` | Dashboard med att göra, pipeline och statistik |
+| `/jobb/new` | Skapa nytt jobb via länk eller manuell inmatning |
+| `/jobb/[jobId]` | Detaljsida för ett specifikt jobb |
+| `/report` | Aktivitetsrapport med månadsfilter |
 
-## Datamodell
+## API-rutter
 
-Appen använder just nu en lokal datakälla i:
+| Route | Metoder | Syfte |
+| --- | --- | --- |
+| `/api/jobs` | `GET`, `POST` | Lista jobb och skapa nytt jobb |
+| `/api/jobs/[jobId]` | `GET`, `PATCH`, `DELETE` | Hämta, uppdatera eller ta bort ett jobb |
+| `/api/arbetsformedlingen` | `GET` | Hämta och normalisera annonsdata från Platsbanken |
+
+## Datalagring
+
+Appen använder i nuläget lokal filbaserad lagring.
+
+Primär datafil:
 
 - `src/server/db.json`
 
-Filen innehåller en `applications`-array där varje jobbpost består av bland annat:
+Tillhörande serverhjälpare:
+
+- `src/server/db.ts`
+
+Varje jobb innehåller bland annat:
 
 - `id`
 - `title`
@@ -139,21 +114,23 @@ Filen innehåller en `applications`-array där varje jobbpost består av bland a
 - `jobUrl`
 - `contactPerson`
 - `timeline`
+- `notes`
+- `status`
 
 Tillhörande TypeScript-typer finns i:
 
 - `src/app/types.ts`
 
-Exempel på struktur:
+Exempel:
 
 ```json
 {
   "applications": [
     {
-      "id": "1",
-      "title": "UI Developer",
-      "company": "PixelForge",
-      "location": "Stockholm / Remote"
+      "id": "30752613",
+      "title": "Webbansvarig/Webbstrateg",
+      "company": "High Chaparral Sweden AB",
+      "status": "in process"
     }
   ]
 }
@@ -164,58 +141,31 @@ Exempel på struktur:
 ```text
 src/
   app/
+    api/
+      arbetsformedlingen/
+      jobs/
     jobb/
       [jobId]/page.tsx
       new/page.tsx
+    report/page.tsx
     globals.css
     layout.tsx
     page.tsx
     types.ts
   components/
+    dashboard/
+    report/
     ui/
-      btn.tsx
   server/
     db.json
+    db.ts
 ```
 
-## Designsystem
+## Kända begränsningar
 
-ApplyTrack är byggd med några tydliga designprinciper:
-
-- mobile-first layout i hela appen
-- Tailwind som enda stylingstrategi i komponenterna
-- färger definieras i `globals.css` som variabler och exponeras som Tailwind-tokens
-- Inter används som grundfont
-- Bricolage Grotesque används för rubriker
-- UI:t ska kännas enkelt, snabbt och tydligt snarare än tungt eller överdesignat
-
-## Produktidé
-
-Som användare vill jag kunna:
-
-- lägga till jobb snabbt genom att klistra in eller fylla i information manuellt
-- få en tydlig överblick över mina ansökningar
-- följa historik, status och nästa steg för varje jobb
-- undvika att missa uppföljningar eller deadlines
-
-Nice to have framåt:
-
-- se trender i min ansökningsprocess 📈
-- filtrera jobb utifrån status
-- skapa flera boards för olika karriärspår
-- exportera data till PDF eller rapportformat
-- få smarta påminnelser baserat på status och datum
-
-## Roadmap
-
-Nästa naturliga steg för projektet:
-
-1. Rendera dashboarden dynamiskt från `db.json`
-2. Koppla formuläret till mock-API eller riktig backend
-3. Införa statusflöden som `Ansökt`, `Intervju`, `Erbjudande` och `Avslag`
-4. Lägga till filtrering, sortering och sökning
-5. Förbereda appen för riktig persistens med databas
+- Data sparas i lokala JSON-filer och är därför inte en robust produktionslösning.
+- Om appen ska deployas för verklig användning bör `db.json` ersättas med en riktig databas.
 
 ## Status
 
-Projektet är i ett tidigt produkt- och UI-skede, men har redan en tydlig struktur för vidareutveckling. README:n är skriven för att göra det snabbt att förstå appens riktning, köra den lokalt och bygga vidare utan att behöva läsa hela kodbasen först.
+Projektet är nu mer än en ren UI-prototyp. Det finns fungerande CRUD-flöden, rapportering, autofill från Platsbanken, statushantering, statistik och uppföljningslogik direkt i dashboarden.
