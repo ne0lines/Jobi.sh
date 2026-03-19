@@ -1,12 +1,8 @@
-import { JobStatus, type Db } from "@/app/types";
+import { Job, JobStatus } from "@/app/types";
 import Board from "./board";
 
-export default async function Pipeline() {
-  const res = await fetch("http:localhost:3000/api/jobs");
-
-  if (!res.ok) return <p>No applications yet!</p>;
-
-  const { applications: jobs } = (await res.json()) as Db;
+export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
+  if (jobs.length === 0) return <p>No applications yet!</p>;
 
   const saved = jobs.filter((j) => j.status === JobStatus.SAVED);
   const applied = jobs.filter((j) => j.status === JobStatus.APPLIED);

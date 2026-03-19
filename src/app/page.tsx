@@ -1,11 +1,9 @@
 import { Btn } from "@/components/ui/btn";
 import { Pipeline, Statistics } from "@/components/dashboard";
+import { readDb } from "@/server/db";
 
 export default async function Home() {
-  const res = await fetch("http://localhost:3000/api/jobs", {
-    cache: "no-store",
-  });
-  const data = await res.json();
+  const data = await readDb();
   const applications = data.applications;
 
   return (
@@ -24,7 +22,7 @@ export default async function Home() {
             <Btn href="/jobb/new" icon="/MaterialSymbolsAdd.svg" iconHex="#FFFFFF">Lägg till jobb</Btn>
           </div>
         </section>
-        <Pipeline />
+        <Pipeline jobs={applications} />
         <Statistics applications={applications} />
         <Btn href="/report" className="mt-5 w-full" icon="/ams-logo.svg" hex="#00005A">
           Aktivitetsrapportera

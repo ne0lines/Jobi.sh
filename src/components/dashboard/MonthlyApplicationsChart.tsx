@@ -1,6 +1,12 @@
-'use client'
-import ReactApexChart from 'react-apexcharts'
-import { JobStatus } from '@/app/types'
+"use client";
+
+import dynamic from "next/dynamic";
+
+import { JobStatus } from "@/app/types";
+
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
 type MonthlyApplicationsChartProps = {
   applications: Array<{
@@ -15,7 +21,7 @@ type MonthlyApplicationsChartProps = {
 
 export function MonthlyApplicationsChart({
   applications,
-}: MonthlyApplicationsChartProps) {
+}: Readonly<MonthlyApplicationsChartProps>) {
   // Find the earliest application date
   const earliestDate =
     applications.length > 0
