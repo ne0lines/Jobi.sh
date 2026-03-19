@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "auth:reset-password": "node scripts/reset-password.mjs",
     "mock-server": "json-server --watch src/server/db.json --port 3001",
     "dev": "next dev",
     "dev:mock": "concurrently --kill-others-on-fail \"npm run mock-server\" \"npm run dev\"",
