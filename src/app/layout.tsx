@@ -15,11 +15,22 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "ApplyTrack",
   description: "Mobile-first jobbspårning byggd med Next.js",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "ApplyTrack",
+  },
+  icons: {
+    apple: "/icons/Assets.xcassets/AppIcon.appiconset/180.png",
+    icon: "/icons/Assets.xcassets/AppIcon.appiconset/196.png",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#6e33eb",
   viewportFit: "cover",
 };
 

@@ -31,6 +31,7 @@ export type Job = {
   timeline: JobTimelineItem[];
   notes?: string;
   status: JobStatus;
+  followUpReminderSentAt?: string | null;
 };
 
 export type CreateJobInput = Omit<Job, "id">;
@@ -70,6 +71,27 @@ export type AutofillPayload = {
   status: JobStatus;
 };
 
+export type PushSubscriptionRecord = {
+  endpoint: string;
+  expirationTime: number | null;
+  keys: {
+    auth: string;
+    p256dh: string;
+  };
+  createdAt: string;
+  userAgent?: string;
+};
+
+export type PushNotificationPayload = {
+  body: string;
+  icon?: string;
+  jobId?: string;
+  tag?: string;
+  title: string;
+  url?: string;
+};
+
 export type Db = {
   applications: Job[];
+  pushSubscriptions: PushSubscriptionRecord[];
 };

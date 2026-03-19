@@ -9,13 +9,21 @@ type DbFile = Db & {
 
 const dbFilePath = path.join(process.cwd(), "src/server/db.json");
 
+function normalizeDbFile(data: DbFile): DbFile {
+  return {
+    ...data,
+    applications: data.applications ?? [],
+    pushSubscriptions: data.pushSubscriptions ?? [],
+  };
+}
+
 export async function readDb(): Promise<DbFile> {
   const raw = await fs.readFile(dbFilePath, "utf8");
-  return JSON.parse(raw) as DbFile;
+  return normalizeDbFile(JSON.parse(raw) as DbFile);
 }
 
 export async function writeDb(data: DbFile): Promise<void> {
-  await fs.writeFile(dbFilePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  await fs.writeFile(dbFilePath, `${JSON.stringify(normalizeDbFile(data), null, 2)}\n`, "utf8");
 }
 
 export function getNextJobId(applications: Job[]): string {

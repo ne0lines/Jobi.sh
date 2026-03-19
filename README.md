@@ -103,6 +103,43 @@ Kör lint:
 npm run lint
 ```
 
+## Deploy Till Vercel
+
+Repo:t är nu förberett för deploy via GitHub Actions till Vercel.
+
+Workflows:
+
+- push till `dev` skapar en preview-deploy
+- push till `main` skapar en production-deploy
+- workflow kan även köras manuellt via `workflow_dispatch`
+
+Skapa följande GitHub Secrets:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+Lägg också in dessa miljövariabler i Vercel-projektet:
+
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- `VAPID_PRIVATE_KEY`
+- `VAPID_SUBJECT`
+- `CRON_SECRET`
+
+VAPID-nycklar kan genereras lokalt med:
+
+```bash
+npm run push:keys
+```
+
+Viktigt för produktion:
+
+- appen använder just nu `src/server/db.json` som datalager
+- filskrivningar i Vercels serverless-miljö är inte persistent lagring
+- det betyder att skapade jobb, uppdateringar, raderingar och sparade push-subscriptions inte är tillförlitliga i produktion med nuvarande datalager
+
+För en riktig production-deploy bör `db.json` ersättas med en extern datakälla, till exempel Vercel Postgres, Supabase eller Neon.
+
 ## Scripts
 
 | Script | Beskrivning |

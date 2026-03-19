@@ -8,18 +8,21 @@
     "dev:mock": "concurrently --kill-others-on-fail \"npm run mock-server\" \"npm run dev\"",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "push:keys": "web-push generate-vapid-keys"
   },
   "dependencies": {
     "next": "16.1.7",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
     "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.7",

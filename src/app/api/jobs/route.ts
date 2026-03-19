@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import type { CreateJobInput, Db, Job } from "@/app/types";
+import type { CreateJobInput, Job } from "@/app/types";
 import { getNextJobId, readDb, writeDb } from "@/server/db";
+
+type JobsResponse = {
+  applications: Job[];
+};
 
 function extractExternalJobId(value: string): string | null {
   const match = /(\d{6,})/.exec(value);
   return match?.[1] ?? null;
 }
 
-export async function GET(req: NextRequest): Promise<NextResponse<Db>> {
+export async function GET(req: NextRequest): Promise<NextResponse<JobsResponse>> {
   const res = await readDb();
 
   return NextResponse.json({ applications: res.applications });

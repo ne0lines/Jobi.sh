@@ -1,18 +1,17 @@
-import { JobStatus, type Db } from "@/app/types";
+import { Job, JobStatus } from "@/app/types";
+import { getDueFollowUpJobs } from "@/server/follow-up";
 import Board from "./board";
 
-export default async function Pipeline() {
-  const res = await fetch("http:localhost:3000/api/jobs");
-
-  if (!res.ok) return <p>No applications yet!</p>;
-
-  const { applications: jobs } = (await res.json()) as Db;
+export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
+  if (jobs.length === 0) return <p>No applications yet!</p>;
 
   const saved = jobs.filter((j) => j.status === JobStatus.SAVED);
   const applied = jobs.filter((j) => j.status === JobStatus.APPLIED);
   const interviewed = jobs.filter((j) => j.status === JobStatus.INTERVIEW);
   const inProcess = jobs.filter((j) => j.status === JobStatus.IN_PROCESS);
   const offers = jobs.filter((j) => j.status === JobStatus.OFFER);
+  const dueFollowUps = getDueFollowUpJobs(jobs);
+  const nextReminder = dueFollowUps[0];
 
   return (
     <section className="w-full">
@@ -58,7 +57,9 @@ export default async function Pipeline() {
       <article className="mt-3 rounded-2xl border border-app-stroke bg-app-card p-4">
         <h3 className="mb-2 text-xl font-display">Påminnelse</h3>
         <p className="text-base text-app-muted">
-          Ingen återkoppling från PixelForge efter 7 dagar. Följ upp idag.
+          {nextReminder
+            ? `Ingen återkoppling från ${nextReminder.company} efter 7 dagar. Följ upp idag.`
+            : "Inga uppföljningspåminnelser just nu."}
         </p>
       </article>
     </section>
