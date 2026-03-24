@@ -33,7 +33,7 @@ export default async function Home() {
       <div className="w-full rounded-3xl">
         <section className="w-full">
           <div className="flex items-center justify-between gap-3">
-            <h1 className="font-display text-4xl leading-none sm:text-6xl">Jobi<span className="text-app-primary">.sh</span></h1>
+            <h1 className="font-display text-4xl leading-none">Jobi<span className="text-app-primary">.sh</span></h1>
             <Btn href="/jobb/new" icon="/MaterialSymbolsAdd.svg" iconHex="#FFFFFF">Lägg till jobb</Btn>
           </div>
         </section>

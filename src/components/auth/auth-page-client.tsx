@@ -104,7 +104,7 @@ export function AuthPageClient({ initialNextPath = "/" }: Readonly<{ initialNext
     <main className="min-h-dvh px-4">
       <section className="mx-auto flex min-h-dvh w-full flex-col gap-4">
         <div className="space-y-2">
-          <h1 className="font-display text-4xl sm:text-5xl">Jobi<span>.sh</span> </h1>
+            <h1 className="font-display text-4xl leading-none">Jobi<span className="text-app-primary">.sh</span></h1>
         </div>
         <div className="flex flex-col w-full flex-1 gap-4 items-center justify-center">
             <div className="grid w-full grid-cols-2 gap-3 rounded-2xl border border-app-stroke bg-app-card p-2">
