@@ -5,7 +5,8 @@
   <img src="https://img.shields.io/badge/React-19-149eca" alt="React 19" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178c6" alt="TypeScript 5" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-4-06b6d4" alt="Tailwind CSS 4" />
-  <img src="https://img.shields.io/badge/json--server-mock_api-fc427b" alt="json-server" />
+  <img src="https://img.shields.io/badge/Prisma-7-2D3748" alt="Prisma 7" />
+  <img src="https://img.shields.io/badge/PostgreSQL-db-336791" alt="PostgreSQL" />
 </p>
 
 <p align="center">
@@ -20,17 +21,21 @@
 
 ## Innehåll
 
-- [Vad appen gör](#vad-appen-gör)
-- [Highlights](#highlights)
-- [Teknikstack](#teknikstack)
-- [Kom igång](#kom-igång)
-- [Scripts](#scripts)
-- [Rutter](#rutter)
-- [Datamodell](#datamodell)
-- [Projektstruktur](#projektstruktur)
-- [Designsystem](#designsystem)
-- [Produktidé](#produktidé)
-- [Roadmap](#roadmap)
+- [ApplyTrack](#applytrack)
+  - [Innehåll](#innehåll)
+  - [Vad appen gör](#vad-appen-gör)
+  - [Highlights](#highlights)
+  - [Teknikstack](#teknikstack)
+  - [Kom igång](#kom-igång)
+    - [Databas](#databas)
+  - [Scripts](#scripts)
+  - [Rutter](#rutter)
+  - [Datamodell](#datamodell)
+  - [Projektstruktur](#projektstruktur)
+  - [Designsystem](#designsystem)
+  - [Produktidé](#produktidé)
+  - [Roadmap](#roadmap)
+  - [Status](#status)
 
 ## Vad appen gör
 
@@ -48,20 +53,25 @@ I nuvarande version kan du:
 - 📱 Mobile-first från grunden
 - 🧭 Tydlig pipeline för jobbstatus
 - 📝 Detaljvy med kontaktperson, annonslänk och historik
+- 🔐 Inloggning och sessionshantering med magic link
+- 🗄️ PostgreSQL-databas via Prisma med fullt definierat schema
+- 🤖 Auto-ifyllning av jobbinfo från Arbetsförmedlingens API
+- 📊 Statistik och månatliga ansökningsgrafer med ApexCharts
 - 🎯 Återanvändbara UI-komponenter med Tailwind
-- 🗃️ Mock-backend via `json-server`
 - 🔤 Inter som grundfont och Bricolage Grotesque för rubriker
 
 ## Teknikstack
 
-| Område | Val |
-| --- | --- |
-| Ramverk | Next.js 16 |
-| UI | React 19 |
-| Språk | TypeScript |
-| Styling | Tailwind CSS 4 |
-| Mock-API | json-server |
-| Datakälla | `src/server/db.json` |
+| Område   | Val                                       |
+| -------- | ----------------------------------------- |
+| Ramverk  | Next.js 16                                |
+| UI       | React 19                                  |
+| Språk    | TypeScript                                |
+| Styling  | Tailwind CSS 4                            |
+| Databas  | PostgreSQL via Prisma 7                   |
+| Auth     | Magic link – sessioner i httpOnly-cookies |
+| Grafer   | ApexCharts                                |
+| Mock-API | json-server                               |
 
 ## Kom igång
 
@@ -69,6 +79,12 @@ Installera beroenden:
 
 ```bash
 npm install
+```
+
+Skapa en `.env.local`-fil:
+
+```env
+DATABASE_URL="postgresql://..."
 ```
 
 Starta frontend:
@@ -103,24 +119,32 @@ Kör lint:
 npm run lint
 ```
 
+### Databas
+
+```bash
+npx prisma migrate dev   # Kör migrationer och skapa tabeller
+npx prisma generate      # Generera Prisma-klienten
+npx prisma studio        # Öppna visuell databasvy
+```
+
 ## Scripts
 
-| Script | Beskrivning |
-| --- | --- |
-| `npm run dev` | Startar Next.js i utvecklingsläge |
-| `npm run mock-server` | Startar `json-server` med `src/server/db.json` |
-| `npm run dev:mock` | Startar både Next.js och mock-servern samtidigt |
-| `npm run build` | Skapar produktionsbuild |
-| `npm run start` | Startar produktionsservern |
-| `npm run lint` | Kör ESLint |
+| Script                | Beskrivning                                     |
+| --------------------- | ----------------------------------------------- |
+| `npm run dev`         | Startar Next.js i utvecklingsläge               |
+| `npm run mock-server` | Startar `json-server` med `src/server/db.json`  |
+| `npm run dev:mock`    | Startar både Next.js och mock-servern samtidigt |
+| `npm run build`       | Skapar produktionsbuild                         |
+| `npm run start`       | Startar produktionsservern                      |
+| `npm run lint`        | Kör ESLint                                      |
 
 ## Rutter
 
-| Route | Syfte |
-| --- | --- |
-| `/` | Dashboard med översikt, pipeline och statistik |
-| `/jobb/new` | Formulär för att lägga till ett nytt jobb |
-| `/jobb/[jobId]` | Dynamisk detaljsida för ett specifikt jobb |
+| Route           | Syfte                                          |
+| --------------- | ---------------------------------------------- |
+| `/`             | Dashboard med översikt, pipeline och statistik |
+| `/jobb/new`     | Formulär för att lägga till ett nytt jobb      |
+| `/jobb/[jobId]` | Dynamisk detaljsida för ett specifikt jobb     |
 
 ## Datamodell
 
