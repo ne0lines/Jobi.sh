@@ -2,6 +2,14 @@
 
 import { updateJob } from "@/app/services/services";
 import { JobStatus } from "@/app/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const statusOptions: Array<{ value: JobStatus; label: string }> = [
@@ -23,19 +31,21 @@ type StatusSelectProps = {
 };
 
 export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProps>) {
+  const router = useRouter();
   const [status, setStatus] = useState<JobStatus>(initialStatus);
   const [message, setMessage] = useState<string>("");
 
-  async function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    const nextStatus = event.target.value as JobStatus;
-    setStatus(nextStatus);
-    setMessage(`Status ändrad till ${statusLabelByValue[nextStatus].toLowerCase()}.`);
+  async function handleChange(nextStatus: string | null) {
+    const resolvedStatus = (nextStatus ?? initialStatus) as JobStatus;
+    setStatus(resolvedStatus);
+    setMessage(`Status ändrad till ${statusLabelByValue[resolvedStatus].toLowerCase()}.`);
 
     try {
-      await updateJob(jobId, { status: nextStatus });
+      await updateJob(jobId, { status: resolvedStatus });
+      router.refresh();
     } catch {
       setMessage(
-        `Status ändrad till ${statusLabelByValue[nextStatus].toLowerCase()} lokalt. Mock-servern kunde inte uppdateras just nu.`,
+        `Status ändrad till ${statusLabelByValue[resolvedStatus].toLowerCase()} lokalt. Jobbet kunde inte uppdateras just nu.`,
       );
     }
   }
@@ -51,18 +61,21 @@ export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProp
         </div>
 
         <label className="flex w-full flex-col gap-2 sm:max-w-xs">
-          <select
-            aria-label="Ändra status för jobbet"
-            className="w-full rounded-2xl border border-app-stroke bg-app-surface px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
-            value={status}
-            onChange={handleChange}
-          >
-            {statusOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <Select value={status} onValueChange={handleChange}>
+            <SelectTrigger
+              aria-label="Ändra status för jobbet"
+              className="h-12 w-full rounded-2xl border-app-stroke bg-app-surface px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {statusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
       </div>
 

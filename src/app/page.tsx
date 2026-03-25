@@ -1,29 +1,47 @@
 import { Btn } from "@/components/ui/btn";
+import { LogoutBtn } from "@/components/auth/logout-btn";
 import { Pipeline, Statistics } from "@/components/dashboard";
+import { Plus } from "lucide-react";
+import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { getApplicationsForUser, readDbForUser } from "@/server/db";
+import { AUTH_COOKIE_NAME, getUserIdFromHeaders, verifySessionValue } from "@/server/auth-session";
+import { getUserById } from "@/server/users";
 
 export default async function Home() {
-  const res = await fetch('http://localhost:3000/api/jobs');
-  const data = await res.json();
-  const applications = data.applications;
+  const headerList = await headers();
+  const cookieStore = await cookies();
+  const userId = getUserIdFromHeaders(headerList) ?? (await verifySessionValue(cookieStore.get(AUTH_COOKIE_NAME)?.value));
+
+  if (!userId) {
+    redirect("/auth");
+  }
+
+  const data = userId ? await readDbForUser(userId) : { applications: [] };
+  const applications = userId ? getApplicationsForUser(data.applications, userId) : [];
+  const currentUser = userId ? await getUserById(userId) : null;
+
+  if (!currentUser) {
+    redirect("/auth");
+  }
+
+  if (applications.length === 0) {
+    redirect("/jobb/new");
+  }
 
   return (
-    <main className="container mx-auto grid min-h-screen place-items-center p-4 sm:p-5">
-      <section className="rounded-3xl border border-app-stroke bg-app-surface p-5 shadow-sm sm:p-8">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="grid">
-            <span className="font-display text-5xl leading-none sm:text-6xl">
-              ApplyTrack{" "}
-            </span>
-            <span className="mt-2 text-lg text-app-muted font-normal">
-              Översikt över sökta jobb
-            </span>
-          </h1>
-          <Btn href="/jobb/new">Lägg till jobb</Btn>
-        </div>
-        <Pipeline />
-
+    <main className="min-h-svh px-4 md:px-0">
+      <div className="w-full rounded-3xl">
+        <section className="w-full">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="font-display text-4xl leading-none md:hidden">Jobi<span className="text-app-primary">.sh</span></h1>
+            <Btn className="md:hidden" href="/jobb/new" icon={Plus}>Lägg till jobb</Btn>
+          </div>
+        </section>
+        <Pipeline jobs={applications} />
         <Statistics applications={applications} />
-      </section>
+        <LogoutBtn className="mt-3 w-full md:hidden" />
+      </div>
     </main>
   );
 }
