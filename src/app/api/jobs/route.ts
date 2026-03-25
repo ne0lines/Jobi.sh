@@ -1,8 +1,8 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import type { CreateJobInput, Job } from "@/app/types";
 import { getApplicationsForUser, getNextJobId, readDbForUser, writeDb } from "@/server/db";
-import { getUserIdFromRequest } from "@/server/auth-session";
 
 type JobsResponse = {
   applications: Job[];
@@ -13,11 +13,11 @@ function extractExternalJobId(value: string): string | null {
   return match?.[1] ?? null;
 }
 
-export async function GET(req: NextRequest): Promise<NextResponse<JobsResponse | { error: string }>> {
-  const userId = await getUserIdFromRequest(req);
+export async function GET(_req: NextRequest): Promise<NextResponse<JobsResponse | { error: string }>> {
+  const { userId } = await auth();
 
   if (!userId) {
-    return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 400 });
+    return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
   const res = await readDbForUser(userId);
@@ -27,10 +27,10 @@ export async function GET(req: NextRequest): Promise<NextResponse<JobsResponse |
 
 export async function POST(req: NextRequest): Promise<NextResponse<Job | { error: string }>> {
   try {
-    const userId = await getUserIdFromRequest(req);
+    const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 400 });
+      return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
     }
 
     const payload = (await req.json()) as CreateJobInput;

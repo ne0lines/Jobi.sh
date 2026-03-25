@@ -75,14 +75,3 @@ export type Db = {
   applications: Job[];
 };
 
-export type AppUser = {
-  id: string;
-  email: string;
-  passwordHash: string;
-  passwordSalt: string;
-  createdAt: string;
-};
-
-export type UsersDb = {
-  users: AppUser[];
-};

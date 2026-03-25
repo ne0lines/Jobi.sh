@@ -14,60 +14,31 @@ export default function AuthPageClient() {
   const [code, setCode] = React.useState("");
   const [verifying, setVerifying] = React.useState(false);
   const [feedback, setFeedBack] = useState("");
-  const [loading, setLoading] = useState<"submit" | "verify" | "resend" | null>(
-    null,
-  );
-  const [showMissingRequirements, setShowMissingRequirements] =
-    React.useState(false);
+  const [loading, setLoading] = useState<"submit" | "verify" | "resend" | null>(null);
 
-  // Helper to finalize sign-in and navigate
+  const navigate = (decorateUrl: (url: string) => string) => {
+    const url = decorateUrl("/");
+    if (url.startsWith("http")) {
+      window.location.href = url;
+    } else {
+      router.push(url);
+    }
+  };
+
   const finalizeSignIn = async () => {
     await signIn.finalize({
-      navigate: ({ session, decorateUrl }) => {
-        if (session?.currentTask) {
-          // Handle pending session tasks
-          // See https://clerk.com/docs/guides/development/custom-flows/authentication/session-tasks
-          console.log(session?.currentTask);
-          return;
-        }
-
-        const url = decorateUrl("/");
-        if (url.startsWith("http")) {
-          window.location.href = url;
-        } else {
-          router.push(url);
-        }
-      },
+      navigate: ({ decorateUrl }) => navigate(decorateUrl),
     });
   };
 
-  // Helper to finalize sign-up and navigate
   const finalizeSignUp = async () => {
     await signUp.finalize({
-      navigate: ({ session, decorateUrl }) => {
-        if (session?.currentTask) {
-          // Handle pending session tasks
-          // See https://clerk.com/docs/guides/development/custom-flows/authentication/session-tasks
-          console.log(session?.currentTask);
-          return;
-        }
-
-        const url = decorateUrl("/");
-        if (url.startsWith("http")) {
-          window.location.href = url;
-        } else {
-          router.push(url);
-        }
-      },
+      navigate: ({ decorateUrl }) => navigate(decorateUrl),
     });
   };
 
-  // Step 1: Start sign-in with signUpIfMissing and send email code
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Create sign-in for the signUpIfMissing flow.
-    // The flow will proceed to verification regardless of whether an account exists or not.
     setFeedBack("");
     setLoading("submit");
     try {
@@ -92,20 +63,14 @@ export default function AuthPageClient() {
     }
   };
 
-  // Step 2: Verification step
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setFeedBack("");
     setLoading("verify");
     const { error } = await signIn.emailCode.verifyCode({ code });
 
-    // When the user doesn't exist, verifyCode returns an error with
-    // the code 'sign_up_if_missing_transfer'. Check for this error
-    // to determine if we need to transfer to sign-up.
     if (error) {
       if (error.errors[0]?.code === "sign_up_if_missing_transfer") {
-        // The user doesn't exist - transfer to sign-up
         await handleTransfer();
         return;
       }
@@ -124,9 +89,6 @@ export default function AuthPageClient() {
     // The user exists and verification succeeded
     if (signIn.status === "complete") {
       await finalizeSignIn();
-    } else if (signIn.status === "needs_second_factor") {
-      // Handle MFA if required
-      // See https://clerk.com/docs/guides/development/custom-flows/authentication/multi-factor-authentication
     } else if (signIn.status === "needs_client_trust") {
       const emailCodeFactor = signIn.supportedSecondFactors.find(
         (factor) => factor.strategy === "email_code",
@@ -141,10 +103,7 @@ export default function AuthPageClient() {
     setLoading(null);
   };
 
-  // Step 3: Transfer to sign-up
   const handleTransfer = async () => {
-    // Create sign-up using transfer.
-    // This moves the verified identification from the sign-in to a new sign-up.
     const { error } = await signUp.create({ transfer: true });
     if (error) {
       setFeedBack("Något gick fel vid registrering. Försök igen.");
@@ -152,19 +111,12 @@ export default function AuthPageClient() {
     }
 
     if (signUp.status === "complete") {
-      // No additional requirements - sign-up is complete
       await finalizeSignUp();
-    } else if (signUp.status === "missing_requirements") {
-      // Additional fields are required to complete sign-up.
-      // Common missing fields include legal_accepted, first_name, last_name, etc.
-      // Show a form to collect the missing fields.
-      setShowMissingRequirements(true);
     } else {
       setFeedBack("Något gick fel. Försök igen.");
     }
   };
 
-  // Step 2 UI: Show verification code form
   if (verifying || signIn.status === "needs_client_trust") {
     return (
       <main className="min-h-dvh px-4">
