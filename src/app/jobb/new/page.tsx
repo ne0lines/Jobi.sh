@@ -1,7 +1,6 @@
 "use client";
 
-import { createJob, getJobs } from "@/app/services/services";
-import { LogoutBtn } from "@/components/auth/logout-btn";
+import { createJob } from "@/app/services/services";
 import { Btn } from "@/components/ui/btn";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
@@ -122,7 +121,6 @@ function buildTimeline(form: JobFormState) {
 export default function NewJobPage() {
   const router = useRouter();
   const [form, setForm] = useState<JobFormState>(initialState);
-  const [hasExistingJobs, setHasExistingJobs] = useState(false);
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -130,30 +128,6 @@ export default function NewJobPage() {
   const lastFetchedJobId = useRef<string | null>(null);
 
   const jobId = useMemo(() => extractAfJobId(form.jobUrl), [form.jobUrl]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadJobs() {
-      try {
-        const jobs = await getJobs();
-
-        if (isMounted) {
-          setHasExistingJobs(jobs.length > 0);
-        }
-      } catch {
-        if (isMounted) {
-          setHasExistingJobs(false);
-        }
-      }
-    }
-
-    void loadJobs();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (!jobId || lastFetchedJobId.current === jobId) {
