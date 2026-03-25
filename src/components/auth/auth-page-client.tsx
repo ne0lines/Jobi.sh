@@ -2,19 +2,22 @@
 
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
+import { Btn } from "../ui/btn";
 
 export default function AuthPageClient() {
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
   const router = useRouter();
 
-  const [emailAddress, setEmailAddress] = React.useState("");
-  const [code, setCode] = React.useState("");
-  const [verifying, setVerifying] = React.useState(false);
+  const [emailAddress, setEmailAddress] = useState("");
+  const [code, setCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
   const [feedback, setFeedBack] = useState("");
-  const [loading, setLoading] = useState<"submit" | "verify" | "resend" | null>(null);
+  const [loading, setLoading] = useState<"submit" | "verify" | "resend" | null>(
+    null,
+  );
 
   const navigate = (decorateUrl: (url: string) => string) => {
     const url = decorateUrl("/");
@@ -192,10 +195,12 @@ export default function AuthPageClient() {
     <main className="min-h-svh px-4">
       <section className="mx-auto flex min-h-svh w-full flex-col gap-4">
         <div className="space-y-2">
-            <h1 className="font-display text-4xl leading-none">Jobi<span className="text-app-primary">.sh</span></h1>
+          <h1 className="font-display text-4xl leading-none">
+            Jobi<span className="text-app-primary">.sh</span>
+          </h1>
         </div>
         <div className="flex flex-col w-full flex-1 gap-4 items-center justify-center">
-          <h2 className="text-2xl">Logga In eller Skapa Konto</h2>
+          <h2 className="text-2xl">Logga in eller skapa konto</h2>
           <form
             onSubmit={handleSubmit}
             className="space-y-4 w-full rounded-2xl border border-app-stroke bg-app-card p-4"
@@ -223,9 +228,9 @@ export default function AuthPageClient() {
             <Btn className="w-full" disabled={loading !== null} type="submit">
               {loading === "submit" ? "Loggar in..." : "Fortsätt"}
             </Btn>
+            <div id="clerk-captcha" />
           </form>
         </div>
-        <div id="clerk-captcha" />
       </section>
     </main>
   );

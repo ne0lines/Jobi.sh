@@ -44,10 +44,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sv" className={cn("font-sans", geist.variable)}>
-      <body className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}>
-        <AppNavigationShell>{children}</AppNavigationShell>
-        <Toaster />
-        <ClerkProvider>{children}</ClerkProvider>
+      <body
+        className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}
+      >
+        <ClerkProvider>
+          <AppNavigationShell>{children}</AppNavigationShell>
+          <Toaster />
+        </ClerkProvider>
       </body>
     </html>
   );
