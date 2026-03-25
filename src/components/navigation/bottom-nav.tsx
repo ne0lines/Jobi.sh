@@ -14,7 +14,7 @@ const navItems = [
     href: "/",
     icon: House,
     label: "Översikt",
-    match: (pathname: string) => pathname === "/" || pathname.startsWith("/jobb"),
+    match: (pathname: string) => pathname === "/" || (pathname.startsWith("/jobb") && pathname !== "/jobb/new"),
   },
   {
     href: "/report",
