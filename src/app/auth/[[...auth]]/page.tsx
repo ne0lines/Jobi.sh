@@ -1,3 +1,5 @@
+import AuthPageClient from "@/components/auth/auth-page-client";
+
 export default function AuthPage() {
-  return <div>Auth Page</div>;
+  return <AuthPageClient />;
 }
