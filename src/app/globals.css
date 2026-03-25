@@ -5,6 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+	--mobile-bottom-nav-clearance: calc(env(safe-area-inset-bottom) + 8.5rem);
+	--mobile-toast-offset: calc(var(--mobile-bottom-nav-clearance) + 0.75rem);
 	--app-bg: #f3f4f8;
 	--app-ink: #111728;
 	--app-muted: #697083;
@@ -148,6 +150,23 @@
 	body {
 		@apply font-sans bg-background text-foreground;
 		overflow-x: hidden;
+	}
+
+	html.page-scroll-locked,
+	body.page-scroll-locked {
+		height: 100%;
+		overflow: hidden;
+		overscroll-behavior: none;
+	}
+
+	main {
+		padding-bottom: var(--mobile-bottom-nav-clearance);
+	}
+
+	@media (min-width: 768px) {
+		main {
+			padding-bottom: 0;
+		}
 	}
 
 	a {

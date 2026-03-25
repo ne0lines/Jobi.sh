@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const statusOptions: Array<{ value: JobStatus; label: string }> = [
   { value: JobStatus.SAVED, label: "Sparad" },
@@ -33,19 +34,27 @@ type StatusSelectProps = {
 export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProps>) {
   const router = useRouter();
   const [status, setStatus] = useState<JobStatus>(initialStatus);
-  const [message, setMessage] = useState<string>("");
 
   async function handleChange(nextStatus: string | null) {
     const resolvedStatus = (nextStatus ?? initialStatus) as JobStatus;
+    const previousStatus = status;
+
+    if (resolvedStatus === previousStatus) {
+      return;
+    }
+
     setStatus(resolvedStatus);
-    setMessage(`Status ändrad till ${statusLabelByValue[resolvedStatus].toLowerCase()}.`);
 
     try {
       await updateJob(jobId, { status: resolvedStatus });
+      toast.success(`Status ändrad till ${statusLabelByValue[resolvedStatus].toLowerCase()}.`);
       router.refresh();
-    } catch {
-      setMessage(
-        `Status ändrad till ${statusLabelByValue[resolvedStatus].toLowerCase()} lokalt. Jobbet kunde inte uppdateras just nu.`,
+    } catch (error) {
+      setStatus(previousStatus);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Jobbet kunde inte uppdateras just nu.",
       );
     }
   }
@@ -66,7 +75,7 @@ export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProp
               aria-label="Ändra status för jobbet"
               className="h-12 w-full rounded-2xl border-app-stroke bg-app-surface px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20"
             >
-              <SelectValue />
+              <SelectValue>{statusLabelByValue[status]}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {statusOptions.map((option) => (
@@ -78,8 +87,6 @@ export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProp
           </Select>
         </label>
       </div>
-
-      {message ? <p className="mt-3 text-sm text-app-muted">{message}</p> : null}
     </div>
   );
 }

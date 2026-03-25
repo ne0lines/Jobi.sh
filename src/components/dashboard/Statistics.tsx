@@ -87,7 +87,7 @@ export function Statistics({ applications }: StatisticsProps) {
 
   return (
     <section className='w-full'>
-      <h2 className='mt-6 mb-3 font-display text-4xl'>Statistik</h2>
+      <h2 className='mt-6 mb-3 font-display text-3xl md:text-[1.75rem]'>Statistik</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
         <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-3 h-fit'>
           <article className='rounded-2xl bg-slate-200 p-5'>

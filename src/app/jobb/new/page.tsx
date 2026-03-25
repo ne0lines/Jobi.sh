@@ -1,7 +1,6 @@
 "use client";
 
-import { createJob, getJobs } from "@/app/services/services";
-import { LogoutBtn } from "@/components/auth/logout-btn";
+import { createJob } from "@/app/services/services";
 import { Btn } from "@/components/ui/btn";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
@@ -14,8 +13,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { type AutofillPayload, type CreateJobInput, type JobFormState, JobStatus } from "@/app/types";
+import { Plus, TextCursorInput } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
 const initialState: JobFormState = {
   title: "",
@@ -120,7 +122,6 @@ function buildTimeline(form: JobFormState) {
 export default function NewJobPage() {
   const router = useRouter();
   const [form, setForm] = useState<JobFormState>(initialState);
-  const [hasExistingJobs, setHasExistingJobs] = useState(false);
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -128,30 +129,6 @@ export default function NewJobPage() {
   const lastFetchedJobId = useRef<string | null>(null);
 
   const jobId = useMemo(() => extractAfJobId(form.jobUrl), [form.jobUrl]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadJobs() {
-      try {
-        const jobs = await getJobs();
-
-        if (isMounted) {
-          setHasExistingJobs(jobs.length > 0);
-        }
-      } catch {
-        if (isMounted) {
-          setHasExistingJobs(false);
-        }
-      }
-    }
-
-    void loadJobs();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (!jobId || lastFetchedJobId.current === jobId) {
@@ -174,7 +151,7 @@ export default function NewJobPage() {
           lastFetchedJobId.current = jobId;
           setShowManualFields(false);
           setFeedback("");
-          globalThis.alert("Den här annonsen finns redan sparad.");
+          toast.warning("Den här annonsen finns redan sparad.");
           return;
         }
 
@@ -202,6 +179,7 @@ export default function NewJobPage() {
         setShowManualFields(true);
         setFeedback("");
       } catch {
+        toast.error("Kunde inte hämta data automatiskt just nu.");
         setFeedback("Kunde inte hämta data automatiskt just nu.");
       } finally {
         setIsAutofilling(false);
@@ -213,6 +191,29 @@ export default function NewJobPage() {
       globalThis.clearTimeout(timeout);
     };
   }, [form.jobUrl, jobId]);
+
+  useEffect(() => {
+    const rootElement = document.documentElement;
+    const bodyElement = document.body;
+
+    if (!showManualFields) {
+      rootElement.classList.add("page-scroll-locked");
+      bodyElement.classList.add("page-scroll-locked");
+
+      return () => {
+        rootElement.classList.remove("page-scroll-locked");
+        bodyElement.classList.remove("page-scroll-locked");
+      };
+    }
+
+    rootElement.classList.remove("page-scroll-locked");
+    bodyElement.classList.remove("page-scroll-locked");
+
+    return () => {
+      rootElement.classList.remove("page-scroll-locked");
+      bodyElement.classList.remove("page-scroll-locked");
+    };
+  }, [showManualFields]);
 
   function updateField<K extends keyof JobFormState>(field: K, value: JobFormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -243,9 +244,11 @@ export default function NewJobPage() {
 
       const createdJob = await createJob(payload);
 
+      toast.success("Jobbet lades till.");
       router.push(`/jobb/${createdJob.id}`);
       router.refresh();
     } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Kunde inte spara jobbet just nu.");
       setFeedback(
         error instanceof Error ? error.message : "Kunde inte spara jobbet just nu.",
       );
@@ -260,10 +263,10 @@ export default function NewJobPage() {
   };
 
   return (
-    <main className="min-h-dvh px-4">
-      <section className="mx-auto flex min-h-dvh w-full flex-col gap-4">
+    <main className={cn("flex px-4", showManualFields ? "min-h-svh pt-4" : "h-svh overflow-hidden pb-0 pt-4")}>
+      <section className="mx-auto flex w-full flex-1 flex-col gap-4">
         <div>
-          <h1 className="font-display text-4xl sm:text-6xl">Lägg till jobb</h1>
+          <h1 className="font-display text-4xl md:text-[2.4rem]">Lägg till jobb</h1>
           {feedback ? (
             <p className="mt-4 rounded-2xl border border-app-stroke bg-app-card px-4 py-3 text-sm text-app-muted">
               {isAutofilling ? "⏳ " : ""}
@@ -272,12 +275,13 @@ export default function NewJobPage() {
           ) : null}
         </div>
 
-        <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
+        <form autoComplete="off" className={cn("flex flex-1 flex-col", showManualFields ? "" : "justify-between")} onSubmit={handleSubmit}>
           {showManualFields ? (
             <div className="mt-4">
               <label className="mb-3 block font-semibold text-app-muted">
                 <span className="block">Annonslänk</span>
                 <Input
+                  autoComplete="off"
                   className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="jobUrl"
                   placeholder="https://arbetsformedlingen.se/platsbanken/annonser/30763601"
@@ -290,6 +294,7 @@ export default function NewJobPage() {
               <label className="mb-3 block font-semibold text-app-muted">
                 <span className="block">Jobbtitel</span>
                 <Input
+                  autoComplete="off"
                   className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="title"
                   placeholder="t.ex. UI Developer"
@@ -302,6 +307,7 @@ export default function NewJobPage() {
               <label className="mb-3 block font-semibold text-app-muted">
                 <span className="block">Företag</span>
                 <Input
+                  autoComplete="off"
                   className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="company"
                   placeholder="t.ex. PixelForge"
@@ -314,6 +320,7 @@ export default function NewJobPage() {
               <label className="mb-3 block font-semibold text-app-muted">
                 <span className="block">Plats</span>
                 <Input
+                  autoComplete="off"
                   className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="location"
                   placeholder="t.ex. Stockholm / Remote"
@@ -407,6 +414,7 @@ export default function NewJobPage() {
                   <label className="block text-sm font-semibold text-app-muted">
                     <span className="block">Namn</span>
                     <Input
+                      autoComplete="off"
                       className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactName"
                       placeholder="t.ex. Anna Berg"
@@ -419,6 +427,7 @@ export default function NewJobPage() {
                   <label className="block text-sm font-semibold text-app-muted">
                     <span className="block">Roll</span>
                     <Input
+                      autoComplete="off"
                       className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactRole"
                       placeholder="t.ex. Rekryterare"
@@ -431,6 +440,7 @@ export default function NewJobPage() {
                   <label className="block text-sm font-semibold text-app-muted">
                     <span className="block">E-post</span>
                     <Input
+                      autoComplete="off"
                       className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactEmail"
                       placeholder="namn@företag.se"
@@ -443,6 +453,7 @@ export default function NewJobPage() {
                   <label className="block text-sm font-semibold text-app-muted">
                     <span className="block">Telefon</span>
                     <Input
+                      autoComplete="off"
                       className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactPhone"
                       placeholder="070-123 45 67"
@@ -457,6 +468,7 @@ export default function NewJobPage() {
               <label className="mb-3 block font-semibold text-app-muted">
                 <span className="block">Noteringar (valfritt)</span>
                 <Textarea
+                  autoComplete="off"
                   className="mt-2 w-full resize-y rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="notes"
                   rows={4}
@@ -470,7 +482,7 @@ export default function NewJobPage() {
                 <Btn href="/" variant="secondary" className="w-1/2">
                   Avbryt
                 </Btn>
-                <Btn disabled={isSubmitting} type="submit" className="w-full" icon="/MaterialSymbolsAdd.svg" iconHex="#FFFFFF">
+                <Btn disabled={isSubmitting} type="submit" className="w-full" icon={Plus}>
                   {isSubmitting ? "Sparar..." : "Lägg till jobb"}
                 </Btn>
               </div>
@@ -482,6 +494,7 @@ export default function NewJobPage() {
                   <label className="block font-semibold text-app-muted">
                     <span className="block">Annonslänk</span>
                     <Input
+                      autoComplete="off"
                       className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="jobUrl"
                       placeholder="https://arbetsformedlingen.se/platsbanken/annonser/xxxxx"
@@ -493,27 +506,18 @@ export default function NewJobPage() {
                 </div>
               </div>
 
-              <div className="flex w-full gap-4">
-                {hasExistingJobs ? <Btn variant="secondary" className="w-1/2" href="/">Tillbaka</Btn> : null}
-                <Btn
-                  type="button"
-                  className="w-full"
-                  icon="/LucideTextCursorInput.svg"
-                  iconHex="#FFFFFF"
-                  onClick={() => setShowManualFields(true)}
-                >
-                  Lägg till manuellt
-                </Btn>
-              </div>
-
-              {hasExistingJobs ? null : (
-                <div className="flex mt-4 w-full gap-4">
-                  <Btn href="/konto" variant="secondary" className="w-1/2">
-                    Konto
+              <div className="shrink-0 space-y-4 pb-24">
+                <div className="flex justify-end w-full pb-4">
+                  <Btn
+                    type="button"
+                    variant="secondary"
+                    icon={TextCursorInput}
+                    onClick={() => setShowManualFields(true)}
+                  >
+                    Lägg till manuellt
                   </Btn>
-                  <LogoutBtn className="w-1/2" />
                 </div>
-              )}
+              </div>
             </>
           )}
         </form>

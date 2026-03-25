@@ -1,29 +1,28 @@
-import type { StaticImport } from "next/dist/shared/lib/get-img-props";
-import Image from "next/image";
-import Link from "next/link";
+import type { LucideIcon } from 'lucide-react'
+import Link from 'next/link'
 
 type BtnVariant = "primary" | "secondary" | "tertiary" | "red" | "muted";
 type BtnIconPosition = "left" | "right";
 
 type BtnIcon = {
-  alt: string;
-  position?: BtnIconPosition;
-  size?: number;
-  src: string | StaticImport;
-};
+  component: LucideIcon
+  className?: string
+  position?: BtnIconPosition
+  size?: number
+  strokeWidth?: number
+}
 
-type BtnIconProp = BtnIcon | string | StaticImport;
+type BtnIconProp = BtnIcon | LucideIcon
 
 type SharedProps = {
-  children: React.ReactNode;
-  className?: string;
-  fullWidth?: boolean;
-  hex?: string;
-  icon?: BtnIconProp;
-  iconHex?: string;
-  style?: React.CSSProperties;
-  variant?: BtnVariant;
-};
+  children: React.ReactNode
+  className?: string
+  fullWidth?: boolean
+  hex?: string
+  icon?: BtnIconProp
+  style?: React.CSSProperties
+  variant?: BtnVariant
+}
 
 type LinkBtnProps = SharedProps & {
   href: string;
@@ -89,34 +88,27 @@ function normalizeBtnIcon(icon?: BtnIconProp): BtnIcon | undefined {
     return undefined;
   }
 
-  if (typeof icon === "string") {
+  if (typeof icon === 'function') {
     return {
-      alt: "",
-      position: "left",
+      component: icon,
+      position: 'left',
       size: 18,
-      src: icon,
-    };
+    }
   }
 
-  if (typeof icon === "object" && "src" in icon && "alt" in icon) {
-    return icon;
+  if (typeof icon === 'object' && 'component' in icon) {
+    return icon
   }
 
-  return {
-    alt: "",
-    position: "left",
-    size: 18,
-    src: icon,
-  };
-}
-
-function getBtnIconSrc(icon: BtnIcon): string {
-  if (typeof icon.src === "string") {
-    return icon.src;
+  if (typeof icon === 'object') {
+    return {
+      component: icon as LucideIcon,
+      position: 'left',
+      size: 18,
+    }
   }
 
-  const source = icon.src as { default?: { src?: string }; src?: string };
-  return source.src ?? source.default?.src ?? "";
+  return undefined
 }
 
 export function Btn({
@@ -125,13 +117,11 @@ export function Btn({
   fullWidth = false,
   hex,
   icon,
-  iconHex,
   style,
   variant = "primary",
   ...props
 }: BtnProps) {
-  const normalizedHex = hex ? normalizeHexColor(hex) : null;
-  const normalizedIconHex = iconHex ? normalizeHexColor(iconHex) : null;
+  const normalizedHex = hex ? normalizeHexColor(hex) : null
   const classes = cn(
     baseClassName,
     variantClassNames[variant],
@@ -141,48 +131,26 @@ export function Btn({
   );
   const resolvedStyle = normalizedHex
     ? {
-      ...style,
-      backgroundColor: normalizedHex,
-      backgroundImage: "none",
-      borderColor: normalizedHex,
-      color: getContrastTextColor(normalizedHex),
-    }
-    : style;
-  const resolvedIcon = normalizeBtnIcon(icon);
-  const iconPosition = resolvedIcon?.position ?? "left";
-  const iconSize = resolvedIcon?.size ?? 18;
-  let iconElement: React.ReactNode = null;
+        ...style,
+        backgroundColor: normalizedHex,
+        backgroundImage: 'none',
+        borderColor: normalizedHex,
+        color: getContrastTextColor(normalizedHex),
+      }
+    : style
+  const resolvedIcon = normalizeBtnIcon(icon)
+  const iconPosition = resolvedIcon?.position ?? 'left'
+  const iconSize = resolvedIcon?.size ?? 18
+  const Icon = resolvedIcon?.component
+  let iconElement: React.ReactNode = null
 
-  if (resolvedIcon && normalizedIconHex) {
+  if (resolvedIcon && Icon) {
     iconElement = (
-      <span
-        aria-hidden="true"
-        className="shrink-0"
-        style={{
-          backgroundColor: normalizedIconHex,
-          display: "inline-block",
-          height: `${iconSize}px`,
-          maskImage: `url(${getBtnIconSrc(resolvedIcon)})`,
-          maskPosition: "center",
-          maskRepeat: "no-repeat",
-          maskSize: "contain",
-          WebkitMaskImage: `url(${getBtnIconSrc(resolvedIcon)})`,
-          WebkitMaskPosition: "center",
-          WebkitMaskRepeat: "no-repeat",
-          WebkitMaskSize: "contain",
-          width: `${iconSize}px`,
-        }}
-      />
-    );
-  } else if (resolvedIcon) {
-    iconElement = (
-      <Image
-        alt={resolvedIcon.alt}
-        className="shrink-0"
-        height={iconSize}
-        src={resolvedIcon.src}
-        unoptimized
-        width={iconSize}
+      <Icon
+        aria-hidden='true'
+        className={cn('shrink-0', resolvedIcon.className)}
+        size={iconSize}
+        strokeWidth={resolvedIcon.strokeWidth ?? 2.2}
       />
     );
   }

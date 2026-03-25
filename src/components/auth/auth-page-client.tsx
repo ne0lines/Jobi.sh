@@ -2,8 +2,8 @@
 
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { Btn } from "../ui/btn";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function AuthPageClient() {
   const { signIn } = useSignIn();
@@ -237,11 +237,11 @@ export default function AuthPageClient() {
   }
 
   return (
-    <main className="min-h-dvh px-4">
-      <h1 className="font-display text-4xl leading-none">
-        Jobi<span className="text-app-primary">.sh</span>
-      </h1>
-      <section className="mx-auto flex min-h-dvh w-full flex-col gap-4">
+    <main className="min-h-svh px-4">
+      <section className="mx-auto flex min-h-svh w-full flex-col gap-4">
+        <div className="space-y-2">
+            <h1 className="font-display text-4xl leading-none">Jobi<span className="text-app-primary">.sh</span></h1>
+        </div>
         <div className="flex flex-col w-full flex-1 gap-4 items-center justify-center">
           <h2 className="text-2xl">Logga In eller Skapa Konto</h2>
           <form
