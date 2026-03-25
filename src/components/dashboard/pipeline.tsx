@@ -1,9 +1,11 @@
 import { Job, JobStatus } from "@/app/types";
+import Link from "next/link";
 import Board from "./board";
 
 type TodoItem = {
   dueAt: number;
   id: string;
+  jobId: string;
   text: string;
 };
 
@@ -109,6 +111,7 @@ function getTodoItems(jobs: Job[]): TodoItem[] {
           {
             dueAt: dueDate.getTime(),
             id: `${job.id}-saved`,
+            jobId: job.id,
             text:
               dueDate < now
                 ? `Skicka ansökan till ${job.company} för ${job.title} så snart som möjligt. Den borde ha skickats senast ${formatDueDate(dueDate)}.`
@@ -134,6 +137,7 @@ function getTodoItems(jobs: Job[]): TodoItem[] {
           {
             dueAt: followUpDate.getTime(),
             id: `${job.id}-applied`,
+            jobId: job.id,
             text: `Följ upp ansökan hos ${job.company} för ${job.title}. Det har gått 14 dagar sedan du skickade ansökan.`,
           },
         ];
@@ -156,6 +160,7 @@ function getTodoItems(jobs: Job[]): TodoItem[] {
           {
             dueAt: contactDate.getTime(),
             id: `${job.id}-interview`,
+            jobId: job.id,
             text: `Kontakta ${job.company} om ${job.title}. Det har gått 7 dagar sedan intervjun utan svar.`,
           },
         ];
@@ -178,14 +183,18 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
 
   return (
     <section className="w-full">
-      <article className="mt-6 rounded-2xl border border-app-stroke bg-app-card p-4">
+      <article className="mt-4 rounded-2xl border border-app-stroke bg-app-card p-4">
         <h3 className="mb-2 text-xl font-display">Att göra</h3>
         {todoItems.length > 0 ? (
           <div className="divide-y divide-app-stroke text-base text-app-muted">
             {todoItems.map((item) => (
-              <p key={item.id} className="py-3 first:pt-0 last:pb-0">
+              <Link
+                key={item.id}
+                href={`/jobb/${item.jobId}`}
+                className="block py-3 transition first:pt-0 last:pb-0 hover:text-app-primary"
+              >
                 {item.text}
-              </p>
+              </Link>
             ))}
           </div>
         ) : (
@@ -194,8 +203,8 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
           </p>
         )}
       </article>
-      <h2 className="mt-6 mb-3 font-display text-3xl sm:text-4xl">Pipeline</h2>
-      <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+      <h2 className="mt-6 mb-3 font-display text-3xl md:text-[1.75rem]">Pipeline</h2>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {applied.length > 0 && (
           <Board
             jobs={applied}

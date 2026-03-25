@@ -150,6 +150,23 @@
 		overflow-x: hidden;
 	}
 
+	html.page-scroll-locked,
+	body.page-scroll-locked {
+		height: 100%;
+		overflow: hidden;
+		overscroll-behavior: none;
+	}
+
+	main {
+		padding-bottom: 6.8rem;
+	}
+
+	@media (min-width: 768px) {
+		main {
+			padding-bottom: 0;
+		}
+	}
+
 	a {
 		@apply text-inherit no-underline;
 	}

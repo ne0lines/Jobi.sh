@@ -1,14 +1,15 @@
-import { AppliedJobsPageClient } from "@/components/report/applied-jobs-page-client";
 import { getReportPageData } from "@/app/report/report-page-data";
+import { ReportPageClient } from "@/components/report/report-page-client";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+
 import { getApplicationsForUser, readDbForUser } from "../../server/db";
 import { AUTH_COOKIE_NAME, getUserIdFromHeaders, verifySessionValue } from "../../server/auth-session";
 import { getUserById } from "../../server/users";
 
 export const dynamic = "force-dynamic";
 
-export default async function ReportPage() {
+export default async function ActivityReportPage() {
   const headerList = await headers();
   const cookieStore = await cookies();
   const userId = getUserIdFromHeaders(headerList) ?? (await verifySessionValue(cookieStore.get(AUTH_COOKIE_NAME)?.value));
@@ -29,7 +30,7 @@ export default async function ReportPage() {
     redirect("/jobb/new");
   }
 
-  const { jobs } = getReportPageData(applications);
+  const { jobs, options } = getReportPageData(applications);
 
-  return <AppliedJobsPageClient jobs={jobs} />;
+  return <ReportPageClient jobs={jobs} options={options} />;
 }

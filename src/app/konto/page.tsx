@@ -1,5 +1,3 @@
-import { Btn } from "@/components/ui/btn";
-import { LogoutBtn } from "@/components/auth/logout-btn";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -22,13 +20,10 @@ export default async function AccountPage() {
   }
 
   return (
-    <main className="min-h-screen px-4">
-      <section className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+    <main className="min-h-svh px-4 pt-4">
+      <section className="mx-auto flex w-full max-w-2xl flex-col gap-4 md:max-w-none">
         <div>
-          <h1 className="font-display text-4xl sm:text-6xl">Konto</h1>
-          <p className="mt-3 text-base text-app-muted sm:text-lg">
-            Inloggad med {currentUser.email}
-          </p>
+          <h1 className="font-display text-4xl md:text-[2.4rem]">Konto</h1>
         </div>
 
         <article className="rounded-3xl border border-app-stroke bg-app-card p-5">
@@ -44,13 +39,6 @@ export default async function AccountPage() {
             </div>
           </dl>
         </article>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Btn href="/" variant="secondary" className="w-full">
-            Tillbaka
-          </Btn>
-          <LogoutBtn className="w-full" />
-        </div>
       </section>
     </main>
   );

@@ -4,6 +4,7 @@ import { deleteJob, getJob } from "@/app/services/services";
 import type { Job } from "@/app/types";
 import { Btn } from "@/components/ui/btn";
 import { StatusSelect } from "@/components/ui/status-select";
+import { ExternalLink, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
@@ -68,9 +69,9 @@ export default function JobDetailPage({
 
   if (!job && !error) {
     return (
-      <main className="min-h-screen px-4">
-        <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8">
-          <h1 className="font-display text-4xl sm:text-6xl">Jobbdetaljer</h1>
+      <main className="min-h-svh px-4 pt-4">
+        <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
+          <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
           <p className="text-base text-app-muted sm:text-lg">Laddar jobb...</p>
         </section>
       </main>
@@ -79,9 +80,9 @@ export default function JobDetailPage({
 
   if (!job) {
     return (
-      <main className="min-h-screen px-4">
-        <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8">
-          <h1 className="font-display text-4xl sm:text-6xl">Jobbdetaljer</h1>
+      <main className="min-h-svh px-4 pt-4">
+        <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
+          <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
           <p className="text-base text-app-muted sm:text-lg">{error}</p>
           <Btn href="/" variant="secondary">
             Tillbaka
@@ -92,9 +93,9 @@ export default function JobDetailPage({
   }
 
   return (
-    <main className="min-h-screen px-4">
+    <main className="min-h-svh px-4 pt-4">
       <section className="flex flex-col gap-4 w-full">
-        <h1 className="font-display text-4xl sm:text-6xl">Jobbdetaljer</h1>
+        <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
         <p className="text-base text-app-muted sm:text-lg">Följ status, historik och nästa steg</p>
         <div className="flex flex-col gap-4">
           <article className="rounded-2xl border border-app-stroke bg-app-card p-4">
@@ -112,7 +113,7 @@ export default function JobDetailPage({
             <p className="text-base text-app-muted"><strong>E-post:</strong> <Link href={`mailto:${job.contactPerson.email}`} className="font-medium text-app-cyan-strong">{job.contactPerson.email}</Link></p>
             <p className="text-base text-app-muted"><strong>Telefon:</strong> <Link href={`tel:${job.contactPerson.phone}`} className="font-medium text-app-cyan-strong">{job.contactPerson.phone}</Link></p>
           </article>
-          <Btn href={job.jobUrl} icon="/MaterialSymbolsOpenInNewRounded.svg" iconHex="#FFFFFF" rel="noreferrer" target="_blank">Besök annons</Btn>
+          <Btn href={job.jobUrl} icon={ExternalLink} rel="noreferrer" target="_blank">Besök annons</Btn>
           <article className="rounded-2xl border border-app-stroke bg-app-card p-4">
             <h3 className="mb-2 text-xl font-display">Historik</h3>
             <div className="relative mt-2">
@@ -134,7 +135,7 @@ export default function JobDetailPage({
         </div>
         <div className="flex w-full gap-4">
           <Btn variant="secondary" className="w-1/2" href="/">Tillbaka</Btn>
-          <Btn disabled={isDeleting} type="button" variant="red" className="w-full" icon="/MaterialSymbolsDeleteOutline.svg" iconHex="#FFFFFF" onClick={() => void handleDelete()}>
+          <Btn disabled={isDeleting} type="button" variant="red" className="w-full" icon={Trash2} onClick={() => void handleDelete()}>
             {isDeleting ? "Tar bort..." : "Ta bort jobb"}
           </Btn>
         </div>

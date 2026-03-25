@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReportJobEntry, ReportOption } from "@/app/report/report-page-data";
 import { Btn } from "@/components/ui/btn";
 import {
   Select,
@@ -8,23 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Image from "next/image";
+import { Copy } from "lucide-react";
 import { useMemo, useState } from "react";
-
-type ReportJobEntry = {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  workload: string;
-  applicationDate: string;
-  monthKey: string;
-};
-
-type ReportOption = {
-  key: string;
-  label: string;
-};
 
 type ReportPageClientProps = {
   jobs: ReportJobEntry[];
@@ -48,14 +34,7 @@ function CopyTrigger({
     >
       <span className="inline-flex items-center gap-1.5">
         <span>{children}</span>
-        <Image
-          alt="Kopiera"
-          className="shrink-0 opacity-35"
-          height={14}
-          src="/MaterialSymbolsContentCopyOutline.svg"
-          unoptimized
-          width={14}
-        />
+        <Copy aria-hidden="true" className="shrink-0 opacity-35" size={14} strokeWidth={2.1} />
       </span>
     </button>
   );
@@ -79,9 +58,9 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
 
   if (options.length === 0) {
     return (
-      <main className="min-h-screen px-4">
-        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8">
-          <h1 className="font-display text-4xl sm:text-5xl">Aktivitetsrapport</h1>
+      <main className="min-h-svh px-4 pt-4">
+        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
+          <h1 className="font-display text-4xl md:text-[2.4rem]">Aktivitetsrapport</h1>
           <p className="text-lg text-app-muted">
             Det finns inga registrerade ansökningsdatum att rapportera ännu.
           </p>
@@ -94,11 +73,11 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
   }
 
   return (
-    <main className="min-h-screen px-4">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <main className="min-h-svh px-4 pt-4">
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:max-w-none">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-4xl sm:text-5xl">Aktivitetsrapport</h1>
+            <h1 className="font-display text-4xl md:text-[2.4rem]">Aktivitetsrapport</h1>
             <p className="text-lg text-app-muted">
               Välj månad för att se vilka jobb du sökte under perioden.
             </p>
@@ -166,10 +145,6 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
             </article>
           ))}
         </div>
-
-        <Btn href="/" variant="secondary">
-          Tillbaka
-        </Btn>
       </section>
     </main>
   );

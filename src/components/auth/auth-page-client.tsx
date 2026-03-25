@@ -101,8 +101,8 @@ export function AuthPageClient({ initialNextPath = "/" }: Readonly<{ initialNext
   };
 
   return (
-    <main className="min-h-dvh px-4">
-      <section className="mx-auto flex min-h-dvh w-full flex-col gap-4">
+    <main className="min-h-svh px-4">
+      <section className="mx-auto flex min-h-svh w-full flex-col gap-4">
         <div className="space-y-2">
             <h1 className="font-display text-4xl leading-none">Jobi<span className="text-app-primary">.sh</span></h1>
         </div>
