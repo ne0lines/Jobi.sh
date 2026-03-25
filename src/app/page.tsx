@@ -4,29 +4,35 @@ import { Plus } from "lucide-react";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getApplicationsForUser, readDbForUser } from "@/server/db";
-import { AUTH_COOKIE_NAME, getUserIdFromHeaders, verifySessionValue } from "@/server/auth-session";
+import {
+  AUTH_COOKIE_NAME,
+  getUserIdFromHeaders,
+  verifySessionValue,
+} from "@/server/auth-session";
 import { getUserById } from "@/server/users";
 
 export default async function Home() {
-  const headerList = await headers();
-  const cookieStore = await cookies();
-  const userId = getUserIdFromHeaders(headerList) ?? (await verifySessionValue(cookieStore.get(AUTH_COOKIE_NAME)?.value));
+  // const headerList = await headers();
+  // const cookieStore = await cookies();
+  //  const userId = getUserIdFromHeaders(headerList) ?? (await verifySessionValue(cookieStore.get(AUTH_COOKIE_NAME)?.value));
 
-  if (!userId) {
-    redirect("/auth");
-  }
+  //if (!userId) {
+  // redirect("/auth");
+  //}
 
-  const data = userId ? await readDbForUser(userId) : { applications: [] };
-  const applications = userId ? getApplicationsForUser(data.applications, userId) : [];
-  const currentUser = userId ? await getUserById(userId) : null;
+  // const data = userId ? await readDbForUser(userId) : { applications: [] };
+  // const applications = userId
+  //   ? getApplicationsForUser(data.applications, userId)
+  //   : [];
+  // const currentUser = userId ? await getUserById(userId) : null;
 
-  if (!currentUser) {
-    redirect("/auth");
-  }
+  // if (!currentUser) {
+  //   redirect("/auth");
+  // }
 
-  if (applications.length === 0) {
-    redirect("/jobb/new");
-  }
+  // if (applications.length === 0) {
+  //   redirect("/jobb/new");
+  // }
 
   return (
     <main className="min-h-svh px-4 md:px-0">
@@ -37,7 +43,11 @@ export default async function Home() {
             <Btn className="md:hidden" href="/jobb/new" icon={Plus}>Lägg till jobb</Btn>
           </div>
         </section>
-        <Pipeline jobs={applications} />
+        {/*
+ <Pipeline jobs={applications} />
+        */}
+
+        {/*
         <Statistics applications={applications} />
       </div>
     </main>

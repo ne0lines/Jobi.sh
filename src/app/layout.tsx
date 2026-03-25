@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from "next";
+import {
+  ClerkProvider,
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const bricolageGrotesque = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -40,6 +47,7 @@ export default function RootLayout({
       <body className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}>
         <AppNavigationShell>{children}</AppNavigationShell>
         <Toaster />
+        <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>
   );
