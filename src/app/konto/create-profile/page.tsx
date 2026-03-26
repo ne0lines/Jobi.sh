@@ -57,7 +57,7 @@ export default function CreateProfilePage() {
   };
 
   return (
-    <main className="min-h-dvh px-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+    <main className="min-h-dvh pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       <h1 className="font-display text-4xl leading-none">
         Jobi<span className="text-app-primary">.sh</span>
       </h1>

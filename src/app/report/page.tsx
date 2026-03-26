@@ -1,5 +1,5 @@
-import type { Job, JobTimelineItem } from "@/app/types";
-import { ReportPageClient } from "@/components/report/report-page-client";
+import { getReportPageData } from "@/app/report/report-page-data";
+import { AppliedJobsPageClient } from "@/components/report/applied-jobs-page-client";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getApplicationsForUser, readDbForUser } from "../../server/db";

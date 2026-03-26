@@ -1,9 +1,9 @@
 "use client";
 
+import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { toast } from "sonner";
 import { Btn } from "../ui/btn";
 
 export default function AuthPageClient() {
@@ -71,14 +71,16 @@ export default function AuthPageClient() {
     setFeedBack("");
     setLoading("verify");
     const { error } = await signIn.emailCode.verifyCode({ code });
+    const clerkCode = isClerkAPIResponseError(error)
+      ? error.errors[0]?.code
+      : undefined;
 
     if (error) {
-      if (error.errors[0]?.code === "sign_up_if_missing_transfer") {
+      if (clerkCode === "sign_up_if_missing_transfer") {
         await handleTransfer();
         return;
       }
 
-      const clerkCode = error.errors[0]?.code;
       if (clerkCode === "form_code_incorrect") {
         setFeedBack("Felaktig kod. Kontrollera och försök igen.");
       } else if (clerkCode === "verification_expired") {
@@ -192,7 +194,7 @@ export default function AuthPageClient() {
   }
 
   return (
-    <main className="min-h-svh px-4">
+    <main className="min-h-svh">
       <section className="mx-auto flex min-h-svh w-full flex-col gap-4">
         <div className="space-y-2">
           <h1 className="font-display text-4xl leading-none">

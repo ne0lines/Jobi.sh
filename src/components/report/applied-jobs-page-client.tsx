@@ -11,7 +11,7 @@ type AppliedJobsPageClientProps = {
 export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientProps>) {
   if (jobs.length === 0) {
     return (
-      <main className="min-h-svh px-4 pt-4">
+      <main className="min-h-svh pt-4">
         <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Sökta jobb</h1>
           <p className="text-lg text-app-muted">
@@ -26,7 +26,7 @@ export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientPr
   }
 
   return (
-    <main className="min-h-svh px-4 pt-4">
+    <main className="min-h-svh pt-4">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:max-w-none">
         <div>
           <h1 className="font-display text-4xl md:text-[2.4rem]">Sökta jobb</h1>

@@ -69,7 +69,7 @@ export default function JobDetailPage({
 
   if (!job && !error) {
     return (
-      <main className="min-h-svh px-4 pt-4">
+      <main className="min-h-svh pt-4">
         <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
           <p className="text-base text-app-muted sm:text-lg">Laddar jobb...</p>
@@ -80,7 +80,7 @@ export default function JobDetailPage({
 
   if (!job) {
     return (
-      <main className="min-h-svh px-4 pt-4">
+      <main className="min-h-svh pt-4">
         <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
           <p className="text-base text-app-muted sm:text-lg">{error}</p>
@@ -93,7 +93,7 @@ export default function JobDetailPage({
   }
 
   return (
-    <main className="min-h-svh px-4 pt-4">
+    <main className="min-h-svh pt-4">
       <section className="flex flex-col gap-4 w-full">
         <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
         <p className="text-base text-app-muted sm:text-lg">Följ status, historik och nästa steg</p>
