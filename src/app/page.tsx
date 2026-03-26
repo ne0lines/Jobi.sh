@@ -1,8 +1,37 @@
 import { Btn } from "@/components/ui/btn";
 import { Pipeline, Statistics } from "@/components/dashboard";
+import type { Job } from "@/app/types";
+import { auth } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 import { Plus } from "lucide-react";
+import { redirect } from "next/navigation";
+
+async function getJobs(cookieHeader: string): Promise<Job[]> {
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "localhost:3000";
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+
+  const res = await fetch(`${protocol}://${host}/api/jobs`, {
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  });
+
+  if (!res.ok) return [];
+
+  const data = (await res.json()) as { applications: Job[] };
+  return data.applications;
+}
 
 export default async function Home() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  const headersList = await headers();
+  const jobs = await getJobs(headersList.get("cookie") ?? "");
+
   return (
     <main className="min-h-svh px-4 md:px-0">
       <div className="w-full rounded-3xl">
@@ -16,8 +45,8 @@ export default async function Home() {
             </Btn>
           </div>
         </section>
-        <Pipeline jobs={[]} />
-        <Statistics applications={[]} />
+        <Pipeline jobs={jobs} />
+        <Statistics applications={jobs} />
       </div>
     </main>
   );
