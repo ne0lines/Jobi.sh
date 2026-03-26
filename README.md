@@ -75,56 +75,51 @@ I nuvarande version kan du:
 
 ## Kom igång
 
-Installera beroenden:
+**1. Installera beroenden:**
 
 ```bash
 npm install
 ```
 
-Skapa en `.env.local`-fil:
+**2. Konfigurera miljövariabler:**
 
-```env
-DATABASE_URL="postgresql://..."
+Kopiera `.example.env` till `.env` och fyll i värdena:
+
+```bash
+cp .example.env .env
 ```
 
-Starta frontend:
+| Variabel | Beskrivning |
+|---|---|
+| `DATABASE_URL` | PostgreSQL-anslutningssträng |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key — hämtas från [dashboard.clerk.com](https://dashboard.clerk.com) |
+| `CLERK_SECRET_KEY` | Clerk secret key |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Inloggningssida, t.ex. `/sign-in` |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL` | Redirect efter inloggning |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL` | Redirect efter registrering |
+| `SEED_USER_ID` | *(Valfritt)* Clerk user ID för att köra seed — hittas i Clerk-dashboarden |
+| `SEED_USER_EMAIL` | *(Valfritt)* E-post kopplad till seed-användaren |
+
+**3. Kör databasmigrationer:**
+
+```bash
+npx prisma migrate dev
+```
+
+**4. Starta appen:**
 
 ```bash
 npm run dev
 ```
 
-Starta frontend och mock-server samtidigt:
+Appen körs på `http://localhost:3000`.
+
+**5. (Valfritt) Importera exempeldata:**
+
+Sätt `SEED_USER_ID` och `SEED_USER_EMAIL` i `.env`, kör sedan:
 
 ```bash
-npm run dev:mock
-```
-
-Mock-servern kör på `http://localhost:3001` och använder data från `src/server/db.json`.
-
-Bygg för produktion:
-
-```bash
-npm run build
-```
-
-Starta produktionsserver:
-
-```bash
-npm run start
-```
-
-Kör lint:
-
-```bash
-npm run lint
-```
-
-### Databas
-
-```bash
-npx prisma migrate dev   # Kör migrationer och skapa tabeller
-npx prisma generate      # Generera Prisma-klienten
-npx prisma studio        # Öppna visuell databasvy
+tsx prisma/seed.ts
 ```
 
 ## Scripts
