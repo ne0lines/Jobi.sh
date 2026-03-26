@@ -211,6 +211,78 @@
 	.monthly-applications-chart .apexcharts-xaxis-texts-g text:last-child {
 		transform: translateX(-8px);
 	}
+
+	.app-loader {
+		--loader-size: 48px;
+		--loader-surface: var(--app-primary-strong);
+		--loader-shadow: var(--app-ink);
+		display: inline-block;
+		width: var(--loader-size);
+		height: var(--loader-size);
+		position: relative;
+		flex-shrink: 0;
+	}
+
+	.app-loader::before {
+		content: "";
+		width: 100%;
+		height: calc(var(--loader-size) * 0.1041666667);
+		background: var(--loader-shadow);
+		opacity: 0.25;
+		position: absolute;
+		top: calc(var(--loader-size) * 1.25);
+		left: 0;
+		border-radius: 50%;
+		animation: app-loader-shadow 0.5s linear infinite;
+	}
+
+	.app-loader::after {
+		content: "";
+		width: 100%;
+		height: 100%;
+		background: var(--loader-surface);
+		border: 1px solid rgb(255 255 255 / 0.5);
+		animation: app-loader-spin 0.5s linear infinite;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border-radius: calc(var(--loader-size) * 0.0833333333);
+		box-shadow: 0 10px 24px rgb(110 51 235 / 0.18), inset 0 0 0 1px rgb(255 255 255 / 0.1);
+	}
+
+	@keyframes app-loader-spin {
+		17% {
+			border-bottom-right-radius: calc(var(--loader-size) * 0.0625);
+		}
+
+		25% {
+			transform: translateY(calc(var(--loader-size) * 0.1875)) rotate(22.5deg);
+		}
+
+		50% {
+			transform: translateY(calc(var(--loader-size) * 0.375)) scale(1, 0.9) rotate(45deg);
+			border-bottom-right-radius: calc(var(--loader-size) * 0.8333333333);
+		}
+
+		75% {
+			transform: translateY(calc(var(--loader-size) * 0.1875)) rotate(67.5deg);
+		}
+
+		100% {
+			transform: translateY(0) rotate(90deg);
+		}
+	}
+
+	@keyframes app-loader-shadow {
+		0%,
+		100% {
+			transform: scale(1, 1);
+		}
+
+		50% {
+			transform: scale(1.2, 1);
+		}
+	}
   * {
     @apply border-border outline-ring/50;
 	}

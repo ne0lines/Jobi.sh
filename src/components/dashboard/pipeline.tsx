@@ -1,6 +1,8 @@
 import { Job, JobStatus } from "@/app/types";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import Board from "./board";
+import { QuickImportInput } from "./quick-import-input";
 
 type TodoItem = {
   dueAt: number;
@@ -172,7 +174,28 @@ function getTodoItems(jobs: Job[]): TodoItem[] {
 }
 
 export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
-  if (jobs.length === 0) return <p>No applications yet!</p>;
+  if (jobs.length === 0) {
+    return (
+      <section className="w-full">
+        <article className="overflow-hidden mt-5">
+          <div className="flex flex-col gap-4">
+            <div>
+              <h2 className="font-display text-3xl leading-tight md:text-[2rem]">
+                Din nästa möjlighet börjar här.
+              </h2>
+              <p className="mt-3 text-base text-app-muted sm:text-lg">
+                När du sparar dina jobb här får du en tydlig översikt, statistik och nästa steg samlat på ett ställe. Detta ger dig ett avsevärt mycket enklare workflow i ditt arbetssökande och när det är dags att aktivitetsrapportera till Arbetsförmedlingen.
+              </p>
+            </div>
+
+            <div className="py-20">
+              <QuickImportInput />
+            </div>
+          </div>
+        </article>
+      </section>
+    );
+  }
 
   const saved = jobs.filter((j) => j.status === JobStatus.SAVED);
   const applied = jobs.filter((j) => j.status === JobStatus.APPLIED);

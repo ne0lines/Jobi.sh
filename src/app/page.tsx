@@ -33,8 +33,8 @@ export default async function Home() {
   const jobs = await getJobs(headersList.get("cookie") ?? "");
 
   return (
-    <main className="min-h-svh px-4 md:px-0">
-      <div className="w-full rounded-3xl">
+    <main className="min-h-svh">
+      <div className="w-full">
         <section className="w-full">
           <div className="flex items-center justify-between gap-3">
             <h1 className="font-display text-4xl leading-none md:hidden">

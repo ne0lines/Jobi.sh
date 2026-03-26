@@ -191,6 +191,38 @@
       "status": "closed",
       "id": "30723795",
       "userId": "b99d4c94-99c4-493b-9186-6d23488b9775"
+    },
+    {
+      "title": "Frontend-utvecklare",
+      "company": "RiseRank AB",
+      "location": "Stockholm",
+      "employmentType": "Tillsvidare",
+      "workload": "Heltid",
+      "jobUrl": "https://arbetsformedlingen.se/platsbanken/annonser/30797637",
+      "contactPerson": {
+        "name": "",
+        "role": "",
+        "email": "",
+        "phone": ""
+      },
+      "timeline": [
+        {
+          "date": "26 mars 2026",
+          "event": "Jobbet sparat"
+        },
+        {
+          "date": "25 mars 2026",
+          "event": "Ansökan skickad"
+        },
+        {
+          "date": "27 mars 2026",
+          "event": "Sista ansökningsdag"
+        }
+      ],
+      "notes": "",
+      "status": "saved",
+      "id": "30797637",
+      "userId": "user_3BTaBnMo5OXhaIKELwGYNF9axwK"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

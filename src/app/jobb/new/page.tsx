@@ -4,6 +4,7 @@ import { createJob } from "@/app/services/services";
 import { Btn } from "@/components/ui/btn";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
+import { Loader } from "@/components/ui/loader";
 import {
   Select,
   SelectContent,
@@ -50,6 +51,24 @@ const statusOptions: Array<{ value: JobStatus; label: string }> = [
 function extractAfJobId(value: string): string | null {
   const match = /(\d{6,})/.exec(value);
   return match?.[1] ?? null;
+}
+
+function isArbetsformedlingenUrl(value: string): boolean {
+  try {
+    const url = new URL(value.trim());
+    return url.hostname.includes("arbetsformedlingen.se");
+  } catch {
+    return false;
+  }
+}
+
+function isAbsoluteUrl(value: string): boolean {
+  try {
+    new URL(value.trim());
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function mergeAutofill(prev: JobFormState, data: AutofillPayload): JobFormState {
@@ -126,12 +145,50 @@ export default function NewJobPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [showManualFields, setShowManualFields] = useState(false);
+  const [isDirectImportFlow, setIsDirectImportFlow] = useState(false);
   const lastFetchedJobId = useRef<string | null>(null);
+  const appliedPrefillUrl = useRef<string | null>(null);
 
+  const trimmedJobUrl = form.jobUrl.trim();
+  const isAmsUrl = isArbetsformedlingenUrl(trimmedJobUrl);
   const jobId = useMemo(() => extractAfJobId(form.jobUrl), [form.jobUrl]);
+  const isAmsImportLoading = isDirectImportFlow || (isAutofilling && !showManualFields);
+  const shouldRenderForm = !isAmsImportLoading;
 
   useEffect(() => {
-    if (!jobId || lastFetchedJobId.current === jobId) {
+    const requestedJobUrl = new URLSearchParams(globalThis.location.search).get("url")?.trim() ?? "";
+
+    if (!requestedJobUrl || appliedPrefillUrl.current === requestedJobUrl) {
+      return;
+    }
+
+    appliedPrefillUrl.current = requestedJobUrl;
+    setForm((prev) => ({ ...prev, jobUrl: requestedJobUrl }));
+
+    if (isArbetsformedlingenUrl(requestedJobUrl)) {
+      setIsDirectImportFlow(true);
+      setShowManualFields(false);
+      setFeedback("Hämtar data från Arbetsförmedlingen...");
+      return;
+    }
+
+    setIsDirectImportFlow(false);
+    setShowManualFields(true);
+    setFeedback("");
+  }, []);
+
+  useEffect(() => {
+    if (showManualFields || !trimmedJobUrl || isAmsUrl || !isAbsoluteUrl(trimmedJobUrl)) {
+      return;
+    }
+
+    setIsDirectImportFlow(false);
+    setFeedback("");
+    setShowManualFields(true);
+  }, [isAmsUrl, showManualFields, trimmedJobUrl]);
+
+  useEffect(() => {
+    if (!isAmsUrl || !jobId || lastFetchedJobId.current === jobId) {
       return;
     }
 
@@ -149,6 +206,7 @@ export default function NewJobPage() {
 
         if (existingJobResponse.ok) {
           lastFetchedJobId.current = jobId;
+          setIsDirectImportFlow(false);
           setShowManualFields(false);
           setFeedback("");
           toast.warning("Den här annonsen finns redan sparad.");
@@ -176,9 +234,12 @@ export default function NewJobPage() {
 
         setForm((prev) => mergeAutofill(prev, data));
         lastFetchedJobId.current = jobId;
+        setIsDirectImportFlow(false);
         setShowManualFields(true);
         setFeedback("");
       } catch {
+        setIsDirectImportFlow(false);
+        setShowManualFields(false);
         toast.error("Kunde inte hämta data automatiskt just nu.");
         setFeedback("Kunde inte hämta data automatiskt just nu.");
       } finally {
@@ -190,7 +251,7 @@ export default function NewJobPage() {
       controller.abort();
       globalThis.clearTimeout(timeout);
     };
-  }, [form.jobUrl, jobId]);
+  }, [form.jobUrl, isAmsUrl, jobId]);
 
   useEffect(() => {
     const rootElement = document.documentElement;
@@ -263,33 +324,48 @@ export default function NewJobPage() {
   };
 
   return (
-    <main className={cn("flex px-4", showManualFields ? "min-h-svh pt-4" : "h-svh overflow-hidden pb-0 pt-4")}>
+    <main className={cn("flex", showManualFields ? "min-h-svh pt-4" : "h-svh overflow-hidden pb-0 pt-4")}>
       <section className="mx-auto flex w-full flex-1 flex-col gap-4">
         <div>
           <h1 className="font-display text-4xl md:text-[2.4rem]">Lägg till jobb</h1>
-          {feedback ? (
-            <p className="mt-4 rounded-2xl border border-app-stroke bg-app-card px-4 py-3 text-sm text-app-muted">
-              {isAutofilling ? "⏳ " : ""}
-              {feedback}
-            </p>
+          {feedback && !isAmsImportLoading ? (
+            <div className="mt-4 flex items-start gap-4 rounded-2xl border border-app-stroke bg-app-card px-4 py-3 text-sm text-app-muted">
+              {isAutofilling ? <Loader className="mt-0.5" size={24} /> : null}
+              <p className="min-w-0 pt-0.5">{feedback}</p>
+            </div>
           ) : null}
         </div>
 
-        <form autoComplete="off" className={cn("flex flex-1 flex-col", showManualFields ? "" : "justify-between")} onSubmit={handleSubmit}>
-          {showManualFields ? (
-            <div className="mt-4">
-              <label className="mb-3 block font-semibold text-app-muted">
-                <span className="block">Annonslänk</span>
-                <Input
-                  autoComplete="off"
-                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
-                  name="jobUrl"
-                  placeholder="https://arbetsformedlingen.se/platsbanken/annonser/30763601"
-                  type="url"
-                  value={form.jobUrl}
-                  onChange={(event) => updateField("jobUrl", event.target.value)}
-                />
-              </label>
+        {isAmsImportLoading ? (
+          <div className="flex flex-1 items-center justify-center">
+            <div className="flex w-full max-w-md flex-col items-center px-6 py-10 text-center">
+              <Loader size={40} />
+              <p className="mt-10 text-base font-medium text-app-ink">
+                {feedback || "Hämtar data från Arbetsförmedlingen..."}
+              </p>
+              <p className="mt-2 text-sm text-app-muted">
+                Formuläret visas automatiskt så fort annonsdatan är klar.
+              </p>
+            </div>
+          </div>
+        ) : null}
+
+        {shouldRenderForm ? (
+          <form autoComplete="off" className={cn("flex flex-1 flex-col", showManualFields ? "" : "justify-between")} onSubmit={handleSubmit}>
+            {showManualFields ? (
+              <div className="mt-4">
+                <label className="mb-3 block font-semibold text-app-muted">
+                  <span className="block">Annonslänk</span>
+                  <Input
+                    autoComplete="off"
+                    className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                    name="jobUrl"
+                    placeholder="https://arbetsformedlingen.se/platsbanken/annonser/30763601"
+                    type="url"
+                    value={form.jobUrl}
+                    onChange={(event) => updateField("jobUrl", event.target.value)}
+                  />
+                </label>
 
               <label className="mb-3 block font-semibold text-app-muted">
                 <span className="block">Jobbtitel</span>
@@ -478,49 +554,50 @@ export default function NewJobPage() {
                 />
               </label>
 
-              <div className="flex gap-4">
-                <Btn href="/" variant="secondary" className="w-1/2">
-                  Avbryt
-                </Btn>
-                <Btn disabled={isSubmitting} type="submit" className="w-full" icon={Plus}>
-                  {isSubmitting ? "Sparar..." : "Lägg till jobb"}
-                </Btn>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="flex flex-1 items-center justify-center">
-                <div className="w-full max-w-xl">
-                  <label className="block font-semibold text-app-muted">
-                    <span className="block">Annonslänk</span>
-                    <Input
-                      autoComplete="off"
-                      className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
-                      name="jobUrl"
-                      placeholder="https://arbetsformedlingen.se/platsbanken/annonser/xxxxx"
-                      type="url"
-                      value={form.jobUrl}
-                      onChange={(event) => updateField("jobUrl", event.target.value)}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="shrink-0 space-y-4 pb-24">
-                <div className="flex justify-end w-full pb-4">
-                  <Btn
-                    type="button"
-                    variant="secondary"
-                    icon={TextCursorInput}
-                    onClick={() => setShowManualFields(true)}
-                  >
-                    Lägg till manuellt
+                <div className="flex gap-4">
+                  <Btn href="/" variant="secondary" className="w-1/2">
+                    Avbryt
+                  </Btn>
+                  <Btn disabled={isSubmitting} type="submit" className="w-full" icon={Plus}>
+                    {isSubmitting ? "Sparar..." : "Lägg till jobb"}
                   </Btn>
                 </div>
               </div>
-            </>
-          )}
-        </form>
+            ) : (
+              <>
+                <div className="flex flex-1 items-center justify-center">
+                  <div className="w-full max-w-xl">
+                    <label className="block font-semibold text-app-muted">
+                      <span className="block">Annonslänk</span>
+                      <Input
+                        autoComplete="off"
+                        className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                        name="jobUrl"
+                        placeholder="https://arbetsformedlingen.se/platsbanken/annonser/xxxxx"
+                        type="url"
+                        value={form.jobUrl}
+                        onChange={(event) => updateField("jobUrl", event.target.value)}
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="shrink-0 space-y-4 pb-24">
+                  <div className="flex justify-end w-full pb-4">
+                    <Btn
+                      type="button"
+                      variant="secondary"
+                      icon={TextCursorInput}
+                      onClick={() => setShowManualFields(true)}
+                    >
+                      Lägg till manuellt
+                    </Btn>
+                  </div>
+                </div>
+              </>
+            )}
+          </form>
+        ) : null}
       </section>
     </main>
   );
