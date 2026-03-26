@@ -35,7 +35,7 @@ export default async function AccountPage() {
   const profile = await getUserProfile(headersList.get("cookie") ?? "");
 
   return (
-    <main className="min-h-svh px-4 pt-4">
+    <main className="min-h-svh pt-4">
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-4 md:max-w-none">
         <div>
           <h1 className="font-display text-4xl sm:text-6xl">Konto</h1>
@@ -47,8 +47,7 @@ export default async function AccountPage() {
         </div>
 
         <article className="rounded-3xl border border-app-stroke bg-app-card p-5">
-          <h2 className="font-display text-2xl">Kontoinformation</h2>
-          <dl className="mt-4 space-y-3 text-base text-app-ink">
+          <dl className="space-y-3 text-base text-app-ink">
             <div>
               <dt className="text-sm font-semibold uppercase tracking-[0.08em] text-app-muted">Namn</dt>
               <dd className="mt-1">{profile?.name ?? "—"}</dd>

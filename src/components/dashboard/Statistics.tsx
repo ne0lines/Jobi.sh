@@ -90,29 +90,29 @@ export function Statistics({ applications }: StatisticsProps) {
       <h2 className='mt-6 mb-3 font-display text-3xl md:text-[1.75rem]'>Statistik</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
         <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-3 h-fit'>
-          <article className='rounded-2xl bg-slate-200 p-5'>
+          <article className='rounded-2xl bg-slate-200 p-3'>
             <strong className='block font-display text-4xl leading-none'>
               {totalApplications}
             </strong>
-            <span className='text-base text-app-muted'>Ansökningar</span>
+            <span className='text-base text-app-muted text-sm'>Ansökningar</span>
           </article>
-          <article className='rounded-2xl bg-app-cyan p-5 text-app-cyan-strong'>
+          <article className='rounded-2xl bg-app-cyan p-3 text-app-cyan-strong'>
             <strong className='block font-display text-4xl leading-none'>
               {interviews}
             </strong>
-            <span className='text-base text-app-muted'>Intervjuer</span>
+            <span className='text-base text-app-muted text-sm'>Intervjuer</span>
           </article>
-          <article className='rounded-2xl bg-app-green p-5 text-app-green-strong'>
+          <article className='rounded-2xl bg-app-green p-3 text-app-green-strong'>
             <strong className='block font-display text-4xl leading-none'>
               {offers}
             </strong>
-            <span className='text-base text-app-muted'>Jobberbjudanden</span>
+            <span className='text-base text-app-muted text-sm'>Jobberbjudanden</span>
           </article>
-          <article className='rounded-2xl bg-red-200 p-5 text-red-700'>
+          <article className='rounded-2xl bg-red-200 p-3 text-red-700'>
             <strong className='block font-display text-4xl leading-none'>
               {closed}
             </strong>
-            <span className='text-base text-app-muted'>Avslutade</span>
+            <span className='text-base text-app-muted text-sm'>Avslutade</span>
           </article>
 
           {/*

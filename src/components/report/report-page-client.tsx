@@ -60,7 +60,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
 
   if (options.length === 0) {
     return (
-      <main className="min-h-svh px-4 pt-4">
+      <main className="min-h-svh pt-4">
         <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Aktivitetsrapport</h1>
           <p className="text-lg text-app-muted">
@@ -75,7 +75,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
   }
 
   return (
-    <main className="min-h-svh px-4 pt-4">
+    <main className="min-h-svh pt-4">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:max-w-none">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>

@@ -216,10 +216,7 @@ export function MonthlyApplicationsChart({
   ]
 
   return (
-    <article className='monthly-applications-chart w-full min-w-0 rounded-2xl border border-app-stroke bg-app-card p-4'>
-      <h3 className='mb-3 text-xl font-display'>
-        Ansökningar & Intervjuer per månad
-      </h3>
+    <article className='monthly-applications-chart w-full min-w-0 rounded-2xl border border-app-stroke bg-app-card px-4'>
       <div className='w-[calc(100%+1rem)] min-w-0'>
         <ReactApexChart
           options={chartOptions}

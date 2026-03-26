@@ -74,69 +74,67 @@ export function AppNavigationShell({
   return (
     <>
       {showNavigation ? (
-        <>
-          <aside className="pointer-events-none fixed inset-y-0 left-0 z-40 hidden w-72 p-4 md:block">
-            <div className="pointer-events-auto flex h-full flex-col rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] p-4 shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))]">
-              <Link
-                href="/"
-                className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30"
-              >
-                <h1 className="w-full text-[3.5rem] leading-none tracking-[-0.04em]">
-                  Jobi<span className="text-app-primary">.sh</span>
-                </h1>
-              </Link>
+        <div className="mx-auto w-full max-w-270 md:px-4">
+          <div className="md:flex md:items-start md:gap-8">
+            <aside className="hidden md:block md:w-72 md:shrink-0 md:py-4">
+              <div className="sticky top-4 flex h-[calc(100svh-2rem)] flex-col rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] p-4 shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))]">
+                <Link href="/" className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30">
+                  <h1 className="w-full text-[3.5rem] leading-none tracking-[-0.04em]">
+                    Jobi<span className="text-app-primary">.sh</span>
+                  </h1>
+                </Link>
 
-              <nav
-                aria-label="Primär navigation"
-                className="mt-8 flex flex-col gap-2"
-              >
-                {navItems.map((item) => {
-                  const isActive = item.match(pathname);
-                  const isActivityReport = item.href === "/aktivitetsrapport";
+                <nav aria-label="Primär navigation" className="mt-8 flex flex-col gap-2">
+                  {navItems.map((item) => {
+                    const isActive = item.match(pathname);
+                    const isActivityReport = item.href === "/aktivitetsrapport";
 
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "flex items-center gap-3 rounded-[1.35rem] px-4 py-3 text-sm font-medium tracking-[0.01em] transition duration-200",
-                        getNavItemClasses(isActive, isActivityReport),
-                      )}
-                    >
-                      {"icon" in item ? (
-                        <item.icon
-                          className={cn(
-                            "size-5 shrink-0",
-                            getNavIconClasses(isActive, isActivityReport),
-                          )}
-                          strokeWidth={2.1}
-                        />
-                      ) : (
-                        <Image
-                          alt="AMS"
-                          className="shrink-0"
-                          height={20}
-                          src={item.iconSrc}
-                          unoptimized
-                          width={20}
-                        />
-                      )}
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-[1.35rem] px-4 py-3 text-sm font-medium tracking-[0.01em] transition duration-200",
+                          getNavItemClasses(isActive, isActivityReport),
+                        )}
+                      >
+                        {"icon" in item ? (
+                          <item.icon className={cn("size-5 shrink-0", getNavIconClasses(isActive, isActivityReport))} strokeWidth={2.1} />
+                        ) : (
+                          <Image
+                            alt="AMS"
+                            className="shrink-0"
+                            height={20}
+                            src={item.iconSrc}
+                            unoptimized
+                            width={20}
+                          />
+                        )}
+                        <span>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </nav>
 
-              <div className="mt-auto flex flex-col gap-3 pt-6">
-                <Btn className="w-full" href="/jobb/new" icon={Plus}>
-                  Lägg till jobb
-                </Btn>
-                <LogoutBtn className="w-full" />
+                <div className="mt-auto flex flex-col gap-3 pt-6">
+                  <Btn className="w-full" href="/jobb/new" icon={Plus}>
+                    Lägg till jobb
+                  </Btn>
+                  <LogoutBtn className="w-full" />
+                </div>
               </div>
-            </div>
-          </aside>
+            </aside>
 
-          <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-4 md:hidden">
+            <div className="min-w-0 flex-1">{children}</div>
+          </div>
+        </div>
+      ) : (
+        <div className="mx-auto w-full max-w-300">{children}</div>
+      )}
+
+      {showNavigation ? (
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-4 md:hidden">
+          <div className="mx-auto w-full max-w-300">
             <nav
               aria-label="Primär navigation"
               className="pointer-events-auto mx-auto flex w-full items-center justify-between rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] p-2 shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))]"
@@ -180,12 +178,8 @@ export function AppNavigationShell({
               })}
             </nav>
           </div>
-        </>
+        </div>
       ) : null}
-
-      <div className={cn(!hideNavigation && "md:pl-72 md:pr-4")}>
-        {children}
-      </div>
     </>
   );
 }
