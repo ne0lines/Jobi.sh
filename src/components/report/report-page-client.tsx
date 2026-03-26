@@ -132,15 +132,20 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                 <div className="flex items-start justify-between gap-4 text-sm text-app-muted">
                   <p className="min-w-0">
                     <strong className="text-app-ink">Plats:</strong>{" "}
-                    <CopyTrigger
-                      className="text-left transition hover:text-app-primary"
-                      onClick={() => void copyTextToClipboard(job.location)}
-                    >
-                      {job.location}
-                    </CopyTrigger>
+                    {job.location ? (
+                      <CopyTrigger
+                        className="text-left transition hover:text-app-primary"
+                        onClick={() => void copyTextToClipboard(job.location)}
+                      >
+                        {job.location}
+                      </CopyTrigger>
+                    ) : (
+                      <span className="italic">Ej angiven</span>
+                    )}
                   </p>
                   <p className="shrink-0 text-right">
-                    <strong className="text-app-ink">Omfattning:</strong> {job.workload}
+                    <strong className="text-app-ink">Omfattning:</strong>{" "}
+                    {job.workload || <span className="italic">Ej angiven</span>}
                   </p>
                 </div>
               </div>

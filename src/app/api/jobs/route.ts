@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import type { Job } from "@/app/types";
+import type { CreateJobInput, Job } from "@/app/types";
 import { JobStatus } from "@/app/types";
 
 type JobsResponse = {
@@ -15,6 +15,15 @@ const prismaStatusToAppStatus: Record<string, JobStatus> = {
   interview: JobStatus.INTERVIEW,
   offer: JobStatus.OFFER,
   closed: JobStatus.CLOSED,
+};
+
+const appStatusToPrisma: Record<string, string> = {
+  [JobStatus.SAVED]: "saved",
+  [JobStatus.APPLIED]: "applied",
+  [JobStatus.IN_PROCESS]: "in_process",
+  [JobStatus.INTERVIEW]: "interview",
+  [JobStatus.OFFER]: "offer",
+  [JobStatus.CLOSED]: "closed",
 };
 
 export async function GET(): Promise<NextResponse<JobsResponse | { error: string }>> {
@@ -45,4 +54,54 @@ export async function GET(): Promise<NextResponse<JobsResponse | { error: string
   }));
 
   return NextResponse.json({ applications });
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse<Job | { error: string }>> {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
+  }
+
+  const payload = (await req.json()) as CreateJobInput;
+
+  if (!payload.title || !payload.company) {
+    return NextResponse.json({ error: "Jobbtitel och företag måste anges." }, { status: 400 });
+  }
+
+  const job = await prisma.job.create({
+    data: {
+      userId,
+      title: payload.title,
+      company: payload.company,
+      location: payload.location ?? "",
+      employmentType: payload.employmentType ?? "",
+      workload: payload.workload ?? "",
+      jobUrl: payload.jobUrl ?? "",
+      notes: payload.notes ?? "",
+      status: appStatusToPrisma[payload.status] as never ?? "saved",
+      contactPerson: payload.contactPerson
+        ? { create: payload.contactPerson }
+        : undefined,
+      timeline: payload.timeline?.length
+        ? { create: payload.timeline }
+        : undefined,
+    },
+    include: { contactPerson: true, timeline: true },
+  });
+
+  return NextResponse.json({
+    id: job.id,
+    userId: job.userId,
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    employmentType: job.employmentType,
+    workload: job.workload,
+    jobUrl: job.jobUrl,
+    notes: job.notes,
+    status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
+    contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
+    timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
+  } satisfies Job, { status: 201 });
 }

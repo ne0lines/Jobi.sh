@@ -3,6 +3,7 @@
 import { deleteJob, getJob } from "@/app/services/services";
 import type { Job } from "@/app/types";
 import { Btn } from "@/components/ui/btn";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusSelect } from "@/components/ui/status-select";
 import { ExternalLink, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -20,6 +21,7 @@ export default function JobDetailPage({
   const [job, setJob] = useState<Job | null>(null);
   const [error, setError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,17 +50,12 @@ export default function JobDetailPage({
   }, [jobId]);
 
   async function handleDelete() {
-    const isConfirmed = globalThis.confirm("Är du säker på att du vill ta bort annonsen?");
-
-    if (!isConfirmed) {
-      return;
-    }
-
     setIsDeleting(true);
 
     try {
       await deleteJob(jobId);
       toast.success("Jobbet togs bort.");
+      setConfirmOpen(false);
       router.push("/");
       router.refresh();
     } catch (deleteError) {
@@ -108,10 +105,24 @@ export default function JobDetailPage({
               <p className="w-full text-base text-app-muted"><strong>Anställningsform</strong><br />{job.employmentType}</p>
               <p className="w-full text-base text-app-muted"><strong>Omfattning</strong><br />{job.workload}</p>
             </div>
-            <h3 className="mt-3 font-display text-xl">Kontaktperson</h3>
-            <p className="text-base text-app-muted"><strong>{job.contactPerson.name}</strong> ({job.contactPerson.role})</p>
-            <p className="text-base text-app-muted"><strong>E-post:</strong> <Link href={`mailto:${job.contactPerson.email}`} className="font-medium text-app-cyan-strong">{job.contactPerson.email}</Link></p>
-            <p className="text-base text-app-muted"><strong>Telefon:</strong> <Link href={`tel:${job.contactPerson.phone}`} className="font-medium text-app-cyan-strong">{job.contactPerson.phone}</Link></p>
+            {(job.contactPerson.name || job.contactPerson.role || job.contactPerson.email || job.contactPerson.phone) && (
+              <>
+                <h3 className="mt-3 font-display text-xl">Kontaktperson</h3>
+                {(job.contactPerson.name || job.contactPerson.role) && (
+                  <p className="text-base text-app-muted">
+                    {job.contactPerson.name && <strong>{job.contactPerson.name}</strong>}
+                    {job.contactPerson.name && job.contactPerson.role && " "}
+                    {job.contactPerson.role}
+                  </p>
+                )}
+                {job.contactPerson.email && (
+                  <p className="text-base text-app-muted"><strong>E-post:</strong> <Link href={`mailto:${job.contactPerson.email}`} className="font-medium text-app-cyan-strong">{job.contactPerson.email}</Link></p>
+                )}
+                {job.contactPerson.phone && (
+                  <p className="text-base text-app-muted"><strong>Telefon:</strong> <Link href={`tel:${job.contactPerson.phone}`} className="font-medium text-app-cyan-strong">{job.contactPerson.phone}</Link></p>
+                )}
+              </>
+            )}
           </article>
           <Btn href={job.jobUrl} icon={ExternalLink} rel="noreferrer" target="_blank">Besök annons</Btn>
           <article className="rounded-2xl border border-app-stroke bg-app-card p-4">
@@ -135,10 +146,20 @@ export default function JobDetailPage({
         </div>
         <div className="flex w-full gap-4">
           <Btn variant="secondary" className="w-1/2" href="/">Tillbaka</Btn>
-          <Btn disabled={isDeleting} type="button" variant="red" className="w-full" icon={Trash2} onClick={() => void handleDelete()}>
-            {isDeleting ? "Tar bort..." : "Ta bort jobb"}
+          <Btn type="button" variant="red" className="w-full" icon={Trash2} onClick={() => setConfirmOpen(true)}>
+            Ta bort jobb
           </Btn>
         </div>
+
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title="Ta bort jobb?"
+          description="Det här går inte att ångra. Jobbet och all tillhörande information tas bort permanent."
+          confirmLabel="Ta bort"
+          onConfirm={() => void handleDelete()}
+          isLoading={isDeleting}
+        />
       </section>
     </main>
   );

@@ -14,13 +14,13 @@ const navItems = [
     href: "/",
     icon: House,
     label: "Översikt",
-    match: (pathname: string) => pathname === "/" || (pathname.startsWith("/jobb") && pathname !== "/jobb/new"),
+    match: (pathname: string) => pathname === "/",
   },
   {
-    href: "/report",
+    href: "/jobb",
     icon: BriefcaseBusiness,
     label: "Sökta jobb",
-    match: (pathname: string) => pathname.startsWith("/report"),
+    match: (pathname: string) => pathname.startsWith("/jobb"),
   },
   {
     href: "/konto",
@@ -64,7 +64,9 @@ type AppNavigationShellProps = {
   children: React.ReactNode;
 };
 
-export function AppNavigationShell({ children }: Readonly<AppNavigationShellProps>) {
+export function AppNavigationShell({
+  children,
+}: Readonly<AppNavigationShellProps>) {
   const pathname = usePathname();
   const hideNavigation = pathname.startsWith("/auth");
   const showNavigation = !hideNavigation;
@@ -75,13 +77,19 @@ export function AppNavigationShell({ children }: Readonly<AppNavigationShellProp
         <>
           <aside className="pointer-events-none fixed inset-y-0 left-0 z-40 hidden w-72 p-4 md:block">
             <div className="pointer-events-auto flex h-full flex-col rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] p-4 shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))]">
-              <Link href="/" className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30">
+              <Link
+                href="/"
+                className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30"
+              >
                 <h1 className="w-full text-[3.5rem] leading-none tracking-[-0.04em]">
                   Jobi<span className="text-app-primary">.sh</span>
                 </h1>
               </Link>
 
-              <nav aria-label="Primär navigation" className="mt-8 flex flex-col gap-2">
+              <nav
+                aria-label="Primär navigation"
+                className="mt-8 flex flex-col gap-2"
+              >
                 {navItems.map((item) => {
                   const isActive = item.match(pathname);
                   const isActivityReport = item.href === "/aktivitetsrapport";
@@ -96,7 +104,13 @@ export function AppNavigationShell({ children }: Readonly<AppNavigationShellProp
                       )}
                     >
                       {"icon" in item ? (
-                        <item.icon className={cn("size-5 shrink-0", getNavIconClasses(isActive, isActivityReport))} strokeWidth={2.1} />
+                        <item.icon
+                          className={cn(
+                            "size-5 shrink-0",
+                            getNavIconClasses(isActive, isActivityReport),
+                          )}
+                          strokeWidth={2.1}
+                        />
                       ) : (
                         <Image
                           alt="AMS"
@@ -141,7 +155,13 @@ export function AppNavigationShell({ children }: Readonly<AppNavigationShellProp
                     )}
                   >
                     {"icon" in item ? (
-                      <item.icon className={cn("size-5 shrink-0", getNavIconClasses(isActive, isActivityReport))} strokeWidth={2.1} />
+                      <item.icon
+                        className={cn(
+                          "size-5 shrink-0",
+                          getNavIconClasses(isActive, isActivityReport),
+                        )}
+                        strokeWidth={2.1}
+                      />
                     ) : (
                       <Image
                         alt="AMS"
@@ -152,7 +172,9 @@ export function AppNavigationShell({ children }: Readonly<AppNavigationShellProp
                         width={20}
                       />
                     )}
-                    <span className="text-[0.64rem] leading-tight whitespace-normal">{item.label}</span>
+                    <span className="text-[0.64rem] leading-tight whitespace-normal">
+                      {item.label}
+                    </span>
                   </Link>
                 );
               })}
@@ -161,7 +183,9 @@ export function AppNavigationShell({ children }: Readonly<AppNavigationShellProp
         </>
       ) : null}
 
-      <div className={cn(!hideNavigation && "md:pl-72 md:pr-4")}>{children}</div>
+      <div className={cn(!hideNavigation && "md:pl-72 md:pr-4")}>
+        {children}
+      </div>
     </>
   );
 }
