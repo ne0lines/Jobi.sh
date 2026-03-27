@@ -22,6 +22,23 @@ const appStatusToPrisma: Record<string, string> = {
   [JobStatus.CLOSED]: "closed",
 };
 
+const statusTimelineEvent: Record<string, string> = {
+  saved: "Jobbet sparat",
+  applied: "Ansökan skickad",
+  in_process: "Pågår",
+  interview: "Intervju",
+  offer: "Erbjudande mottaget",
+  closed: "Avslutad",
+};
+
+function formatSwedishDate(date: Date): string {
+  return new Intl.DateTimeFormat("sv-SE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 export async function GET(
   _request: NextRequest,
   context: { params: Promise<{ jobId: string }> },
@@ -54,7 +71,14 @@ export async function GET(
     notes: job.notes,
     status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
     contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
-    timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
+    timeline: job.timeline
+      .map((t) => ({ date: t.date, event: t.event }))
+      .sort((a, b) => {
+        const isDeadline = (e: string) => e.toLowerCase().includes("sista");
+        if (isDeadline(a.event)) return 1;
+        if (isDeadline(b.event)) return -1;
+        return 0;
+      }),
   } satisfies Job);
 }
 
@@ -77,6 +101,9 @@ export async function PATCH(
     return NextResponse.json({ error: "Jobbet kunde inte hittas." }, { status: 404 });
   }
 
+  const nextPrismaStatus = updates.status !== undefined ? appStatusToPrisma[updates.status] : undefined;
+  const statusChanged = nextPrismaStatus !== undefined && nextPrismaStatus !== existing.status;
+
   const job = await prisma.job.update({
     where: { id: jobId },
     data: {
@@ -87,7 +114,7 @@ export async function PATCH(
       ...(updates.workload !== undefined && { workload: updates.workload }),
       ...(updates.jobUrl !== undefined && { jobUrl: updates.jobUrl }),
       ...(updates.notes !== undefined && { notes: updates.notes }),
-      ...(updates.status !== undefined && { status: appStatusToPrisma[updates.status] as never }),
+      ...(nextPrismaStatus !== undefined && { status: nextPrismaStatus as never }),
       ...(updates.contactPerson !== undefined && {
         contactPerson: {
           upsert: {
@@ -96,12 +123,16 @@ export async function PATCH(
           },
         },
       }),
-      ...(updates.timeline !== undefined && {
-        timeline: {
-          deleteMany: {},
-          create: updates.timeline,
-        },
-      }),
+      ...(updates.timeline !== undefined
+        ? { timeline: { deleteMany: {}, create: updates.timeline } }
+        : statusChanged && {
+            timeline: {
+              create: {
+                date: formatSwedishDate(new Date()),
+                event: statusTimelineEvent[nextPrismaStatus],
+              },
+            },
+          }),
     },
     include: { contactPerson: true, timeline: true },
   });
