@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getBrowserInstallTarget } from "@/lib/extension-install";
-import { Copy, ExternalLink, X } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -132,34 +132,6 @@ async function sendJobToActivityReportExtension(payload: ActivityReportBridgePay
       currentWindow.location.origin,
     );
   });
-}
-
-function CopyTrigger({
-  children,
-  onClick,
-  className,
-}: Readonly<{
-  children: React.ReactNode;
-  onClick: () => void;
-  className?: string;
-}>) {
-  return (
-    <button className={className} type="button" onClick={onClick}>
-      <span className="inline-flex items-center gap-1.5">
-        <span>{children}</span>
-        <Copy aria-hidden="true" className="shrink-0 opacity-35" size={14} strokeWidth={2.1} />
-      </span>
-    </button>
-  );
-}
-
-async function copyTextToClipboard(value: string) {
-  try {
-    await navigator.clipboard.writeText(value);
-    toast.success("Kopierat till urklipp.");
-  } catch {
-    toast.error("Kunde inte kopiera till urklipp.");
-  }
 }
 
 export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientProps>) {
