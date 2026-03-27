@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Jobi.sh aktivitetsrapport",
+  "name": "Jobi.sh",
   "description": "Tar emot ett jobb från Jobi.sh och fyller i aktivitetsrapporten hos Arbetsförmedlingen.",
   "version": "0.1.0",
   "icons": {
@@ -21,7 +21,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Jobi.sh aktivitetsrapport",
+    "default_title": "Jobi.sh",
     "default_icon": {
       "16": "icons/jobish-16.png",
       "32": "icons/jobish-32.png",
