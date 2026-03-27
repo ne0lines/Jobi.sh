@@ -243,3 +243,16 @@ Nästa naturliga steg för projektet:
 ## Status
 
 Projektet är i ett tidigt produkt- och UI-skede, men har redan en tydlig struktur för vidareutveckling. README:n är skriven för att göra det snabbt att förstå appens riktning, köra den lokalt och bygga vidare utan att behöva läsa hela kodbasen först.
+
+## Chrome Extension för aktivitetsrapport
+
+Repot innehåller nu också en unpacked Chrome Extension i [chrome-extension](chrome-extension) som kan ta emot ett jobb från [src/components/report/report-page-client.tsx](src/components/report/report-page-client.tsx) och försöka fylla i aktivitetsrapporten hos Arbetsförmedlingen.
+
+Snabbstart:
+
+1. Öppna `chrome://extensions`.
+2. Aktivera `Developer mode`.
+3. Ladda in mappen `chrome-extension` via `Load unpacked`.
+4. Gå till `/aktivitetsrapport` i appen och klicka på `Rapportera hos AF`.
+
+Mer detaljer finns i [chrome-extension/README.md](chrome-extension/README.md).
