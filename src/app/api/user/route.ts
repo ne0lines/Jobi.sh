@@ -106,8 +106,20 @@ export async function POST(
     );
   }
 
-  const userData = await prisma.user.create({
-    data: {
+  const select = {
+    complete: true,
+    email: true,
+    id: true,
+    name: true,
+    profession: true,
+    role: true,
+    termsAcceptedAt: true,
+    termsVersion: true,
+  } as const;
+
+  const userData = await prisma.user.upsert({
+    where: { email },
+    create: {
       id: clerkUser.id,
       email,
       name,
@@ -116,16 +128,14 @@ export async function POST(
       termsAcceptedAt: new Date(),
       termsVersion: TERMS_VERSION,
     },
-    select: {
+    update: {
+      name,
+      profession,
       complete: true,
-      email: true,
-      id: true,
-      name: true,
-      profession: true,
-      role: true,
-      termsAcceptedAt: true,
-      termsVersion: true,
+      termsAcceptedAt: new Date(),
+      termsVersion: TERMS_VERSION,
     },
+    select,
   });
 
   return NextResponse.json(userData as User, { status: 201 });
