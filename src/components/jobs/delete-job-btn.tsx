@@ -1,16 +1,14 @@
 "use client";
 
-import { deleteJob } from "@/app/services/services";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useDeleteJob } from "@/lib/hooks/jobs";
 import { Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export function DeleteJobBtn({ jobId }: Readonly<{ jobId: string }>) {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const deleteJob = useDeleteJob();
 
   function handleTrigger(e: React.MouseEvent) {
     e.preventDefault();
@@ -18,18 +16,16 @@ export function DeleteJobBtn({ jobId }: Readonly<{ jobId: string }>) {
     setOpen(true);
   }
 
-  async function handleConfirm() {
-    setIsDeleting(true);
-
-    try {
-      await deleteJob(jobId);
-      toast.success("Jobbet togs bort.");
-      setOpen(false);
-      router.refresh();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Kunde inte ta bort annonsen.");
-      setIsDeleting(false);
-    }
+  function handleConfirm() {
+    deleteJob.mutate(jobId, {
+      onSuccess: () => {
+        toast.success("Jobbet togs bort.");
+        setOpen(false);
+      },
+      onError: (err) => {
+        toast.error(err instanceof Error ? err.message : "Kunde inte ta bort annonsen.");
+      },
+    });
   }
 
   return (
@@ -49,8 +45,8 @@ export function DeleteJobBtn({ jobId }: Readonly<{ jobId: string }>) {
         title="Ta bort jobb?"
         description="Det här går inte att ångra. Jobbet och all tillhörande information tas bort permanent."
         confirmLabel="Ta bort"
-        onConfirm={() => void handleConfirm()}
-        isLoading={isDeleting}
+        onConfirm={handleConfirm}
+        isLoading={deleteJob.isPending}
       />
     </>
   );

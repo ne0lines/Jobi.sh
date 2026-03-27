@@ -1,6 +1,6 @@
 "use client";
 
-import { createJob } from "@/app/services/services";
+import { useCreateJob } from "@/lib/hooks/jobs";
 import { Btn } from "@/components/ui/btn";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
@@ -140,9 +140,9 @@ function buildTimeline(form: JobFormState) {
 
 export default function NewJobPage() {
   const router = useRouter();
+  const createJob = useCreateJob();
   const [form, setForm] = useState<JobFormState>(initialState);
   const [isAutofilling, setIsAutofilling] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [showManualFields, setShowManualFields] = useState(false);
   const [isDirectImportFlow, setIsDirectImportFlow] = useState(false);
@@ -280,42 +280,38 @@ export default function NewJobPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  async function submitJob() {
-    setIsSubmitting(true);
+  function submitJob() {
     setFeedback("");
 
-    try {
-      const payload: CreateJobInput = {
-        title: form.title,
-        company: form.company,
-        location: form.location,
-        employmentType: form.employmentType,
-        workload: form.workload,
-        jobUrl: form.jobUrl,
-        contactPerson: {
-          name: form.contactName,
-          role: form.contactRole,
-          email: form.contactEmail,
-          phone: form.contactPhone,
-        },
-        timeline: buildTimeline(form),
-        notes: form.notes,
-        status: form.status,
-      };
+    const payload: CreateJobInput = {
+      title: form.title,
+      company: form.company,
+      location: form.location,
+      employmentType: form.employmentType,
+      workload: form.workload,
+      jobUrl: form.jobUrl,
+      contactPerson: {
+        name: form.contactName,
+        role: form.contactRole,
+        email: form.contactEmail,
+        phone: form.contactPhone,
+      },
+      timeline: buildTimeline(form),
+      notes: form.notes,
+      status: form.status,
+    };
 
-      const createdJob = await createJob(payload);
-
-      toast.success("Jobbet lades till.");
-      router.push(`/jobb/${createdJob.id}`);
-      router.refresh();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Kunde inte spara jobbet just nu.");
-      setFeedback(
-        error instanceof Error ? error.message : "Kunde inte spara jobbet just nu.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    createJob.mutate(payload, {
+      onSuccess: (createdJob) => {
+        toast.success("Jobbet lades till.");
+        router.push(`/jobb/${createdJob.id}`);
+      },
+      onError: (error) => {
+        const message = error instanceof Error ? error.message : "Kunde inte spara jobbet just nu.";
+        toast.error(message);
+        setFeedback(message);
+      },
+    });
   }
 
   const handleSubmit: React.ComponentProps<"form">["onSubmit"] = (event) => {
@@ -558,8 +554,8 @@ export default function NewJobPage() {
                   <Btn href="/" variant="secondary" className="w-1/2">
                     Avbryt
                   </Btn>
-                  <Btn disabled={isSubmitting} type="submit" className="w-full" icon={Plus}>
-                    {isSubmitting ? "Sparar..." : "Lägg till jobb"}
+                  <Btn disabled={createJob.isPending} type="submit" className="w-full" icon={Plus}>
+                    {createJob.isPending ? "Sparar..." : "Lägg till jobb"}
                   </Btn>
                 </div>
               </div>

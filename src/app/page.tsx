@@ -1,26 +1,12 @@
 import { Btn } from "@/components/ui/btn";
-import { Pipeline, Statistics } from "@/components/dashboard";
-import type { Job } from "@/app/types";
 import { auth } from "@clerk/nextjs/server";
-import { headers } from "next/headers";
 import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
-
-async function getJobs(cookieHeader: string): Promise<Job[]> {
-  const headersList = await headers();
-  const host = headersList.get("host") ?? "localhost:3000";
-  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-
-  const res = await fetch(`${protocol}://${host}/api/jobs`, {
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
-
-  if (!res.ok) return [];
-
-  const data = (await res.json()) as { applications: Job[] };
-  return data.applications;
-}
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { makeQueryClient } from "@/lib/hooks/query-client";
+import { jobKeys } from "@/lib/hooks/job-query-keys";
+import { getJobsServer } from "@/server/queries";
+import { DashboardContent } from "@/components/dashboard/dashboard-content";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -29,8 +15,12 @@ export default async function Home() {
     redirect("/sign-in");
   }
 
-  const headersList = await headers();
-  const jobs = await getJobs(headersList.get("cookie") ?? "");
+  const queryClient = makeQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: jobKeys.all,
+    queryFn: getJobsServer,
+  });
 
   return (
     <main className="min-h-svh">
@@ -45,8 +35,9 @@ export default async function Home() {
             </Btn>
           </div>
         </section>
-        <Pipeline jobs={jobs} />
-        <Statistics applications={jobs} />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <DashboardContent />
+        </HydrationBoundary>
       </div>
     </main>
   );

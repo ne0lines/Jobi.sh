@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
@@ -65,9 +66,11 @@ export default function RootLayout({
         className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}
       >
         <ClerkProvider>
-          <RegisterServiceWorker />
-          <AppNavigationShell>{children}</AppNavigationShell>
-          <Toaster />
+          <QueryProvider>
+            <RegisterServiceWorker />
+            <AppNavigationShell>{children}</AppNavigationShell>
+            <Toaster />
+          </QueryProvider>
         </ClerkProvider>
       </body>
     </html>
