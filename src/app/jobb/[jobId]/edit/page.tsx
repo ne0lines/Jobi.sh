@@ -1,6 +1,5 @@
 "use client";
 
-import { getJob, updateJob } from "@/app/services/services";
 import type { Job, JobFormState, JobTimelineItem, UpdateJobInput } from "@/app/types";
 import { JobStatus } from "@/app/types";
 import { Btn } from "@/components/ui/btn";
@@ -15,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useJob, useUpdateJob } from "@/lib/hooks/jobs";
 import { Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
@@ -182,91 +182,66 @@ export default function EditJobPage({
 }>) {
   const { jobId } = use(params);
   const router = useRouter();
-  const [job, setJob] = useState<Job | null>(null);
   const [form, setForm] = useState<JobFormState>(initialState);
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: job, isLoading, isError } = useJob(jobId);
+  const updateJobMutation = useUpdateJob();
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function loadJob() {
-      try {
-        const nextJob = await getJob(jobId);
-
-        if (!isMounted) {
-          return;
-        }
-
-        setJob(nextJob);
-        setForm(buildFormState(nextJob));
-        setError("");
-      } catch {
-        if (isMounted) {
-          setJob(null);
-          setError("Jobbet kunde inte laddas för redigering.");
-        }
-      }
+    if (job) {
+      setForm(buildFormState(job));
     }
-
-    void loadJob();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [jobId]);
+  }, [job]);
 
   function updateField<K extends keyof JobFormState>(field: K, value: JobFormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  async function handleSubmit() {
-    if (!job) {
-      return;
-    }
+  function handleSubmit() {
+    if (!job) return;
 
-    setIsSubmitting(true);
+    const payload: UpdateJobInput = {
+      title: form.title,
+      company: form.company,
+      location: form.location,
+      employmentType: form.employmentType,
+      workload: form.workload,
+      jobUrl: form.jobUrl,
+      status: form.status,
+      notes: form.notes,
+      contactPerson: {
+        name: form.contactName,
+        role: form.contactRole,
+        email: form.contactEmail,
+        phone: form.contactPhone,
+      },
+      timeline: buildUpdatedTimeline(job.timeline, form),
+    };
 
-    try {
-      const payload: UpdateJobInput = {
-        title: form.title,
-        company: form.company,
-        location: form.location,
-        employmentType: form.employmentType,
-        workload: form.workload,
-        jobUrl: form.jobUrl,
-        status: form.status,
-        notes: form.notes,
-        contactPerson: {
-          name: form.contactName,
-          role: form.contactRole,
-          email: form.contactEmail,
-          phone: form.contactPhone,
+    updateJobMutation.mutate(
+      { id: jobId, updates: payload },
+      {
+        onSuccess: () => {
+          toast.success("Jobbet uppdaterades.");
+          router.push(`/jobb/${jobId}`);
         },
-        timeline: buildUpdatedTimeline(job.timeline, form),
-      };
-
-      await updateJob(jobId, payload);
-      toast.success("Jobbet uppdaterades.");
-      router.push(`/jobb/${jobId}`);
-      router.refresh();
-    } catch (submitError) {
-      toast.error(
-        submitError instanceof Error
-          ? submitError.message
-          : "Kunde inte uppdatera jobbet just nu.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+        onError: (error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Kunde inte uppdatera jobbet just nu.",
+          );
+        },
+      },
+    );
   }
 
   const onSubmit: React.ComponentProps<"form">["onSubmit"] = (event) => {
     event.preventDefault();
-    void handleSubmit();
+    handleSubmit();
   };
 
-  if (!job && !error) {
+  if (isLoading) {
     return (
       <main className="flex min-h-svh flex-col items-center justify-center gap-3">
         <Loader size={40} />
@@ -275,12 +250,12 @@ export default function EditJobPage({
     );
   }
 
-  if (!job) {
+  if (isError || !job) {
     return (
       <main className="min-h-svh pt-4">
         <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Redigera jobb</h1>
-          <p className="text-base text-app-muted sm:text-lg">{error}</p>
+          <p className="text-base text-app-muted sm:text-lg">Jobbet kunde inte laddas för redigering.</p>
           <Btn href={`/jobb/${jobId}`} variant="secondary">
             Tillbaka
           </Btn>
@@ -488,8 +463,8 @@ export default function EditJobPage({
               <Btn href={`/jobb/${jobId}`} variant="secondary" className="w-1/2">
                 Avbryt
               </Btn>
-              <Btn disabled={isSubmitting} type="submit" className="w-full" icon={Save}>
-                {isSubmitting ? "Sparar..." : "Spara ändringar"}
+              <Btn disabled={updateJobMutation.isPending} type="submit" className="w-full" icon={Save}>
+                {updateJobMutation.isPending ? "Sparar..." : "Spara ändringar"}
               </Btn>
             </div>
           </div>
