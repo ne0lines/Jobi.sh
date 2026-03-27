@@ -26,14 +26,16 @@ enum JobStatus {
 // ─── Models ───────────────────────────────────────────────────
 
 model User {
-  id         String   @id @default(uuid())
-  email      String   @unique
-  name       String   @default("")
-  role       UserRole @default(user)
-  profession String   @default("")
-  complete   Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String    @id @default(uuid())
+  email           String    @unique
+  name            String    @default("")
+  role            UserRole  @default(user)
+  profession      String    @default("")
+  complete        Boolean   @default(false)
+  termsAcceptedAt DateTime?
+  termsVersion    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   jobs  Job[]
   tasks Task[]

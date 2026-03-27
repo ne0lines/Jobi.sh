@@ -3,7 +3,7 @@
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { Btn } from "../ui/btn";
 
 export default function AuthPageClient() {
@@ -91,7 +91,6 @@ export default function AuthPageClient() {
       return;
     }
 
-    // The user exists and verification succeeded
     if (signIn.status === "complete") {
       await finalizeSignIn();
     } else if (signIn.status === "needs_client_trust") {
@@ -129,27 +128,27 @@ export default function AuthPageClient() {
           Jobi<span className="text-app-primary">.sh</span>
         </h1>
         <section className="mx-auto flex min-h-dvh w-full flex-col gap-4">
-          <div className="flex flex-col w-full flex-1 gap-4 items-center justify-center">
-            <h2 className="text-2xl">Verifiera epost</h2>
+          <div className="flex w-full flex-1 flex-col items-center justify-center gap-4">
+            <h2 className="text-2xl">Verifiera e-post</h2>
             <p>
-              Vi har skickat en virifikations kod till:{" "}
+              Vi har skickat en verifikationskod till:{" "}
               <strong>{emailAddress}</strong>
             </p>
             <form
               onSubmit={handleVerify}
-              className="space-y-4 w-full rounded-2xl border border-app-stroke bg-app-card p-4"
+              className="w-full space-y-4 rounded-2xl border border-app-stroke bg-app-card p-4"
             >
               <div>
-                <label htmlFor="code">Ange verifikations kod</label>
+                <label htmlFor="code">Ange verifikationskod</label>
                 <input
                   className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   id="code"
                   name="code"
-                  type="text"
                   placeholder="XXXXXX"
+                  required
+                  type="text"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  required
                 />
                 {feedback && (
                   <p className="mt-2 text-sm text-red-500">{feedback}</p>
@@ -158,7 +157,7 @@ export default function AuthPageClient() {
               <Btn className="w-full" disabled={loading !== null} type="submit">
                 {loading === "verify" ? "Verifierar..." : "Fortsätt"}
               </Btn>
-              <div className="flex items-center gap-4 justify-center">
+              <div className="flex items-center justify-center gap-4">
                 <Btn
                   type="button"
                   disabled={loading !== null}
@@ -201,11 +200,11 @@ export default function AuthPageClient() {
             Jobi<span className="text-app-primary">.sh</span>
           </h1>
         </div>
-        <div className="flex flex-col w-full flex-1 gap-4 items-center justify-center">
+        <div className="flex w-full flex-1 flex-col items-center justify-center gap-4">
           <h2 className="text-2xl">Logga in eller skapa konto</h2>
           <form
             onSubmit={handleSubmit}
-            className="space-y-4 w-full rounded-2xl border border-app-stroke bg-app-card p-4"
+            className="w-full space-y-4 rounded-2xl border border-app-stroke bg-app-card p-4"
           >
             <label className="block font-semibold text-app-muted">
               <span className="block">E-postadress</span>
@@ -213,11 +212,11 @@ export default function AuthPageClient() {
                 className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                 id="email"
                 name="email"
-                type="email"
                 placeholder="namn@epost.se"
+                required
+                type="email"
                 value={emailAddress}
                 onChange={(e) => setEmailAddress(e.target.value)}
-                required
               />
             </label>
 

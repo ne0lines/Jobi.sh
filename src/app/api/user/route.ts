@@ -1,7 +1,8 @@
-import { currentUser } from "@clerk/nextjs/server";
-import prisma from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
 import { UserRole } from "@/app/generated/prisma/enums";
+import { TERMS_VERSION } from "@/lib/legal";
+import prisma from "@/lib/prisma";
+import { currentUser } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 
 type User = {
   complete: boolean;
@@ -10,6 +11,8 @@ type User = {
   profession: string;
   role: UserRole;
   id: string;
+  termsAcceptedAt: Date | null;
+  termsVersion: string | null;
 };
 
 export async function GET(
@@ -32,20 +35,30 @@ export async function GET(
 
   const dbData = await prisma.user.findUnique({
     where: { email },
+    select: {
+      complete: true,
+      email: true,
+      id: true,
+      name: true,
+      profession: true,
+      role: true,
+      termsAcceptedAt: true,
+      termsVersion: true,
+    },
   });
 
   if (!dbData) {
     return NextResponse.redirect(new URL("/konto/create-profile", req.url));
   }
 
-  const { createdAt, updatedAt, ...userData } = dbData;
-
-  return NextResponse.json(userData as User);
+  return NextResponse.json(dbData as User);
 }
 
 type CreateProfileInput = {
   name: string;
   profession: string;
+  termsAccepted: boolean;
+  termsVersion?: string;
 };
 
 export async function POST(
@@ -66,7 +79,8 @@ export async function POST(
     );
   }
 
-  const { name, profession } = (await req.json()) as CreateProfileInput;
+  const { name, profession, termsAccepted, termsVersion } =
+    (await req.json()) as CreateProfileInput;
 
   if (!name || !profession) {
     return NextResponse.json(
@@ -75,13 +89,42 @@ export async function POST(
     );
   }
 
-  const { createdAt, updatedAt, ...userData } = await prisma.user.create({
+  if (!termsAccepted) {
+    return NextResponse.json(
+      { error: "Du måste godkänna användarvillkoren." },
+      { status: 400 },
+    );
+  }
+
+  if (termsVersion !== TERMS_VERSION) {
+    return NextResponse.json(
+      {
+        error:
+          "Villkoren har uppdaterats. Läs och godkänn den senaste versionen.",
+      },
+      { status: 400 },
+    );
+  }
+
+  const userData = await prisma.user.create({
     data: {
       id: clerkUser.id,
       email,
       name,
       profession,
       complete: true,
+      termsAcceptedAt: new Date(),
+      termsVersion: TERMS_VERSION,
+    },
+    select: {
+      complete: true,
+      email: true,
+      id: true,
+      name: true,
+      profession: true,
+      role: true,
+      termsAcceptedAt: true,
+      termsVersion: true,
     },
   });
 
