@@ -1,12 +1,31 @@
 "use client";
 
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useAuth, useSignIn, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Btn } from "../ui/btn";
 
+const CLERK_ERROR_MESSAGES: Record<string, string> = {
+  form_code_incorrect: "Felaktig kod. Kontrollera och försök igen.",
+  verification_expired: "Koden har gått ut. Begär en ny kod.",
+  too_many_requests: "För många försök. Vänta en stund och försök igen.",
+  form_identifier_not_found: "Ingen användare hittades med den e-postadressen.",
+  form_password_incorrect: "Felaktigt lösenord.",
+  identifier_already_signed_in: "Du är redan inloggad.",
+  session_exists: "En aktiv session finns redan.",
+  verification_failed: "Verifiering misslyckades. Försök igen.",
+  strategy_for_user_invalid: "Inloggningsmetoden stöds inte för det här kontot.",
+  not_allowed_access: "Åtkomst nekad.",
+};
+
+function clerkErrorMessage(code: string | undefined): string {
+  if (!code) return "Något gick fel. Försök igen.";
+  return CLERK_ERROR_MESSAGES[code] ?? `Något gick fel. Försök igen. (${code})`;
+}
+
 export default function AuthPageClient() {
+  const { isSignedIn } = useAuth();
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
   const router = useRouter();
@@ -49,14 +68,18 @@ export default function AuthPageClient() {
         identifier: emailAddress,
         signUpIfMissing: true,
       });
+
       if (createError) {
-        setFeedBack("Något gick fel. Försök igen.");
+        const code = isClerkAPIResponseError(createError) ? createError.errors[0]?.code : undefined;
+        setFeedBack(clerkErrorMessage(code));
         return;
       }
 
       const { error: sendError } = await signIn.emailCode.sendCode();
+
       if (sendError) {
-        setFeedBack("Kunde inte skicka koden. Försök igen.");
+        const code = isClerkAPIResponseError(sendError) ? sendError.errors[0]?.code : undefined;
+        setFeedBack(clerkErrorMessage(code));
         return;
       }
 
@@ -71,23 +94,25 @@ export default function AuthPageClient() {
     setFeedBack("");
     setLoading("verify");
     const { error } = await signIn.emailCode.verifyCode({ code });
-    const clerkCode = isClerkAPIResponseError(error)
-      ? error.errors[0]?.code
-      : undefined;
+    const clerkCode =
+      error && isClerkAPIResponseError(error)
+        ? error.errors[0]?.code
+        : undefined;
 
     if (error) {
-      if (clerkCode === "sign_up_if_missing_transfer") {
-        await handleTransfer();
+      if (isSignedIn) {
+        router.push("/");
         return;
       }
 
-      if (clerkCode === "form_code_incorrect") {
-        setFeedBack("Felaktig kod. Kontrollera och försök igen.");
-      } else if (clerkCode === "verification_expired") {
-        setFeedBack("Koden har gått ut. Begär en ny kod.");
-      } else {
-        setFeedBack("Något gick fel. Försök igen.");
+      if (clerkCode === "sign_up_if_missing_transfer") {
+        await handleTransfer();
+        setLoading(null);
+        return;
       }
+
+      setFeedBack(clerkErrorMessage(clerkCode));
+      setLoading(null);
       return;
     }
 
@@ -103,7 +128,7 @@ export default function AuthPageClient() {
         await signIn.mfa.sendEmailCode();
       }
     } else {
-      setFeedBack("Något gick fel. Försök igen.");
+      setFeedBack(clerkErrorMessage(undefined));
     }
     setLoading(null);
   };
@@ -111,14 +136,15 @@ export default function AuthPageClient() {
   const handleTransfer = async () => {
     const { error } = await signUp.create({ transfer: true });
     if (error) {
-      setFeedBack("Något gick fel vid registrering. Försök igen.");
+      const code = isClerkAPIResponseError(error) ? error.errors[0]?.code : undefined;
+      setFeedBack(clerkErrorMessage(code));
       return;
     }
 
     if (signUp.status === "complete") {
       await finalizeSignUp();
     } else {
-      setFeedBack("Något gick fel. Försök igen.");
+      setFeedBack(clerkErrorMessage(undefined));
     }
   };
 
