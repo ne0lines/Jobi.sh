@@ -1,0 +1,163 @@
+const JOBISH_STORE_REPORT_JOB = "JOBISH_STORE_REPORT_JOB";
+const JOBISH_GET_REPORT_JOB = "JOBISH_GET_REPORT_JOB";
+const JOBISH_CLEAR_REPORT_JOB = "JOBISH_CLEAR_REPORT_JOB";
+const JOBISH_OPEN_AF_REPORT_PAGE = "JOBISH_OPEN_AF_REPORT_PAGE";
+const JOBISH_FILL_PENDING_REPORT_JOB = "JOBISH_FILL_PENDING_REPORT_JOB";
+const JOBISH_REGISTER_ORIGIN = "JOBISH_REGISTER_ORIGIN";
+const JOBISH_OPEN_IMPORT_PAGE = "JOBISH_OPEN_IMPORT_PAGE";
+const JOBISH_GET_PREFERRED_ORIGIN = "JOBISH_GET_PREFERRED_ORIGIN";
+const PENDING_JOB_STORAGE_KEY = "jobishPendingActivityReportJob";
+const PREFERRED_JOBISH_ORIGIN_KEY = "jobishPreferredOrigin";
+const AF_REPORT_URL = "https://arbetsformedlingen.se/for-arbetssokande/mina-sidor/aktivitetsrapportera/lagg-till-aktivitet";
+const DEFAULT_JOBISH_ORIGIN = "https://jobi.sh";
+const JOBISH_URL_PATTERNS = [
+  "http://localhost:3000/*",
+  "http://127.0.0.1:3000/*",
+  "https://jobi.sh/*",
+  "https://*.jobi.sh/*",
+];
+
+async function setPendingJob(payload) {
+  await chrome.storage.local.set({
+    [PENDING_JOB_STORAGE_KEY]: {
+      ...payload,
+      storedAt: Date.now(),
+    },
+  });
+}
+
+async function getPendingJob() {
+  const result = await chrome.storage.local.get(PENDING_JOB_STORAGE_KEY);
+  return result[PENDING_JOB_STORAGE_KEY] ?? null;
+}
+
+async function clearPendingJob() {
+  await chrome.storage.local.remove(PENDING_JOB_STORAGE_KEY);
+}
+
+async function setPreferredJobishOrigin(origin) {
+  await chrome.storage.local.set({
+    [PREFERRED_JOBISH_ORIGIN_KEY]: origin,
+  });
+}
+
+async function getPreferredJobishOrigin() {
+  const result = await chrome.storage.local.get(PREFERRED_JOBISH_ORIGIN_KEY);
+  return result[PREFERRED_JOBISH_ORIGIN_KEY] ?? null;
+}
+
+function getOriginFromUrl(url) {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveJobishOrigin() {
+  const tabs = await chrome.tabs.query({ url: JOBISH_URL_PATTERNS });
+  const activeTab = tabs.find((tab) => tab.active) ?? tabs[0];
+  const tabOrigin = activeTab?.url ? getOriginFromUrl(activeTab.url) : null;
+
+  if (tabOrigin) {
+    await setPreferredJobishOrigin(tabOrigin);
+    return tabOrigin;
+  }
+
+  return (await getPreferredJobishOrigin()) ?? DEFAULT_JOBISH_ORIGIN;
+}
+
+async function openJobImportPage(sourceUrl) {
+  const origin = await resolveJobishOrigin();
+  const importUrl = new URL("/jobb/new", origin);
+  importUrl.searchParams.set("url", sourceUrl);
+
+  const matchingTabs = await chrome.tabs.query({ url: `${origin}/*` });
+  const matchingTab = matchingTabs.find((tab) => tab.id);
+
+  if (matchingTab?.id) {
+    await chrome.tabs.update(matchingTab.id, { active: true, url: importUrl.toString() });
+    if (matchingTab.windowId) {
+      await chrome.windows.update(matchingTab.windowId, { focused: true });
+    }
+    return matchingTab;
+  }
+
+  return await chrome.tabs.create({ url: importUrl.toString(), active: true });
+}
+
+async function openAfReportPage() {
+  const existingTabs = await chrome.tabs.query({ url: `${AF_REPORT_URL}*` });
+  const existingTab = existingTabs[0];
+
+  if (existingTab?.id) {
+    await chrome.tabs.update(existingTab.id, { active: true, url: AF_REPORT_URL });
+    if (existingTab.windowId) {
+      await chrome.windows.update(existingTab.windowId, { focused: true });
+    }
+    return existingTab;
+  }
+
+  return await chrome.tabs.create({ url: AF_REPORT_URL, active: true });
+}
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status !== "complete" || !tab.url?.startsWith(AF_REPORT_URL)) {
+    return;
+  }
+
+  chrome.tabs.sendMessage(tabId, { type: JOBISH_FILL_PENDING_REPORT_JOB }).catch(() => {
+    return undefined;
+  });
+});
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (!message?.type) {
+    return undefined;
+  }
+
+  void (async () => {
+    try {
+      switch (message.type) {
+        case JOBISH_STORE_REPORT_JOB:
+          await setPendingJob(message.payload);
+          await openAfReportPage();
+          sendResponse({ ok: true });
+          return;
+        case JOBISH_GET_REPORT_JOB:
+          sendResponse({ ok: true, job: await getPendingJob() });
+          return;
+        case JOBISH_CLEAR_REPORT_JOB:
+          await clearPendingJob();
+          sendResponse({ ok: true });
+          return;
+        case JOBISH_REGISTER_ORIGIN:
+          if (typeof message.origin === "string" && message.origin) {
+            await setPreferredJobishOrigin(message.origin);
+          }
+          sendResponse({ ok: true });
+          return;
+        case JOBISH_GET_PREFERRED_ORIGIN:
+          sendResponse({ ok: true, origin: await resolveJobishOrigin() });
+          return;
+        case JOBISH_OPEN_AF_REPORT_PAGE:
+          await openAfReportPage();
+          sendResponse({ ok: true });
+          return;
+        case JOBISH_OPEN_IMPORT_PAGE:
+          await openJobImportPage(message.sourceUrl);
+          sendResponse({ ok: true });
+          return;
+        default:
+          sendResponse({ ok: false, error: `Unknown message type: ${message.type}` });
+      }
+    } catch (error) {
+      sendResponse({
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  })();
+
+  return true;
+});
