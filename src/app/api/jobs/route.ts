@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import type { CreateJobInput, Job } from "@/app/types";
 import { JobStatus } from "@/app/types";
 
@@ -33,10 +35,17 @@ export async function GET(): Promise<NextResponse<JobsResponse | { error: string
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
-  const jobs = await prisma.job.findMany({
-    where: { userId },
-    include: { contactPerson: true, timeline: true },
-  });
+  let jobs;
+  try {
+    jobs = await prisma.job.findMany({
+      where: { userId },
+      include: { contactPerson: true, timeline: true },
+    });
+  } catch (err) {
+    logger.error("Failed to fetch jobs", { userId });
+    Sentry.captureException(err, { tags: { route: "GET /api/jobs" } });
+    return NextResponse.json({ error: "Det gick inte att hämta jobben." }, { status: 500 });
+  }
 
   const applications: Job[] = jobs.map((job) => ({
     id: job.id,
@@ -69,26 +78,33 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
     return NextResponse.json({ error: "Jobbtitel och företag måste anges." }, { status: 400 });
   }
 
-  const job = await prisma.job.create({
-    data: {
-      userId,
-      title: payload.title,
-      company: payload.company,
-      location: payload.location ?? "",
-      employmentType: payload.employmentType ?? "",
-      workload: payload.workload ?? "",
-      jobUrl: payload.jobUrl ?? "",
-      notes: payload.notes ?? "",
-      status: appStatusToPrisma[payload.status] as never ?? "saved",
-      contactPerson: payload.contactPerson
-        ? { create: payload.contactPerson }
-        : undefined,
-      timeline: payload.timeline?.length
-        ? { create: payload.timeline }
-        : undefined,
-    },
-    include: { contactPerson: true, timeline: true },
-  });
+  let job;
+  try {
+    job = await prisma.job.create({
+      data: {
+        userId,
+        title: payload.title,
+        company: payload.company,
+        location: payload.location ?? "",
+        employmentType: payload.employmentType ?? "",
+        workload: payload.workload ?? "",
+        jobUrl: payload.jobUrl ?? "",
+        notes: payload.notes ?? "",
+        status: appStatusToPrisma[payload.status] as never ?? "saved",
+        contactPerson: payload.contactPerson
+          ? { create: payload.contactPerson }
+          : undefined,
+        timeline: payload.timeline?.length
+          ? { create: payload.timeline }
+          : undefined,
+      },
+      include: { contactPerson: true, timeline: true },
+    });
+  } catch (err) {
+    logger.error("Failed to create job", { userId });
+    Sentry.captureException(err, { tags: { route: "POST /api/jobs" } });
+    return NextResponse.json({ error: "Det gick inte att skapa jobbet." }, { status: 500 });
+  }
 
   return NextResponse.json({
     id: job.id,

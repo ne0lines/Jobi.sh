@@ -1,6 +1,8 @@
 import { UserRole } from "@/app/generated/prisma/enums";
 import { TERMS_VERSION } from "@/lib/legal";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
+import * as Sentry from "@sentry/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -33,19 +35,26 @@ export async function GET(
     );
   }
 
-  const dbData = await prisma.user.findUnique({
-    where: { email },
-    select: {
-      complete: true,
-      email: true,
-      id: true,
-      name: true,
-      profession: true,
-      role: true,
-      termsAcceptedAt: true,
-      termsVersion: true,
-    },
-  });
+  let dbData;
+  try {
+    dbData = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        complete: true,
+        email: true,
+        id: true,
+        name: true,
+        profession: true,
+        role: true,
+        termsAcceptedAt: true,
+        termsVersion: true,
+      },
+    });
+  } catch (err) {
+    logger.error("Failed to fetch user profile", { userId: clerkUser.id });
+    Sentry.captureException(err, { tags: { route: "GET /api/user" } });
+    return NextResponse.json({ error: "Det gick inte att hämta profilen." }, { status: 500 });
+  }
 
   if (!dbData) {
     return NextResponse.redirect(new URL("/konto/create-profile", req.url));
@@ -117,26 +126,33 @@ export async function POST(
     termsVersion: true,
   } as const;
 
-  const userData = await prisma.user.upsert({
-    where: { email },
-    create: {
-      id: clerkUser.id,
-      email,
-      name,
-      profession,
-      complete: true,
-      termsAcceptedAt: new Date(),
-      termsVersion: TERMS_VERSION,
-    },
-    update: {
-      name,
-      profession,
-      complete: true,
-      termsAcceptedAt: new Date(),
-      termsVersion: TERMS_VERSION,
-    },
-    select,
-  });
+  let userData;
+  try {
+    userData = await prisma.user.upsert({
+      where: { email },
+      create: {
+        id: clerkUser.id,
+        email,
+        name,
+        profession,
+        complete: true,
+        termsAcceptedAt: new Date(),
+        termsVersion: TERMS_VERSION,
+      },
+      update: {
+        name,
+        profession,
+        complete: true,
+        termsAcceptedAt: new Date(),
+        termsVersion: TERMS_VERSION,
+      },
+      select,
+    });
+  } catch (err) {
+    logger.error("Failed to upsert user profile", { userId: clerkUser.id });
+    Sentry.captureException(err, { tags: { route: "POST /api/user" } });
+    return NextResponse.json({ error: "Det gick inte att spara profilen." }, { status: 500 });
+  }
 
   return NextResponse.json(userData as User, { status: 201 });
 }

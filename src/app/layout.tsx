@@ -4,6 +4,7 @@ import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { SentryUserProvider } from "@/components/providers/sentry-user-provider";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
@@ -67,9 +68,11 @@ export default function RootLayout({
       >
         <ClerkProvider>
           <QueryProvider>
-            <RegisterServiceWorker />
-            <AppNavigationShell>{children}</AppNavigationShell>
-            <Toaster />
+            <SentryUserProvider>
+              <RegisterServiceWorker />
+              <AppNavigationShell>{children}</AppNavigationShell>
+              <Toaster />
+            </SentryUserProvider>
           </QueryProvider>
         </ClerkProvider>
       </body>

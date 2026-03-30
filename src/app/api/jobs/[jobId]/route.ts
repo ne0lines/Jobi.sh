@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import type { Job, UpdateJobInput } from "@/app/types";
 import { JobStatus } from "@/app/types";
 
@@ -50,10 +52,17 @@ export async function GET(
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
-  const job = await prisma.job.findFirst({
-    where: { id: jobId, userId },
-    include: { contactPerson: true, timeline: true },
-  });
+  let job;
+  try {
+    job = await prisma.job.findFirst({
+      where: { id: jobId, userId },
+      include: { contactPerson: true, timeline: true },
+    });
+  } catch (err) {
+    logger.error("Failed to fetch job", { userId, jobId });
+    Sentry.captureException(err, { tags: { route: "GET /api/jobs/[jobId]" } });
+    return NextResponse.json({ error: "Det gick inte att hämta jobbet." }, { status: 500 });
+  }
 
   if (!job) {
     return NextResponse.json({ error: "Jobbet kunde inte hittas." }, { status: 404 });
@@ -95,7 +104,14 @@ export async function PATCH(
 
   const updates = (await request.json()) as UpdateJobInput;
 
-  const existing = await prisma.job.findFirst({ where: { id: jobId, userId } });
+  let existing;
+  try {
+    existing = await prisma.job.findFirst({ where: { id: jobId, userId } });
+  } catch (err) {
+    logger.error("Failed to fetch job for update", { userId, jobId });
+    Sentry.captureException(err, { tags: { route: "PATCH /api/jobs/[jobId]" } });
+    return NextResponse.json({ error: "Det gick inte att hämta jobbet." }, { status: 500 });
+  }
 
   if (!existing) {
     return NextResponse.json({ error: "Jobbet kunde inte hittas." }, { status: 404 });
@@ -104,38 +120,45 @@ export async function PATCH(
   const nextPrismaStatus = updates.status !== undefined ? appStatusToPrisma[updates.status] : undefined;
   const statusChanged = nextPrismaStatus !== undefined && nextPrismaStatus !== existing.status;
 
-  const job = await prisma.job.update({
-    where: { id: jobId },
-    data: {
-      ...(updates.title !== undefined && { title: updates.title }),
-      ...(updates.company !== undefined && { company: updates.company }),
-      ...(updates.location !== undefined && { location: updates.location }),
-      ...(updates.employmentType !== undefined && { employmentType: updates.employmentType }),
-      ...(updates.workload !== undefined && { workload: updates.workload }),
-      ...(updates.jobUrl !== undefined && { jobUrl: updates.jobUrl }),
-      ...(updates.notes !== undefined && { notes: updates.notes }),
-      ...(nextPrismaStatus !== undefined && { status: nextPrismaStatus as never }),
-      ...(updates.contactPerson !== undefined && {
-        contactPerson: {
-          upsert: {
-            create: updates.contactPerson,
-            update: updates.contactPerson,
-          },
-        },
-      }),
-      ...(updates.timeline !== undefined
-        ? { timeline: { deleteMany: {}, create: updates.timeline } }
-        : statusChanged && {
-            timeline: {
-              create: {
-                date: formatSwedishDate(new Date()),
-                event: statusTimelineEvent[nextPrismaStatus],
-              },
+  let job;
+  try {
+    job = await prisma.job.update({
+      where: { id: jobId },
+      data: {
+        ...(updates.title !== undefined && { title: updates.title }),
+        ...(updates.company !== undefined && { company: updates.company }),
+        ...(updates.location !== undefined && { location: updates.location }),
+        ...(updates.employmentType !== undefined && { employmentType: updates.employmentType }),
+        ...(updates.workload !== undefined && { workload: updates.workload }),
+        ...(updates.jobUrl !== undefined && { jobUrl: updates.jobUrl }),
+        ...(updates.notes !== undefined && { notes: updates.notes }),
+        ...(nextPrismaStatus !== undefined && { status: nextPrismaStatus as never }),
+        ...(updates.contactPerson !== undefined && {
+          contactPerson: {
+            upsert: {
+              create: updates.contactPerson,
+              update: updates.contactPerson,
             },
-          }),
-    },
-    include: { contactPerson: true, timeline: true },
-  });
+          },
+        }),
+        ...(updates.timeline !== undefined
+          ? { timeline: { deleteMany: {}, create: updates.timeline } }
+          : statusChanged && {
+              timeline: {
+                create: {
+                  date: formatSwedishDate(new Date()),
+                  event: statusTimelineEvent[nextPrismaStatus],
+                },
+              },
+            }),
+      },
+      include: { contactPerson: true, timeline: true },
+    });
+  } catch (err) {
+    logger.error("Failed to update job", { userId, jobId });
+    Sentry.captureException(err, { tags: { route: "PATCH /api/jobs/[jobId]" } });
+    return NextResponse.json({ error: "Det gick inte att uppdatera jobbet." }, { status: 500 });
+  }
 
   return NextResponse.json({
     id: job.id,
@@ -164,13 +187,26 @@ export async function DELETE(
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
-  const existing = await prisma.job.findFirst({ where: { id: jobId, userId } });
+  let existing;
+  try {
+    existing = await prisma.job.findFirst({ where: { id: jobId, userId } });
+  } catch (err) {
+    logger.error("Failed to fetch job for deletion", { userId, jobId });
+    Sentry.captureException(err, { tags: { route: "DELETE /api/jobs/[jobId]" } });
+    return NextResponse.json({ error: "Det gick inte att hämta jobbet." }, { status: 500 });
+  }
 
   if (!existing) {
     return NextResponse.json({ error: "Jobbet kunde inte hittas." }, { status: 404 });
   }
 
-  await prisma.job.delete({ where: { id: jobId } });
+  try {
+    await prisma.job.delete({ where: { id: jobId } });
+  } catch (err) {
+    logger.error("Failed to delete job", { userId, jobId });
+    Sentry.captureException(err, { tags: { route: "DELETE /api/jobs/[jobId]" } });
+    return NextResponse.json({ error: "Det gick inte att ta bort jobbet." }, { status: 500 });
+  }
 
   return NextResponse.json({ success: true });
 }
