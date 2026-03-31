@@ -8,6 +8,9 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
+  // Do not send PII — no user identity, no IP addresses stored
+  sendDefaultPii: false,
+
   // Performance: 100% in dev, 10% in production to stay within quota
   tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
 

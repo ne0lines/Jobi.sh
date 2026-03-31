@@ -63,7 +63,24 @@ export default function GDPRPage() {
       {/* 4 */}
       <Card>
         <CardHeader>
-          <CardTitle>4. Laglig grund</CardTitle>
+          <CardTitle>4. Felspårning och felsökning</CardTitle>
+        </CardHeader>
+        <CardContent className='space-y-2'>
+          <p>
+            Vi samlar in anonym data om tekniska fel för att förbättra appens
+            stabilitet. All data är helt anonym och kan inte användas för att
+            spåra eller identifiera dig som användare.
+          </p>
+          <p>
+            Land och region lagras som en del av felrapporten.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* 5 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>5. Laglig grund</CardTitle>
         </CardHeader>
         <CardContent className='space-y-2'>
           <p>
@@ -76,10 +93,10 @@ export default function GDPRPage() {
         </CardContent>
       </Card>
 
-      {/* 5 */}
+      {/* 6 */}
       <Card>
         <CardHeader>
-          <CardTitle>5. Dina rättigheter</CardTitle>
+          <CardTitle>6. Dina rättigheter</CardTitle>
         </CardHeader>
         <CardContent className='space-y-2'>
           <p>Du har rätt att:</p>
@@ -94,10 +111,10 @@ export default function GDPRPage() {
         </CardContent>
       </Card>
 
-      {/* 6 */}
+      {/* 7 */}
       <Card>
         <CardHeader>
-          <CardTitle>6. Säkerhet</CardTitle>
+          <CardTitle>7. Säkerhet</CardTitle>
         </CardHeader>
         <CardContent>
           <p>
