@@ -1,3 +1,4 @@
+import { ThemePreferenceCard } from '@/components/account/theme-preference-card';
 import { LogoutBtn } from '@/components/auth/logout-btn';
 import { auth } from '@clerk/nextjs/server';
 import { headers } from 'next/headers';
@@ -70,6 +71,7 @@ export default async function AccountPage() {
             </div>
           </dl>
         </article>
+        <ThemePreferenceCard />
         <article className='rounded-3xl border border-app-stroke bg-app-card p-5'>
           <dl className='space-y-3 text-base text-app-ink'>
             <dt className='font-semibold uppercase tracking-[0.08em] text-app-muted'>

@@ -35,16 +35,24 @@ const navItems = [
   },
 ] as const;
 
+const navShellClassName =
+  "rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))] dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(24,24,27,0.94),rgba(15,15,18,0.9))] dark:shadow-[0_10px_24px_rgba(0,0,0,0.28),0_28px_70px_rgba(0,0,0,0.46)] dark:ring-white/8 dark:supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(24,24,27,0.78),rgba(15,15,18,0.62))]";
+
+const navItemInactiveClassName =
+  "text-app-ink/72 hover:bg-white/34 hover:text-app-ink dark:text-white/62 dark:hover:bg-white/6 dark:hover:text-white";
+
+const navItemActiveClassName =
+  "border border-white/70 bg-white/76 text-app-primary shadow-[0_8px_18px_rgba(17,23,40,0.10)] dark:border-white/10 dark:bg-white/7 dark:text-app-primary dark:shadow-[0_10px_24px_rgba(0,0,0,0.34)]";
+
+const activityReportActiveClassName =
+  "border border-[#00005A] bg-[#00005A] text-white shadow-[0_8px_18px_rgba(0,0,90,0.24)] dark:border-white/10 dark:bg-white/7 dark:text-white dark:shadow-[0_10px_24px_rgba(0,0,0,0.34)]";
+
 function getNavItemClasses(isActive: boolean, isActivityReport: boolean) {
   if (isActivityReport) {
-    return isActive
-      ? "border border-[#00005A] bg-[#00005A] text-white shadow-[0_8px_18px_rgba(0,0,90,0.24)]"
-      : "text-app-ink/72 hover:bg-white/34 hover:text-app-ink";
+    return isActive ? activityReportActiveClassName : navItemInactiveClassName;
   }
 
-  return isActive
-    ? "border border-white/70 bg-white/76 text-app-primary shadow-[0_8px_18px_rgba(17,23,40,0.10)]"
-    : "text-app-ink/72 hover:bg-white/34 hover:text-app-ink";
+  return isActive ? navItemActiveClassName : navItemInactiveClassName;
 }
 
 function getNavIconClasses(isActive: boolean, isActivityReport: boolean) {
@@ -56,7 +64,7 @@ function getNavIconClasses(isActive: boolean, isActivityReport: boolean) {
     return "text-app-primary";
   }
 
-  return "text-app-ink/78";
+  return "text-app-ink/78 dark:text-white/70";
 }
 
 type AppNavigationShellProps = {
@@ -80,10 +88,10 @@ export function AppNavigationShell({
         <div className="mx-auto w-full max-w-270 md:px-4">
           <div className="md:flex md:items-start md:gap-8">
             <aside className="hidden md:block md:w-72 md:shrink-0 md:py-4">
-              <div className="fixed top-4 flex h-[calc(100svh-2rem)] w-72 flex-col rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] p-4 shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))]">
+              <div className={cn(navShellClassName, "fixed top-4 flex h-[calc(100svh-2rem)] w-72 flex-col p-4")}>
                 <Link
                   href="/"
-                  className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30"
+                  className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30 dark:hover:bg-white/4"
                 >
                   <h1 className="w-full text-[3.5rem] leading-none tracking-[-0.04em]">
                     Jobi<span className="text-app-primary">.sh</span>
@@ -128,14 +136,14 @@ export function AppNavigationShell({
                   })}
                 </nav>
 
-                <div className="mt-6 border-t border-black/6 pt-5">
+                <div className="mt-6 border-t border-black/6 pt-5 dark:border-white/8">
                   <Link
                     href="/extension"
                     className={cn(
                       "flex items-center gap-3 rounded-[1.35rem] px-4 py-3 text-sm font-medium tracking-[0.01em] transition duration-200",
                       pathname.startsWith("/extension")
-                        ? "border border-white/70 bg-white/76 text-app-primary shadow-[0_8px_18px_rgba(17,23,40,0.10)]"
-                        : "text-app-ink/72 hover:bg-white/34 hover:text-app-ink",
+                        ? navItemActiveClassName
+                        : navItemInactiveClassName,
                     )}
                   >
                     <Puzzle
@@ -143,7 +151,7 @@ export function AppNavigationShell({
                         "size-5 shrink-0",
                         pathname.startsWith("/extension")
                           ? "text-app-primary"
-                          : "text-app-ink/78",
+                          : "text-app-ink/78 dark:text-white/70",
                       )}
                       strokeWidth={2.1}
                     />
@@ -172,7 +180,10 @@ export function AppNavigationShell({
           <div className="mx-auto w-full max-w-300">
             <nav
               aria-label="Primär navigation"
-              className="pointer-events-auto mx-auto flex w-full items-center justify-between rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] p-2 shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))]"
+              className={cn(
+                navShellClassName,
+                "pointer-events-auto mx-auto flex w-full items-center justify-between p-2",
+              )}
             >
               {navItems.map((item) => {
                 const isActive = item.match(pathname);

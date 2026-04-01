@@ -17,6 +17,17 @@ type User = {
   termsVersion: string | null;
 };
 
+const userSelect = {
+  complete: true,
+  email: true,
+  id: true,
+  name: true,
+  profession: true,
+  role: true,
+  termsAcceptedAt: true,
+  termsVersion: true,
+} as const;
+
 export async function GET(
   req: NextRequest,
 ): Promise<NextResponse<User | { error: string } | unknown>> {
@@ -39,16 +50,7 @@ export async function GET(
   try {
     dbData = await prisma.user.findUnique({
       where: { email },
-      select: {
-        complete: true,
-        email: true,
-        id: true,
-        name: true,
-        profession: true,
-        role: true,
-        termsAcceptedAt: true,
-        termsVersion: true,
-      },
+      select: userSelect,
     });
   } catch (err) {
     logger.error("Failed to fetch user profile", { userId: clerkUser.id });
@@ -115,17 +117,6 @@ export async function POST(
     );
   }
 
-  const select = {
-    complete: true,
-    email: true,
-    id: true,
-    name: true,
-    profession: true,
-    role: true,
-    termsAcceptedAt: true,
-    termsVersion: true,
-  } as const;
-
   let userData;
   try {
     userData = await prisma.user.upsert({
@@ -146,7 +137,7 @@ export async function POST(
         termsAcceptedAt: new Date(),
         termsVersion: TERMS_VERSION,
       },
-      select,
+      select: userSelect,
     });
   } catch (err) {
     logger.error("Failed to upsert user profile", { userId: clerkUser.id });

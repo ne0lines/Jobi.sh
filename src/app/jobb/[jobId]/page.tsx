@@ -1,6 +1,5 @@
 "use client";
 
-import type { Job } from "@/app/types";
 import { Btn } from "@/components/ui/btn";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Loader } from "@/components/ui/loader";
@@ -123,7 +122,7 @@ export default function JobDetailPage({
                       <strong>E-post:</strong>{" "}
                       <Link
                         href={`mailto:${job.contactPerson.email}`}
-                        className="font-medium text-app-cyan-strong"
+                        className="font-medium text-app-primary"
                       >
                         {job.contactPerson.email}
                       </Link>
@@ -134,7 +133,7 @@ export default function JobDetailPage({
                       <strong>Telefon:</strong>{" "}
                       <Link
                         href={`tel:${job.contactPerson.phone}`}
-                        className="font-medium text-app-cyan-strong"
+                        className="font-medium text-app-primary"
                       >
                         {job.contactPerson.phone}
                       </Link>
@@ -212,7 +211,7 @@ export default function JobDetailPage({
           title="Ta bort jobb?"
           description="Det här går inte att ångra. Jobbet och all tillhörande information tas bort permanent."
           confirmLabel="Ta bort"
-          onConfirm={() => void handleDelete()}
+          onConfirm={() => handleDelete()}
           isLoading={deleteJobMutation.isPending}
         />
       </section>

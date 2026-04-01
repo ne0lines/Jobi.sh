@@ -1,13 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { PostHogPageView } from "@/components/analytics/posthog-page-view";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
+import {
+  DEFAULT_THEME_PREFERENCE,
+  themeInitializationScript,
+} from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 
@@ -65,19 +71,29 @@ export default function RootLayout({
 }>) {
   return (
     <PostHogProvider>
-      <html lang="sv" className={cn("font-sans", geist.variable)}>
+      <html
+        lang="sv"
+        className={cn("font-sans", geist.variable)}
+        style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
+        suppressHydrationWarning
+      >
         <body
           className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}
         >
+          <Script id="theme-preference-init" strategy="beforeInteractive">
+            {themeInitializationScript}
+          </Script>
           <Suspense fallback={null}>
             <PostHogPageView />
           </Suspense>
           <ClerkProvider>
-            <QueryProvider>
-              <RegisterServiceWorker />
-              <AppNavigationShell>{children}</AppNavigationShell>
-              <Toaster />
-            </QueryProvider>
+            <ThemeProvider>
+              <QueryProvider>
+                <RegisterServiceWorker />
+                <AppNavigationShell>{children}</AppNavigationShell>
+                <Toaster />
+              </QueryProvider>
+            </ThemeProvider>
           </ClerkProvider>
         </body>
       </html>

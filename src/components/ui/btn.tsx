@@ -42,13 +42,13 @@ const baseClassName =
 
 const variantClassNames: Record<BtnVariant, string> = {
   primary:
-    "bg-gradient-to-r from-app-primary to-app-primary-strong text-white shadow-lg visited:text-white",
+    "bg-[linear-gradient(90deg,#6e33eb_0%,#8148ff_100%)] text-white shadow-[0_10px_22px_rgba(110,51,235,0.26)] visited:text-white",
   secondary: "border border-app-stroke bg-white/70 text-app-ink",
   tertiary:
-    "bg-gradient-to-r from-app-green-strong to-app-green-strong text-white/70 shadow-lg visited:text-white",
+    "bg-[linear-gradient(90deg,#1f7a43_0%,#1f7a43_100%)] text-white shadow-[0_10px_22px_rgba(31,122,67,0.22)] visited:text-white",
   muted:
     "border border-app-stroke bg-app-muted-surface text-app-muted-ink hover:bg-app-muted-hover",
-  red: "bg-gradient-to-r from-app-red to-app-red-strong text-white shadow-lg visited:text-white",
+  red: "bg-[linear-gradient(90deg,#ff4d4f_0%,#d32f2f_100%)] text-white shadow-[0_10px_22px_rgba(211,47,47,0.22)] visited:text-white",
 };
 
 function cn(...values: Array<string | undefined | false>) {
