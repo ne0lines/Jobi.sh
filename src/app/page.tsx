@@ -17,8 +17,8 @@ export default async function Home() {
   const queryClient = makeQueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: jobKeys.all,
-    queryFn: getJobsServer,
+    queryKey: jobKeys.all(),
+    queryFn: () => getJobsServer(),
   });
 
   return (

@@ -16,8 +16,8 @@ export default async function JobsPage() {
   const queryClient = makeQueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: jobKeys.all,
-    queryFn: getJobsServer,
+    queryKey: jobKeys.all({ includeArchived: true }),
+    queryFn: () => getJobsServer({ includeArchived: true }),
   });
 
   return (

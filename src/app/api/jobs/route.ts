@@ -29,17 +29,22 @@ const appStatusToPrisma: Record<string, string> = {
   [JobStatus.CLOSED]: "closed",
 };
 
-export async function GET(): Promise<NextResponse<JobsResponse | { error: string }>> {
+export async function GET(request: NextRequest): Promise<NextResponse<JobsResponse | { error: string }>> {
   const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
+  const includeArchived = request.nextUrl.searchParams.get("includeArchived") === "true";
+
   let jobs;
   try {
     jobs = await prisma.job.findMany({
-      where: { userId },
+      where: {
+        userId,
+        ...(includeArchived ? {} : { archivedAt: null }),
+      },
       include: { contactPerson: true, timeline: true },
     });
   } catch (err) {
@@ -59,6 +64,7 @@ export async function GET(): Promise<NextResponse<JobsResponse | { error: string
     jobUrl: job.jobUrl,
     notes: job.notes,
     status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
+    archivedAt: job.archivedAt?.toISOString() ?? null,
     contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
     timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
   }));
@@ -122,7 +128,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
         $process_person_profile: false, // match client-side person_profiles: "never"
       },
     });
-    await posthog.flushAsync();
+    await posthog.flush();
   } catch { /* analytics failure must never affect the response */ }
 
   return NextResponse.json({
@@ -136,6 +142,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
     jobUrl: job.jobUrl,
     notes: job.notes,
     status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
+    archivedAt: job.archivedAt?.toISOString() ?? null,
     contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
     timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
   } satisfies Job, { status: 201 });

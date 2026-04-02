@@ -1,4 +1,9 @@
+type JobListOptions = {
+  includeArchived?: boolean;
+};
+
 export const jobKeys = {
-  all: ["jobs"] as const,
-  detail: (id: string) => ["jobs", id] as const,
+  root: ["jobs"] as const,
+  all: (options: JobListOptions = {}) => ["jobs", "list", { includeArchived: Boolean(options.includeArchived) }] as const,
+  detail: (id: string) => ["jobs", "detail", id] as const,
 };

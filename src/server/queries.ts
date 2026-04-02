@@ -12,12 +12,19 @@ const prismaStatusToAppStatus: Record<string, JobStatus> = {
   closed: JobStatus.CLOSED,
 };
 
-export async function getJobsServer(): Promise<Job[]> {
+type GetJobsServerOptions = {
+  includeArchived?: boolean;
+};
+
+export async function getJobsServer(options: GetJobsServerOptions = {}): Promise<Job[]> {
   const { userId } = await auth();
   if (!userId) return [];
 
   const jobs = await prisma.job.findMany({
-    where: { userId },
+    where: {
+      userId,
+      ...(options.includeArchived ? {} : { archivedAt: null }),
+    },
     include: { contactPerson: true, timeline: true },
   });
 
@@ -32,6 +39,7 @@ export async function getJobsServer(): Promise<Job[]> {
     jobUrl: job.jobUrl,
     notes: job.notes ?? undefined,
     status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
+    archivedAt: job.archivedAt?.toISOString() ?? null,
     contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
     timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
   }));

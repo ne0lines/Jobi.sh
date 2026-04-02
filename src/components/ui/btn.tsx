@@ -28,10 +28,8 @@ type SharedProps = {
   variant?: BtnVariant
 }
 
-type LinkBtnProps = SharedProps & {
+type LinkBtnProps = SharedProps & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof SharedProps | 'href'> & {
   href: string;
-  target?: React.HTMLAttributeAnchorTarget;
-  rel?: string;
 };
 
 type ButtonBtnProps = SharedProps &
@@ -169,7 +167,7 @@ export function Btn({
   );
 
   if (typeof props.href === "string") {
-    const { href, rel, target } = props;
+    const { href, rel, target, ...linkProps } = props;
     const isExternal =
       href.startsWith("http://") || href.startsWith("https://");
 
@@ -178,6 +176,7 @@ export function Btn({
         <a
           className={classes}
           href={href}
+          {...linkProps}
           rel={rel}
           style={resolvedStyle}
           target={target}
