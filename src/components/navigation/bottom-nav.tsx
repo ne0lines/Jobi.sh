@@ -160,7 +160,7 @@ export function AppNavigationShell({
                 </div>
 
                 <div className="mt-auto flex flex-col gap-3 pt-6">
-                  <Btn className="w-full" href="/jobb/new" icon={Plus}>
+                  <Btn className="w-full" href="/jobb/new" icon={Plus} track="add_job_click">
                     Lägg till jobb
                   </Btn>
                   <LogoutBtn className="w-full" />

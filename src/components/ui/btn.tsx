@@ -1,5 +1,8 @@
+"use client"
+
 import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
+import { trackButtonEvent, type TrackableEvent } from '@/lib/analytics'
 
 type BtnVariant = "primary" | "secondary" | "tertiary" | "red" | "muted";
 type BtnIconPosition = "left" | "right";
@@ -21,6 +24,7 @@ type SharedProps = {
   hex?: string
   icon?: BtnIconProp
   style?: React.CSSProperties
+  track?: TrackableEvent
   variant?: BtnVariant
 }
 
@@ -118,6 +122,7 @@ export function Btn({
   hex,
   icon,
   style,
+  track,
   variant = "primary",
   ...props
 }: BtnProps) {
@@ -176,6 +181,7 @@ export function Btn({
           rel={rel}
           style={resolvedStyle}
           target={target}
+          onClick={() => { if (track) trackButtonEvent(track); }}
         >
           {content}
         </a>
@@ -183,14 +189,28 @@ export function Btn({
     }
 
     return (
-      <Link className={classes} href={href} style={resolvedStyle}>
+      <Link
+        className={classes}
+        href={href}
+        style={resolvedStyle}
+        onClick={() => { if (track) trackButtonEvent(track); }}
+      >
         {content}
       </Link>
     );
   }
 
+  const { onClick, ...buttonProps } = props as ButtonBtnProps;
   return (
-    <button className={classes} style={resolvedStyle} {...props}>
+    <button
+      className={classes}
+      style={resolvedStyle}
+      {...buttonProps}
+      onClick={(e) => {
+        if (track) trackButtonEvent(track);
+        onClick?.(e);
+      }}
+    >
       {content}
     </button>
   );

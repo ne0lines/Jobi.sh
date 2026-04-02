@@ -191,7 +191,7 @@ export default function JobDetailPage({
           <StatusSelect jobId={job.id} initialStatus={job.status} />
         </div>
         <div className="flex w-full gap-4">
-          <Btn variant="secondary" className="w-1/2" href="/">
+          <Btn variant="secondary" className="w-1/2" href="/" track="back_click">
             Tillbaka
           </Btn>
           <Btn

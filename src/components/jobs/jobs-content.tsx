@@ -1,7 +1,6 @@
 "use client";
 
 import { useJobs } from "@/lib/hooks/jobs";
-import { trackEvent } from "@/lib/analytics";
 import { Btn } from "@/components/ui/btn";
 import { DeleteJobBtn } from "@/components/jobs/delete-job-btn";
 import { Plus } from "lucide-react";
@@ -14,7 +13,7 @@ export function JobsContent() {
     <section className="flex w-full flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-display text-4xl sm:text-6xl">Jobb</h1>
-        <Btn href="/jobb/new" icon={Plus} onClick={() => trackEvent("add_job_click", { location: "jobs-list" })}>Lägg till</Btn>
+        <Btn href="/jobb/new" icon={Plus} track="add_job_click">Lägg till</Btn>
       </div>
 
       {jobs.length === 0 ? (

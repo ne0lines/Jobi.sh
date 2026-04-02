@@ -460,10 +460,10 @@ export default function EditJobPage({
             </label>
 
             <div className="flex gap-4">
-              <Btn href={`/jobb/${jobId}`} variant="secondary" className="w-1/2">
+              <Btn href={`/jobb/${jobId}`} variant="secondary" className="w-1/2" track="edit_job_cancel_click">
                 Avbryt
               </Btn>
-              <Btn disabled={updateJobMutation.isPending} type="submit" className="w-full" icon={Save}>
+              <Btn disabled={updateJobMutation.isPending} type="submit" className="w-full" icon={Save} track="save_job_click">
                 {updateJobMutation.isPending ? "Sparar..." : "Spara ändringar"}
               </Btn>
             </div>

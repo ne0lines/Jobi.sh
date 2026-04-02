@@ -180,13 +180,14 @@ export default function AuthPageClient() {
                   <p className="mt-2 text-sm text-red-500">{feedback}</p>
                 )}
               </div>
-              <Btn className="w-full" disabled={loading !== null} type="submit">
+              <Btn className="w-full" disabled={loading !== null} track="auth_verify_click" type="submit">
                 {loading === "verify" ? "Verifierar..." : "Fortsätt"}
               </Btn>
               <div className="flex items-center justify-center gap-4">
                 <Btn
                   type="button"
                   disabled={loading !== null}
+                  track="auth_resend_code_click"
                   onClick={async () => {
                     setFeedBack("");
                     setLoading("resend");
@@ -200,6 +201,7 @@ export default function AuthPageClient() {
                 <Btn
                   type="button"
                   disabled={loading !== null}
+                  track="auth_reset_click"
                   onClick={() => {
                     signIn.reset();
                     setVerifying(false);
@@ -252,7 +254,7 @@ export default function AuthPageClient() {
               </p>
             ) : null}
 
-            <Btn className="w-full" disabled={loading !== null} type="submit">
+            <Btn className="w-full" disabled={loading !== null} track="auth_submit_click" type="submit">
               {loading === "submit" ? "Loggar in..." : "Fortsätt"}
             </Btn>
             <div id="clerk-captcha" />

@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
+import { getPageName } from "@/lib/page-names";
 
 export function PostHogPageView() {
   const pathname = usePathname();
@@ -13,7 +14,10 @@ export function PostHogPageView() {
     if (pathname && posthog) {
       const qs = searchParams.toString();
       const url = window.location.origin + pathname + (qs ? `?${qs}` : "");
-      posthog.capture("$pageview", { $current_url: url });
+      posthog.capture("$pageview", {
+        $current_url: url,
+        page_name: getPageName(pathname),
+      });
     }
   }, [pathname, searchParams, posthog]);
 

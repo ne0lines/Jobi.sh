@@ -8,6 +8,7 @@ import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { PostHogPageView } from "@/components/analytics/posthog-page-view";
+import { PostHogServerPageView } from "@/components/analytics/posthog-server-page-view";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
 import {
@@ -83,6 +84,7 @@ export default function RootLayout({
           <Script id="theme-preference-init" strategy="beforeInteractive">
             {themeInitializationScript}
           </Script>
+          <PostHogServerPageView />
           <Suspense fallback={null}>
             <PostHogPageView />
           </Suspense>
