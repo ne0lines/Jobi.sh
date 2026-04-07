@@ -11,6 +11,7 @@ import { PostHogPageView } from "@/components/analytics/posthog-page-view";
 import { PostHogServerPageView } from "@/components/analytics/posthog-server-page-view";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
+import { CookieNotice } from "@/components/gdpr/cookie-notice";
 import {
   DEFAULT_THEME_PREFERENCE,
   themeInitializationScript,
@@ -94,6 +95,7 @@ export default function RootLayout({
                 <RegisterServiceWorker />
                 <AppNavigationShell>{children}</AppNavigationShell>
                 <Toaster />
+                <CookieNotice />
               </QueryProvider>
             </ThemeProvider>
           </ClerkProvider>
