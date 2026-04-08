@@ -1,7 +1,14 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
+const repo = "Jobi.sh";
+
 const nextConfig: NextConfig = {
+  output: "export",
+  basePath: `/${repo}`,
+  assetPrefix: `/${repo}/`,
+  images: { unoptimized: true },
+  
   turbopack: {
     root: process.cwd(),
   },
