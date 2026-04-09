@@ -11,12 +11,14 @@ type AppliedJobsPageClientProps = {
 export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientProps>) {
   if (jobs.length === 0) {
     return (
-      <main className="min-h-svh pt-4">
-        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
-          <h1 className="font-display text-4xl md:text-[2.4rem]">Sökta jobb</h1>
-          <p className="text-lg text-app-muted">
-            Det finns inga registrerade ansökningar att visa ännu.
-          </p>
+      <main className="app-page">
+        <section className="mx-auto app-page-content w-full max-w-3xl md:max-w-none">
+          <div className="app-heading-stack-tight">
+            <h1 className="font-display text-4xl md:text-[2.4rem]">Sökta jobb</h1>
+            <p className="text-lg text-app-muted">
+              Det finns inga registrerade ansökningar att visa ännu.
+            </p>
+          </div>
           <Btn href="/" variant="secondary" track="back_click">
             Tillbaka
           </Btn>
@@ -26,9 +28,9 @@ export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientPr
   }
 
   return (
-    <main className="min-h-svh pt-4">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:max-w-none">
-        <div>
+    <main className="app-page">
+      <section className="mx-auto app-page-content-compact w-full max-w-3xl md:max-w-none">
+        <div className="app-heading-stack-tight">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Sökta jobb</h1>
           <p className="text-lg text-app-muted">
             Här ser du alla jobb du har sökt, sorterade efter senaste ansökningsdatum.
@@ -40,9 +42,9 @@ export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientPr
             <Link
               key={job.id}
               href={`/jobb/${job.id}`}
-              className="rounded-2xl border border-app-stroke bg-app-card p-4 transition hover:-translate-y-0.5 hover:border-app-primary/35 hover:shadow-sm"
+              className="app-card-dense transition hover:-translate-y-0.5 hover:border-app-primary/35 hover:shadow-sm"
             >
-              <div className="flex flex-col">
+              <div className="app-card-stack">
                 <div className="flex items-center justify-between gap-4">
                   <strong className="font-display text-left text-base font-bold transition truncate hover:text-app-primary">
                     {job.title}
@@ -50,11 +52,9 @@ export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientPr
                   <p className="shrink-0 text-sm text-app-muted text-right">{job.applicationDate}</p>
                 </div>
 
-                <div className="mb-2">
-                  <p className="mt-1 block text-left text-app-muted transition hover:text-app-primary">
-                    {job.company}
-                  </p>
-                </div>
+                <p className="block text-left text-app-muted transition hover:text-app-primary">
+                  {job.company}
+                </p>
 
                 <div className="flex items-start justify-between gap-4 text-sm text-app-muted">
                   <p className="min-w-0">

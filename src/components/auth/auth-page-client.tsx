@@ -34,7 +34,7 @@ export default function AuthPageClient() {
   const [emailAddress, setEmailAddress] = useState("");
   const [code, setCode] = useState("");
   const [verifying, setVerifying] = useState(false);
-  const [feedback, setFeedBack] = useState("");
+  const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState<"submit" | "verify" | "resend" | null>(
     null,
   );
@@ -42,7 +42,7 @@ export default function AuthPageClient() {
   const navigate = (decorateUrl: (url: string) => string) => {
     const url = decorateUrl("/");
     if (url.startsWith("http")) {
-      window.location.href = url;
+      globalThis.location.href = url;
     } else {
       router.push(url);
     }
@@ -60,9 +60,9 @@ export default function AuthPageClient() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit: React.ComponentProps<"form">["onSubmit"] = async (e) => {
     e.preventDefault();
-    setFeedBack("");
+    setFeedback("");
     setLoading("submit");
     try {
       const { error: createError } = await signIn.create({
@@ -72,7 +72,7 @@ export default function AuthPageClient() {
 
       if (createError) {
         const code = isClerkAPIResponseError(createError) ? createError.errors[0]?.code : undefined;
-        setFeedBack(clerkErrorMessage(code));
+        setFeedback(clerkErrorMessage(code));
         return;
       }
 
@@ -80,7 +80,7 @@ export default function AuthPageClient() {
 
       if (sendError) {
         const code = isClerkAPIResponseError(sendError) ? sendError.errors[0]?.code : undefined;
-        setFeedBack(clerkErrorMessage(code));
+        setFeedback(clerkErrorMessage(code));
         return;
       }
 
@@ -90,9 +90,9 @@ export default function AuthPageClient() {
     }
   };
 
-  const handleVerify = async (e: React.FormEvent) => {
+  const handleVerify: React.ComponentProps<"form">["onSubmit"] = async (e) => {
     e.preventDefault();
-    setFeedBack("");
+    setFeedback("");
     setLoading("verify");
     const { error } = await signIn.emailCode.verifyCode({ code });
     const clerkCode =
@@ -112,7 +112,7 @@ export default function AuthPageClient() {
         return;
       }
 
-      setFeedBack(clerkErrorMessage(clerkCode));
+      setFeedback(clerkErrorMessage(clerkCode));
       setLoading(null);
       return;
     }
@@ -128,7 +128,7 @@ export default function AuthPageClient() {
         await signIn.mfa.sendEmailCode();
       }
     } else {
-      setFeedBack(clerkErrorMessage(undefined));
+      setFeedback(clerkErrorMessage(undefined));
     }
     setLoading(null);
   };
@@ -137,38 +137,40 @@ export default function AuthPageClient() {
     const { error } = await signUp.create({ transfer: true });
     if (error) {
       const code = isClerkAPIResponseError(error) ? error.errors[0]?.code : undefined;
-      setFeedBack(clerkErrorMessage(code));
+      setFeedback(clerkErrorMessage(code));
       return;
     }
 
     if (signUp.status === "complete") {
       await finalizeSignUp();
     } else {
-      setFeedBack(clerkErrorMessage(undefined));
+      setFeedback(clerkErrorMessage(undefined));
     }
   };
 
   if (verifying || signIn.status === "needs_client_trust") {
     return (
-      <main className="min-h-dvh px-4">
+      <main className="flex min-h-dvh flex-col gap-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
         <h1 className="font-display text-4xl leading-none">
           Jobi<span className="text-app-primary">.sh</span>
         </h1>
-        <section className="mx-auto flex min-h-dvh w-full max-w-150 self-center flex-col gap-4">
-          <div className="flex w-full flex-1 flex-col items-center justify-center gap-4">
-            <h2 className="text-2xl">Verifiera e-post</h2>
-            <p>
-              Vi har skickat en verifikationskod till:{" "}
-              <strong>{emailAddress}</strong>
-            </p>
+        <section className="mx-auto flex w-full max-w-150 flex-1 flex-col justify-center">
+          <div className="flex w-full flex-1 flex-col items-center justify-center gap-6">
+            <div className="app-heading-stack-tight items-center text-center">
+              <h2 className="text-2xl">Verifiera e-post</h2>
+              <p>
+                Vi har skickat en verifikationskod till:{" "}
+                <strong>{emailAddress}</strong>
+              </p>
+            </div>
             <form
               onSubmit={handleVerify}
-              className="w-full space-y-4 p-4"
+              className="app-card app-form-stack w-full"
             >
-              <div>
+              <div className="app-form-field">
                 <label htmlFor="code">Ange verifikationskod</label>
                 <input
-                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   id="code"
                   name="code"
                   placeholder="XXXXXX"
@@ -178,19 +180,19 @@ export default function AuthPageClient() {
                   onChange={(e) => setCode(e.target.value)}
                 />
                 {feedback && (
-                  <p className="mt-2 text-sm text-red-500">{feedback}</p>
+                  <p className="text-sm text-red-500">{feedback}</p>
                 )}
               </div>
               <Btn className="w-full" disabled={loading !== null} track="auth_verify_click" type="submit">
                 {loading === "verify" ? "Verifierar..." : "Fortsätt"}
               </Btn>
-              <div className="flex items-center justify-center gap-4">
+              <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <Btn
                   type="button"
                   disabled={loading !== null}
                   track="auth_resend_code_click"
                   onClick={async () => {
-                    setFeedBack("");
+                    setFeedback("");
                     setLoading("resend");
                     await signIn.emailCode.sendCode();
                     setLoading(null);
@@ -206,7 +208,7 @@ export default function AuthPageClient() {
                   onClick={() => {
                     signIn.reset();
                     setVerifying(false);
-                    setFeedBack("");
+                    setFeedback("");
                     setLoading(null);
                   }}
                   variant="red"
@@ -235,23 +237,25 @@ export default function AuthPageClient() {
   }
 
   return (
-    <main className="min-h-svh">
-      <section className="mx-auto flex min-h-svh w-full flex-col gap-4">
+    <main className="flex min-h-dvh flex-col gap-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+      <section className="mx-auto flex w-full flex-1 flex-col gap-6">
         <div className="space-y-2">
           <h1 className="font-display text-4xl leading-none">
             Jobi<span className="text-app-primary">.sh</span>
           </h1>
         </div>
-        <div className="flex w-full flex-1 flex-col max-w-150 self-center items-center justify-center gap-4">
-          <h2 className="text-2xl">Logga in eller skapa konto</h2>
+        <div className="mx-auto flex w-full max-w-150 flex-1 flex-col items-center justify-center gap-6">
+          <div className="app-heading-stack-tight items-center text-center">
+            <h2 className="text-2xl">Logga in eller skapa konto</h2>
+          </div>
           <form
             onSubmit={handleSubmit}
-            className="w-full space-y-4 p-4"
+            className="app-card app-form-stack w-full"
           >
-            <label className="block font-semibold text-app-muted">
+            <label className="app-form-field font-semibold text-app-muted">
               <span className="block">E-postadress</span>
               <input
-                className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                 id="email"
                 name="email"
                 placeholder="namn@epost.se"
@@ -263,7 +267,7 @@ export default function AuthPageClient() {
             </label>
 
             {feedback ? (
-              <p className="rounded-2xl border border-app-stroke bg-white px-4 py-3 text-sm text-app-muted">
+              <p className="app-feedback-card text-sm text-app-muted">
                 {feedback}
               </p>
             ) : null}

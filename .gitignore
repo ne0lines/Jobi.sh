@@ -46,5 +46,8 @@ CLAUDE.md
 # clerk configuration (can include secrets)
 /.clerk/
 
+# local VS Code MCP configuration can contain API keys
+/.vscode/mcp.json
+
 # Sentry Config File
 .env.sentry-build-plugin

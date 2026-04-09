@@ -56,15 +56,15 @@ export function Statistics({ applications }: Readonly<StatisticsProps>) {
   ] as const
 
   return (
-    <section className='w-full'>
-      <h2 className='mt-6 mb-3 font-display text-3xl md:text-[1.75rem]'>Statistik</h2>
+    <section className='app-page-content-compact w-full'>
+      <h2 className='font-display text-3xl md:text-[1.75rem]'>Statistik</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
         <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-3 h-fit'>
           {statCards.map(({ cardClassName, label, value, valueClassName }) => (
             <article
               key={label}
               className={cn(
-                'rounded-2xl p-3 transition-colors',
+                'rounded-3xl p-4 transition-colors md:p-5',
                 cardClassName,
               )}
             >

@@ -27,11 +27,6 @@ const themeOptions: Array<{
 
 export function ThemePreferenceCard() {
   const { themePreference, setThemePreference } = useThemePreference();
-  let themeStatusLabel = 'Ljust tema aktivt';
-
-  if (themePreference === 'dark') {
-    themeStatusLabel = 'Mörkt tema aktivt';
-  }
 
   function handleThemePreferenceChange(nextThemePreference: ThemePreference) {
     if (nextThemePreference === themePreference) {
@@ -42,14 +37,14 @@ export function ThemePreferenceCard() {
   }
 
   return (
-    <article className='rounded-3xl border border-app-stroke bg-app-card p-5'>
+    <article className='app-card'>
       <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
         <div>
           <h2 className='text-lg font-semibold text-app-ink'>Tema</h2>
         </div>
       </div>
 
-      <div className='mt-4 grid gap-3 sm:grid-cols-2'>
+      <div className='mt-6 grid gap-3 sm:grid-cols-2'>
         {themeOptions.map(({ description, icon: Icon, label, value }) => {
           const isActive = themePreference === value;
 
@@ -58,7 +53,7 @@ export function ThemePreferenceCard() {
               key={value}
               aria-pressed={isActive}
               className={cn(
-                'flex flex-col min-h-36 cursor-pointer rounded-3xl border px-4 py-4 text-left transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/40 disabled:pointer-events-none disabled:opacity-60',
+                'flex min-h-36 cursor-pointer flex-col rounded-3xl border p-4 text-left transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/40 disabled:pointer-events-none disabled:opacity-60 md:p-5',
                 isActive
                   ? 'border-app-primary bg-app-surface text-app-ink shadow-[0_14px_32px_rgba(17,23,40,0.12)]'
                   : 'border-app-stroke bg-app-card text-app-muted hover:-translate-y-0.5 hover:border-app-primary/25 hover:bg-app-surface',
@@ -66,15 +61,15 @@ export function ThemePreferenceCard() {
               type='button'
               onClick={() => handleThemePreferenceChange(value)}
             >
-                <div className="flex justify-between w-full items-center">
-                    <span className='mt-4 text-base font-semibold text-app-ink'>
-                        {label}
-                    </span>
-                    <Icon aria-hidden='true' size={20} />
-                </div>
-                <span className='mt-2 text-sm leading-6 text-app-muted'>
-                    {description}
+              <div className='flex w-full items-center justify-between'>
+                <span className='text-base font-semibold text-app-ink'>
+                  {label}
                 </span>
+                <Icon aria-hidden='true' size={20} />
+              </div>
+              <span className='mt-3 text-sm leading-6 text-app-muted'>
+                {description}
+              </span>
             </button>
           );
         })}

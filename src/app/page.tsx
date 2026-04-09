@@ -22,8 +22,8 @@ export default async function Home() {
   });
 
   return (
-    <main className="min-h-svh">
-      <div className="w-full">
+    <main className="app-page">
+      <div className="app-page-content">
         <section className="w-full">
           <div className="flex items-center justify-between gap-3">
             <h1 className="font-display text-4xl leading-none md:hidden">

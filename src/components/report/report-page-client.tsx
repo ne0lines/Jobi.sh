@@ -192,8 +192,8 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
 
   if (options.length === 0) {
     return (
-      <main className="min-h-svh pt-4">
-        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
+      <main className="app-page">
+        <section className="mx-auto app-page-content w-full max-w-3xl md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Aktivitetsrapport</h1>
           <p className="text-lg text-app-muted">
             Det finns inga registrerade ansökningsdatum att rapportera ännu.
@@ -208,10 +208,10 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
 
   return (
     <>
-      <main className="min-h-svh pt-4">
-        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:max-w-none">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
+      <main className="app-page">
+        <section className="mx-auto app-page-content-compact w-full max-w-3xl md:max-w-none">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="app-heading-stack-tight">
               <h1 className="font-display text-4xl md:text-[2.4rem]">Aktivitetsrapport</h1>
               <p className="text-lg text-app-muted">
                 Välj månad för att se vilka jobb du sökte under perioden.
@@ -238,13 +238,13 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
             {filteredJobs.map((job) => (
               <article
                 key={job.id}
-                className="flex flex-col overflow-hidden rounded-[1.7rem] border border-app-stroke bg-white shadow-[0_12px_28px_rgba(17,23,40,0.05)] md:flex-row md:items-stretch"
+                className="flex flex-col overflow-hidden rounded-3xl border border-app-stroke bg-white shadow-[0_12px_28px_rgba(17,23,40,0.05)] md:flex-row md:items-stretch"
               >
-                <div className="min-w-0 flex-1 px-4 py-4 md:px-5">
+                <div className="min-w-0 flex-1 px-5 py-5 md:px-6">
                   <div className="flex h-full flex-col justify-center gap-3 md:flex-row md:items-center md:justify-between md:gap-5">
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 app-card-stack">
                       <span className="font-bold">{job.title}</span> hos <span className="font-bold">{job.company}</span>
-                      <div className="mt-2 flex flex-col gap-1.5 text-sm text-app-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
+                      <div className="flex flex-col gap-1.5 text-sm text-app-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
                         <p className="whitespace-nowrap">
                           <strong className="text-app-ink">Ort:</strong> {job.location}
                         </p>
@@ -259,7 +259,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                   </div>
                 </div>
 
-                <div className="flex items-center px-4 pb-4 md:w-auto md:shrink-0 md:px-5 md:pb-0">
+                <div className="flex items-center px-5 pb-5 md:w-auto md:shrink-0 md:px-6 md:pb-0">
                   <button
                     type="button"
                     className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-[linear-gradient(90deg,#6e33eb_0%,#8a4bff_100%)] px-5 py-3 text-center text-sm font-semibold text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto md:min-w-52 md:px-6 md:text-base"
@@ -290,14 +290,14 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
           <DrawerTitle className="sr-only">Installera Jobi.sh Extensionen</DrawerTitle>
           <div className="mx-auto flex w-full max-w-[75vw] flex-col gap-6">
             <div className="flex items-start justify-between gap-4">
-              <DrawerHeader className="min-w-0 gap-0">
+              <DrawerHeader className="min-w-0 gap-1">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-app-primary">
                   {installTarget.browserLabel} Extension
                 </p>
-                <DrawerTitle id="extension-drawer-title" className="mt-1">
+                <DrawerTitle id="extension-drawer-title" className="mt-2">
                   Installera Jobi.sh Extensionen
                 </DrawerTitle>
-                <DrawerDescription className="mt-2">
+                <DrawerDescription className="mt-3 leading-6">
                   För att skicka jobb direkt till Arbetsförmedlingen från den här sidan behöver du ha
                   Jobi.sh Extensionen installerad i {installTarget.browserLabel}.
                 </DrawerDescription>
@@ -314,7 +314,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
               </DrawerClose>
             </div>
 
-            <div className="rounded-3xl bg-app-surface p-4 text-sm leading-6 text-app-muted">
+            <div className="rounded-3xl bg-app-surface p-5 text-sm leading-6 text-app-muted md:p-6">
               {installTarget.installDescription}
             </div>
 

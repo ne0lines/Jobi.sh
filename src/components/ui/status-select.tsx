@@ -59,11 +59,11 @@ export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProp
   }
 
   return (
-    <div className="rounded-2xl border border-app-stroke bg-app-card p-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <div className="app-card-dense">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="app-heading-stack-tight">
           <h3 className="text-xl font-display">Status</h3>
-          <p className="mt-1 text-sm text-app-muted">
+          <p className="text-sm text-app-muted">
             Välj var i processen jobbet befinner sig.
           </p>
         </div>

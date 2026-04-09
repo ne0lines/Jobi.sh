@@ -39,8 +39,8 @@ export default async function AccountPage() {
   const profile = await getUserProfile(headersList.get('cookie') ?? '');
 
   return (
-    <main className='min-h-svh pt-4'>
-      <section className='mx-auto flex w-full max-w-2xl flex-col gap-4 md:max-w-none'>
+    <main className='app-page'>
+      <section className='mx-auto app-page-content-compact w-full max-w-2xl md:max-w-none'>
         <div>
           <h1 className='font-display text-4xl sm:text-6xl'>Konto</h1>
           {/*profile?.name && (
@@ -50,7 +50,7 @@ export default async function AccountPage() {
           )*/}
         </div>
 
-        <article className='rounded-3xl border border-app-stroke bg-app-card p-5'>
+        <article className='app-card'>
           <dl className='space-y-3 text-base text-app-ink'>
             <div>
               <dt className='text-sm font-semibold uppercase tracking-[0.08em] text-app-muted'>
@@ -73,7 +73,7 @@ export default async function AccountPage() {
           </dl>
         </article>
         <ThemePreferenceCard />
-        <article className='rounded-3xl border border-app-stroke bg-app-card p-5'>
+        <article className='app-card'>
           <dl className='space-y-3 text-base text-app-ink'>
             <dt className='font-semibold uppercase tracking-[0.08em] text-app-muted'>
               Integritet & Data

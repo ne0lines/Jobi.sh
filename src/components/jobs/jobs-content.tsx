@@ -10,19 +10,19 @@ import Link from "next/link";
 
 function JobList({ jobs, showArchivedBadge = false }: Readonly<{ jobs: Job[]; showArchivedBadge?: boolean }>) {
   return (
-    <ul className="space-y-2">
+    <ul className="space-y-3">
       {jobs.map((job) => (
-        <li key={job.id} className="relative rounded-2xl border border-app-stroke bg-app-card transition hover:-translate-y-0.5 hover:shadow-sm">
+        <li key={job.id} className="relative app-card-dense transition hover:-translate-y-0.5 hover:shadow-sm">
           <Link href={`/jobb/${job.id}`}>
             <span className="absolute inset-0 rounded-2xl" aria-hidden="true" />
             <span className="sr-only">Läs mer om {job.title}</span>
           </Link>
-          <div className="flex items-center justify-between gap-2 p-4">
-            <div className="min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 app-card-stack">
               <strong className="block truncate text-base leading-snug text-app-ink sm:text-lg">
                 {job.title}
               </strong>
-              <span className="mt-0.5 block truncate text-sm text-app-muted sm:text-base">
+              <span className="block truncate text-sm text-app-muted sm:text-base">
                 {job.company}
               </span>
             </div>
@@ -51,16 +51,18 @@ export function JobsContent() {
   const archivedJobs = jobs.filter((job) => job.archivedAt);
 
   return (
-    <section className="flex w-full flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-4xl sm:text-6xl">Jobb</h1>
+    <section className="app-page-content-compact">
+      <div className="flex items-start justify-between gap-3">
+        <div className="app-heading-stack-tight">
+          <h1 className="font-display text-4xl sm:text-6xl">Jobb</h1>
+        </div>
         <Btn href="/jobb/new" icon={Plus} track="add_job_click">Lägg till</Btn>
       </div>
 
       {jobs.length === 0 ? <p className="text-base text-app-muted">Inga jobb sparade än.</p> : null}
 
       {jobs.length > 0 ? (
-        <section className="space-y-2">
+        <section className="space-y-3">
           {activeJobs.length > 0 ? <JobList jobs={activeJobs} /> : null}
         </section>
       ) : null}

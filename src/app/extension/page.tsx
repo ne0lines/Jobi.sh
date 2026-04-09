@@ -34,23 +34,21 @@ export default async function ExtensionPage() {
   }
 
   return (
-    <main className="min-h-svh pt-4">
-      <section className="mx-auto flex w-full max-w-5xl flex-col gap-6 md:max-w-none">
-        <div className="">
-          <div className="max-w-3xl">
-            <h1 className="mt-2 font-display text-4xl md:text-[2.8rem]">
+    <main className="app-page">
+      <section className="mx-auto app-page-content w-full max-w-5xl md:max-w-none">
+        <div className="max-w-3xl space-y-4">
+          <h1 className="font-display text-4xl md:text-[2.8rem]">
               Koppla ihop Jobi<span className="text-app-primary">.sh</span> med Arbetsförmedlingen
-            </h1>
-            <p className="mt-4 text-lg leading-8 text-app-muted">
-              Här samlar vi butikslänkarna för Chrome, Safari och Firefox när respektive extension är
-              publicerad i sin store.
-            </p>
-          </div>
+          </h1>
+          <p className="text-lg leading-8 text-app-muted">
+            Här samlar vi butikslänkarna för Chrome, Safari och Firefox när respektive extension är
+            publicerad i sin store.
+          </p>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
           {featureHighlights.map((item) => (
-            <article key={item.title} className="rounded-3xl border border-app-stroke bg-app-card p-5">
+            <article key={item.title} className="app-card">
               <div className="inline-flex size-11 items-center justify-center rounded-2xl bg-app-primary/10 text-app-primary">
                 <item.icon aria-hidden="true" size={20} strokeWidth={2.1} />
               </div>
@@ -65,7 +63,7 @@ export default async function ExtensionPage() {
             <article
               id={`${target.browserKey}-store`}
               key={target.browserKey}
-              className="scroll-mt-8 rounded-3xl border border-app-stroke bg-white p-5 shadow-[0_14px_32px_rgba(17,23,40,0.06)]"
+              className="app-card-elevated scroll-mt-8"
             >
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-2xl font-semibold text-app-ink">{target.browserLabel}</h2>

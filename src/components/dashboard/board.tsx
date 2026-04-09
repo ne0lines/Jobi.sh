@@ -22,8 +22,8 @@ export default function Board({
   titleClassName = "text-app-ink",
 }: BoardProps) {
   return (
-    <div className={cn(className, bgColor, borderColor, "min-w-0 rounded-2xl border p-4")}>
-      <h3 className={cn("mb-3 text-xl font-display", titleClassName)}>{label}</h3>
+    <div className={cn(className, bgColor, borderColor, "min-w-0 rounded-3xl border p-5 md:p-6")}>
+      <h3 className={cn("mb-4 text-xl font-display", titleClassName)}>{label}</h3>
       <ul className="space-y-3">
         {jobs.map((j) => (
           <li key={`saved-${j.id}`}>
@@ -32,7 +32,7 @@ export default function Board({
               className={cn(
                 borderColor,
                 itemBgColor,
-                "block min-w-0 rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-sm",
+                "block min-w-0 rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-sm md:p-5",
               )}
             >
               <strong className="block min-w-0 truncate whitespace-nowrap text-base leading-snug text-app-ink sm:text-lg">

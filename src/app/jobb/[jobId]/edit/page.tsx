@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useJob, useUpdateJob } from "@/lib/hooks/jobs";
 import { Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 import { toast } from "sonner";
 
 const initialState: JobFormState = {
@@ -182,19 +182,24 @@ export default function EditJobPage({
 }>) {
   const { jobId } = use(params);
   const router = useRouter();
-  const [form, setForm] = useState<JobFormState>(initialState);
+  const [formEdits, setFormEdits] = useState<Record<string, Partial<JobFormState>>>({});
 
   const { data: job, isLoading, isError } = useJob(jobId);
   const updateJobMutation = useUpdateJob();
 
-  useEffect(() => {
-    if (job) {
-      setForm(buildFormState(job));
-    }
-  }, [job]);
+  const form = {
+    ...(job ? buildFormState(job) : initialState),
+    ...formEdits[jobId],
+  } satisfies JobFormState;
 
   function updateField<K extends keyof JobFormState>(field: K, value: JobFormState[K]) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    setFormEdits((prev) => ({
+      ...prev,
+      [jobId]: {
+        ...prev[jobId],
+        [field]: value,
+      },
+    }));
   }
 
   function handleSubmit() {
@@ -252,8 +257,8 @@ export default function EditJobPage({
 
   if (isError || !job) {
     return (
-      <main className="min-h-svh pt-4">
-        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
+      <main className="app-page">
+        <section className="mx-auto app-page-content w-full max-w-3xl md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Redigera jobb</h1>
           <p className="text-base text-app-muted sm:text-lg">Jobbet kunde inte laddas för redigering.</p>
           <Btn href={`/jobb/${jobId}`} variant="secondary">
@@ -265,20 +270,19 @@ export default function EditJobPage({
   }
 
   return (
-    <main className="min-h-svh pt-4">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:max-w-none">
-        <div>
+    <main className="app-page">
+      <section className="mx-auto app-page-content-compact w-full max-w-3xl md:max-w-none">
+        <div className="app-heading-stack-tight">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Redigera jobb</h1>
           <p className="text-base text-app-muted sm:text-lg">Uppdatera informationen för det sparade jobbet.</p>
         </div>
 
-        <form autoComplete="off" className="mt-4" onSubmit={onSubmit}>
-          <div>
-            <label className="mb-3 block font-semibold text-app-muted">
+        <form autoComplete="off" className="pt-2" onSubmit={onSubmit}>
+          <div className="app-page-content-compact app-form-stack">
+            <label className="app-form-field font-semibold text-app-muted">
               <span className="block">Annonslänk</span>
               <Input
                 autoComplete="off"
-                className="mt-2"
                 name="jobUrl"
                 placeholder="https://arbetsformedlingen.se/platsbanken/annonser/30763601"
                 type="url"
@@ -287,11 +291,10 @@ export default function EditJobPage({
               />
             </label>
 
-            <label className="mb-3 block font-semibold text-app-muted">
+            <label className="app-form-field font-semibold text-app-muted">
               <span className="block">Jobbtitel</span>
               <Input
                 autoComplete="off"
-                className="mt-2"
                 name="title"
                 placeholder="t.ex. UI Developer"
                 type="text"
@@ -300,11 +303,10 @@ export default function EditJobPage({
               />
             </label>
 
-            <label className="mb-3 block font-semibold text-app-muted">
+            <label className="app-form-field font-semibold text-app-muted">
               <span className="block">Företag</span>
               <Input
                 autoComplete="off"
-                className="mt-2"
                 name="company"
                 placeholder="t.ex. PixelForge"
                 type="text"
@@ -313,11 +315,10 @@ export default function EditJobPage({
               />
             </label>
 
-            <label className="mb-3 block font-semibold text-app-muted">
+            <label className="app-form-field font-semibold text-app-muted">
               <span className="block">Plats</span>
               <Input
                 autoComplete="off"
-                className="mt-2"
                 name="location"
                 placeholder="t.ex. Stockholm / Remote"
                 type="text"
@@ -326,11 +327,11 @@ export default function EditJobPage({
               />
             </label>
 
-            <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="block font-semibold text-app-muted">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Anställningstyp</span>
                 <Select value={form.employmentType} onValueChange={(value) => updateField("employmentType", value ?? "")}>
-                  <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
+                  <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
                     <SelectValue placeholder="Välj" />
                   </SelectTrigger>
                   <SelectContent>
@@ -343,10 +344,10 @@ export default function EditJobPage({
                 </Select>
               </label>
 
-              <label className="block font-semibold text-app-muted">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Omfattning</span>
                 <Select value={form.workload} onValueChange={(value) => updateField("workload", value ?? "")}>
-                  <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
+                  <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
                     <SelectValue placeholder="Välj" />
                   </SelectTrigger>
                   <SelectContent>
@@ -360,10 +361,10 @@ export default function EditJobPage({
               </label>
             </div>
 
-            <label className="mb-3 block font-semibold text-app-muted">
+            <label className="app-form-field font-semibold text-app-muted">
               <span className="block">Status</span>
               <Select value={form.status} onValueChange={(value) => updateField("status", value as JobStatus)}>
-                <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20">
+                <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -376,27 +377,26 @@ export default function EditJobPage({
               </Select>
             </label>
 
-            <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="block font-semibold text-app-muted">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Datum för ansökan</span>
                 <DatePicker value={form.applicationDate} onChange={(value) => updateField("applicationDate", value)} />
               </label>
 
-              <label className="block font-semibold text-app-muted">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Sista ansökningsdag</span>
                 <DatePicker value={form.deadline} onChange={(value) => updateField("deadline", value)} />
               </label>
             </div>
 
-            <fieldset className="mb-3 rounded-2xl border border-app-stroke bg-white p-4">
+            <fieldset className="app-card-dense app-form-stack">
               <legend className="px-2 font-semibold text-app-muted">Kontaktperson (valfritt)</legend>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <label className="block text-sm font-semibold text-app-muted">
+                <label className="app-form-field text-sm font-semibold text-app-muted">
                   <span className="block">Namn</span>
                   <Input
                     autoComplete="off"
-                    className="mt-1"
                     name="contactName"
                     placeholder="t.ex. Anna Berg"
                     type="text"
@@ -405,11 +405,10 @@ export default function EditJobPage({
                   />
                 </label>
 
-                <label className="block text-sm font-semibold text-app-muted">
+                <label className="app-form-field text-sm font-semibold text-app-muted">
                   <span className="block">Roll</span>
                   <Input
                     autoComplete="off"
-                    className="mt-1"
                     name="contactRole"
                     placeholder="t.ex. Rekryterare"
                     type="text"
@@ -418,11 +417,10 @@ export default function EditJobPage({
                   />
                 </label>
 
-                <label className="block text-sm font-semibold text-app-muted">
+                <label className="app-form-field text-sm font-semibold text-app-muted">
                   <span className="block">E-post</span>
                   <Input
                     autoComplete="off"
-                    className="mt-1"
                     name="contactEmail"
                     placeholder="namn@företag.se"
                     type="email"
@@ -431,11 +429,10 @@ export default function EditJobPage({
                   />
                 </label>
 
-                <label className="block text-sm font-semibold text-app-muted">
+                <label className="app-form-field text-sm font-semibold text-app-muted">
                   <span className="block">Telefon</span>
                   <Input
                     autoComplete="off"
-                    className="mt-1"
                     name="contactPhone"
                     placeholder="070-123 45 67"
                     type="tel"
@@ -446,11 +443,10 @@ export default function EditJobPage({
               </div>
             </fieldset>
 
-            <label className="mb-3 block font-semibold text-app-muted">
+            <label className="app-form-field font-semibold text-app-muted">
               <span className="block">Noteringar (valfritt)</span>
               <Textarea
                 autoComplete="off"
-                className="mt-2"
                 name="notes"
                 rows={4}
                 placeholder="Rollfokus, intervjusignaler, referensväg och nästa steg."
@@ -459,8 +455,8 @@ export default function EditJobPage({
               />
             </label>
 
-            <div className="flex gap-4">
-              <Btn href={`/jobb/${jobId}`} variant="secondary" className="w-1/2" track="edit_job_cancel_click">
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <Btn href={`/jobb/${jobId}`} variant="secondary" className="w-full sm:w-1/2" track="edit_job_cancel_click">
                 Avbryt
               </Btn>
               <Btn disabled={updateJobMutation.isPending} type="submit" className="w-full" icon={Save} track="save_job_click">

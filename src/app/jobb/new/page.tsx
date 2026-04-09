@@ -317,30 +317,30 @@ export default function NewJobPage() {
 
   const handleSubmit: React.ComponentProps<"form">["onSubmit"] = (event) => {
     event.preventDefault();
-    void submitJob();
+    submitJob();
   };
 
   return (
-    <main className={cn("flex", showManualFields ? "min-h-svh pt-4" : "h-svh overflow-hidden pb-0 pt-4")}>
-      <section className="mx-auto flex w-full flex-1 flex-col gap-4">
-        <div>
+    <main className={cn("flex", showManualFields ? "app-page" : "h-svh overflow-hidden pb-0 pt-4")}>
+      <section className="mx-auto app-page-content-compact w-full flex-1">
+        <div className="app-heading-stack-tight">
           <h1 className="font-display text-4xl md:text-[2.4rem]">Lägg till jobb</h1>
           {feedback && !isAmsImportLoading ? (
-            <div className="mt-4 flex items-start gap-4 rounded-2xl border border-app-stroke bg-app-card px-4 py-3 text-sm text-app-muted">
+            <div className="app-feedback-card flex items-start gap-4 text-sm text-app-muted">
               {isAutofilling ? <Loader className="mt-0.5" size={24} /> : null}
-              <p className="min-w-0 pt-0.5">{feedback}</p>
+              <p className="min-w-0 leading-6">{feedback}</p>
             </div>
           ) : null}
         </div>
 
         {isAmsImportLoading ? (
           <div className="flex flex-1 items-center justify-center">
-            <div className="flex w-full max-w-md flex-col items-center px-6 py-10 text-center">
+            <div className="app-heading-stack-tight flex w-full max-w-md flex-col items-center px-6 py-10 text-center">
               <Loader size={40} />
-              <p className="mt-10 text-base font-medium text-app-ink">
+              <p className="pt-6 text-base font-medium text-app-ink">
                 {feedback || "Hämtar data från Arbetsförmedlingen..."}
               </p>
-              <p className="mt-2 text-sm text-app-muted">
+              <p className="text-sm text-app-muted">
                 Formuläret visas automatiskt så fort annonsdatan är klar.
               </p>
             </div>
@@ -350,12 +350,12 @@ export default function NewJobPage() {
         {shouldRenderForm ? (
           <form autoComplete="off" className={cn("flex flex-1 flex-col", showManualFields ? "" : "justify-between")} onSubmit={handleSubmit}>
             {showManualFields ? (
-              <div className="mt-4">
-                <label className="mb-3 block font-semibold text-app-muted">
+              <div className="app-page-content-compact app-form-stack pt-2">
+                <label className="app-form-field font-semibold text-app-muted">
                   <span className="block">Annonslänk</span>
                   <Input
                     autoComplete="off"
-                    className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                    className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                     name="jobUrl"
                     placeholder="https://arbetsformedlingen.se/platsbanken/annonser/30763601"
                     type="url"
@@ -364,11 +364,11 @@ export default function NewJobPage() {
                   />
                 </label>
 
-              <label className="mb-3 block font-semibold text-app-muted">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Jobbtitel</span>
                 <Input
                   autoComplete="off"
-                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="title"
                   placeholder="t.ex. UI Developer"
                   type="text"
@@ -377,11 +377,11 @@ export default function NewJobPage() {
                 />
               </label>
 
-              <label className="mb-3 block font-semibold text-app-muted">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Företag</span>
                 <Input
                   autoComplete="off"
-                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="company"
                   placeholder="t.ex. PixelForge"
                   type="text"
@@ -390,11 +390,11 @@ export default function NewJobPage() {
                 />
               </label>
 
-              <label className="mb-3 block font-semibold text-app-muted">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Plats</span>
                 <Input
                   autoComplete="off"
-                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="location"
                   placeholder="t.ex. Stockholm / Remote"
                   type="text"
@@ -403,14 +403,14 @@ export default function NewJobPage() {
                 />
               </label>
 
-              <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <label className="block font-semibold text-app-muted">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="app-form-field font-semibold text-app-muted">
                   <span className="block">Anställningstyp</span>
                   <Select
                     value={form.employmentType}
                     onValueChange={(value) => updateField("employmentType", value ?? "")}
                   >
-                    <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
+                    <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
                       <SelectValue placeholder="Välj" />
                     </SelectTrigger>
                     <SelectContent>
@@ -423,13 +423,13 @@ export default function NewJobPage() {
                   </Select>
                 </label>
 
-                <label className="block font-semibold text-app-muted">
+                <label className="app-form-field font-semibold text-app-muted">
                   <span className="block">Omfattning</span>
                   <Select
                     value={form.workload}
                     onValueChange={(value) => updateField("workload", value ?? "")}
                   >
-                    <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
+                    <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
                       <SelectValue placeholder="Välj" />
                     </SelectTrigger>
                     <SelectContent>
@@ -443,13 +443,13 @@ export default function NewJobPage() {
                 </label>
               </div>
 
-              <label className="mb-3 block font-semibold text-app-muted">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Status</span>
                 <Select
                   value={form.status}
                   onValueChange={(value) => updateField("status", value as JobStatus)}
                 >
-                  <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20">
+                  <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -462,8 +462,8 @@ export default function NewJobPage() {
                 </Select>
               </label>
 
-              <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <label className="block font-semibold text-app-muted">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="app-form-field font-semibold text-app-muted">
                   <span className="block">Datum för ansökan</span>
                   <DatePicker
                     value={form.applicationDate}
@@ -471,7 +471,7 @@ export default function NewJobPage() {
                   />
                 </label>
 
-                <label className="block font-semibold text-app-muted">
+                <label className="app-form-field font-semibold text-app-muted">
                   <span className="block">Sista ansökningsdag</span>
                   <DatePicker
                     value={form.deadline}
@@ -480,15 +480,15 @@ export default function NewJobPage() {
                 </label>
               </div>
 
-              <fieldset className="mb-3 rounded-2xl border border-app-stroke bg-white p-4">
+              <fieldset className="app-card-dense app-form-stack">
                 <legend className="px-2 font-semibold text-app-muted">Kontaktperson (valfritt)</legend>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <label className="block text-sm font-semibold text-app-muted">
+                  <label className="app-form-field text-sm font-semibold text-app-muted">
                     <span className="block">Namn</span>
                     <Input
                       autoComplete="off"
-                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactName"
                       placeholder="t.ex. Anna Berg"
                       type="text"
@@ -497,11 +497,11 @@ export default function NewJobPage() {
                     />
                   </label>
 
-                  <label className="block text-sm font-semibold text-app-muted">
+                  <label className="app-form-field text-sm font-semibold text-app-muted">
                     <span className="block">Roll</span>
                     <Input
                       autoComplete="off"
-                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactRole"
                       placeholder="t.ex. Rekryterare"
                       type="text"
@@ -510,11 +510,11 @@ export default function NewJobPage() {
                     />
                   </label>
 
-                  <label className="block text-sm font-semibold text-app-muted">
+                  <label className="app-form-field text-sm font-semibold text-app-muted">
                     <span className="block">E-post</span>
                     <Input
                       autoComplete="off"
-                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactEmail"
                       placeholder="namn@företag.se"
                       type="email"
@@ -523,11 +523,11 @@ export default function NewJobPage() {
                     />
                   </label>
 
-                  <label className="block text-sm font-semibold text-app-muted">
+                  <label className="app-form-field text-sm font-semibold text-app-muted">
                     <span className="block">Telefon</span>
                     <Input
                       autoComplete="off"
-                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactPhone"
                       placeholder="070-123 45 67"
                       type="tel"
@@ -538,11 +538,11 @@ export default function NewJobPage() {
                 </div>
               </fieldset>
 
-              <label className="mb-3 block font-semibold text-app-muted">
+              <label className="app-form-field font-semibold text-app-muted">
                 <span className="block">Noteringar (valfritt)</span>
                 <Textarea
                   autoComplete="off"
-                  className="mt-2 w-full resize-y rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="w-full resize-y rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="notes"
                   rows={4}
                   placeholder="Rollfokus, intervjusignaler, referensväg och nästa steg."
@@ -551,8 +551,8 @@ export default function NewJobPage() {
                 />
               </label>
 
-                <div className="flex gap-4">
-                  <Btn href="/" variant="secondary" className="w-1/2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+                  <Btn href="/" variant="secondary" className="w-full sm:w-1/2">
                     Avbryt
                   </Btn>
                   <Btn disabled={createJob.isPending} type="submit" className="w-full" icon={Plus}>
@@ -564,11 +564,11 @@ export default function NewJobPage() {
               <>
                 <div className="flex flex-1 items-center justify-center">
                   <div className="w-full max-w-xl">
-                    <label className="block font-semibold text-app-muted">
+                    <label className="app-form-field font-semibold text-app-muted">
                       <span className="block">Annonslänk</span>
                       <Input
                         autoComplete="off"
-                        className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                        className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                         name="jobUrl"
                         placeholder="https://arbetsformedlingen.se/platsbanken/annonser/xxxxx"
                         type="url"

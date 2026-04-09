@@ -52,8 +52,8 @@ export default function JobDetailPage({
 
   if (isError || !job) {
     return (
-      <main className="min-h-svh pt-4">
-        <section className="flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
+      <main className="app-page">
+        <section className="mx-auto app-page-content w-full max-w-3xl md:max-w-none">
           <h1 className="font-display text-4xl md:text-[2.4rem]">
             Jobbdetaljer
           </h1>
@@ -69,16 +69,18 @@ export default function JobDetailPage({
   }
 
   return (
-    <main className="min-h-svh pt-4">
-      <section className="flex flex-col gap-4 w-full">
-        <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
-        <p className="text-base text-app-muted sm:text-lg">
-          Följ status, historik och nästa steg
-        </p>
+    <main className="app-page">
+      <section className="mx-auto app-page-content-compact w-full max-w-3xl md:max-w-none">
+        <div className="app-heading-stack-tight">
+          <h1 className="font-display text-4xl md:text-[2.4rem]">Jobbdetaljer</h1>
+          <p className="text-base text-app-muted sm:text-lg">
+            Följ status, historik och nästa steg
+          </p>
+        </div>
         <div className="flex flex-col gap-4">
-          <article className="rounded-2xl border border-app-stroke bg-app-card p-4">
+          <article className="app-card-dense">
             <h2 className="font-display text-xl">{job.title}</h2>
-            <div className="flex mt-2 gap-4">
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <p className="w-full text-base text-app-muted">
                 <strong>Företag</strong>
                 <br />
@@ -90,7 +92,7 @@ export default function JobDetailPage({
                 {job.location}
               </p>
             </div>
-            <div className="flex mt-2 gap-4">
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <p className="w-full text-base text-app-muted">
                 <strong>Anställningsform</strong>
                 <br />
@@ -163,9 +165,9 @@ export default function JobDetailPage({
               Redigera
             </Btn>
           </div>
-          <article className="rounded-2xl border border-app-stroke bg-app-card p-4">
-            <h3 className="mb-2 text-xl font-display">Historik</h3>
-            <div className="relative mt-2">
+          <article className="app-card-dense">
+            <h3 className="mb-3 text-xl font-display">Historik</h3>
+            <div className="relative">
               <div
                 aria-hidden="true"
                 className="absolute top-1 bottom-2 left-1.25 w-px bg-app-stroke"
@@ -190,8 +192,8 @@ export default function JobDetailPage({
           </article>
           <StatusSelect jobId={job.id} initialStatus={job.status} />
         </div>
-        <div className="flex w-full gap-4">
-          <Btn variant="secondary" className="w-1/2" href="/" track="back_click">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-4">
+          <Btn variant="secondary" className="w-full sm:w-1/2" href="/" track="back_click">
             Tillbaka
           </Btn>
           <Btn

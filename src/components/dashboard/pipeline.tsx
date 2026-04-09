@@ -175,9 +175,9 @@ function getTodoItems(jobs: Job[]): TodoItem[] {
 export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
   if (jobs.length === 0) {
     return (
-      <section className="w-full">
-        <article className="overflow-hidden mt-5">
-          <div className="flex flex-col gap-4">
+      <section className="app-page-content w-full">
+        <article className="overflow-hidden">
+          <div className="app-page-content-compact">
             <div>
               <h2 className="font-display text-3xl leading-tight md:text-[2rem]">
                 Din nästa möjlighet börjar här.
@@ -204,9 +204,9 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
   const todoItems = getTodoItems(jobs);
 
   return (
-    <section className="w-full">
-      <article className="mt-4 rounded-2xl border border-app-stroke bg-app-card p-4">
-        <h3 className="mb-2 text-xl font-display">Att göra</h3>
+    <section className="app-page-content-compact w-full">
+      <article className="app-card-dense">
+        <h3 className="mb-3 text-xl font-display">Att göra</h3>
         {todoItems.length > 0 ? (
           <div className="divide-y divide-app-stroke text-base text-app-muted">
             {todoItems.map((item) => (
@@ -225,7 +225,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
           </p>
         )}
       </article>
-      <h2 className="mt-6 mb-3 font-display text-3xl md:text-[1.75rem]">Pipeline</h2>
+      <h2 className="font-display text-3xl md:text-[1.75rem]">Pipeline</h2>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {applied.length > 0 && (
           <Board

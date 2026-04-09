@@ -124,26 +124,26 @@ const sections: { title: string; body: ReactNode[] }[] = [
 
 export default function TermsPage() {
   return (
-    <main className="min-h-dvh px-4 py-6">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <div className="space-y-6 rounded-[2rem] border border-app-stroke bg-white p-6 shadow-[0_10px_24px_rgba(17,23,40,0.08)]">
+    <main className="app-page-legal">
+      <section className="mx-auto app-page-content w-full max-w-3xl">
+        <div className="app-card-elevated space-y-4">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-app-primary">
             Jobi.sh
           </p>
-          <h1 className="mt-3 text-4xl leading-none">
+          <h1 className="text-4xl leading-none">
             Användarvillkor (Terms of Service) för Jobi.sh
           </h1>
-          <p className="mt-4 max-w-2xl text-base text-app-muted">
+          <p className="max-w-2xl text-base text-app-muted">
             Senast uppdaterad: <strong>{TERMS_VERSION}</strong>
           </p>
-          <p className="mt-4 text-base leading-7 text-app-muted">
+          <p className="text-base leading-7 text-app-muted">
             Välkommen till Jobi.sh! Dessa användarvillkor reglerar din
             användning av vår mobilapplikation och tjänst. Genom att skapa ett
             konto och använda tjänsten godkänner du dessa villkor i sin helhet.
           </p>
         </div>
 
-        <div className="space-y-6 rounded-[2rem] border border-app-stroke bg-white p-6 shadow-[0_10px_24px_rgba(17,23,40,0.08)]">
+        <div className="app-card-elevated space-y-6">
           {sections.map((section) => (
             <section key={section.title} className="space-y-3">
               <h2 className="text-2xl leading-tight">{section.title}</h2>

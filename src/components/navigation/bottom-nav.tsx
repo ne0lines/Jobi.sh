@@ -86,7 +86,7 @@ export function AppNavigationShell({
   return (
     <>
       {showNavigation ? (
-        <div className="mx-auto w-full max-w-270 md:px-4">
+        <div className="mx-auto w-full max-w-270">
           <div className="md:flex md:items-start md:gap-8">
             <aside className="hidden md:block md:w-72 md:shrink-0 md:py-4">
               <div className={cn(navShellClassName, "fixed top-4 flex h-[calc(100svh-2rem)] w-72 flex-col p-4")}>

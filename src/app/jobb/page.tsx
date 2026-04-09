@@ -21,7 +21,7 @@ export default async function JobsPage() {
   });
 
   return (
-    <main className="min-h-svh px-4 pt-4">
+    <main className="app-page">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <JobsContent />
       </HydrationBoundary>
