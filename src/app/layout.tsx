@@ -80,7 +80,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <body
-          className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}
+          className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased p-3`}
         >
           <Script id="theme-preference-init" strategy="beforeInteractive">
             {themeInitializationScript}

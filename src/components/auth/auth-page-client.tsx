@@ -162,7 +162,7 @@ export default function AuthPageClient() {
             </p>
             <form
               onSubmit={handleVerify}
-              className="w-full space-y-4 rounded-2xl border border-app-stroke bg-app-card p-4"
+              className="w-full space-y-4 p-4"
             >
               <div>
                 <label htmlFor="code">Ange verifikationskod</label>
@@ -232,7 +232,7 @@ export default function AuthPageClient() {
           <h2 className="text-2xl">Logga in eller skapa konto</h2>
           <form
             onSubmit={handleSubmit}
-            className="w-full space-y-4 rounded-2xl border border-app-stroke bg-app-card p-4"
+            className="w-full space-y-4 p-4"
           >
             <label className="block font-semibold text-app-muted">
               <span className="block">E-postadress</span>

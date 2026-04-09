@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
   "/auth(.*)",
+  "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
 ]);
@@ -10,6 +11,7 @@ const isPublicRoute = createRouteMatcher([
 // Routes that don't require a DB profile (auth + the profile creation flow itself)
 const isProfileExempt = createRouteMatcher([
   "/auth(.*)",
+  "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
   "/konto/create-profile(.*)",
