@@ -2,6 +2,7 @@
 
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useAuth, useSignIn, useSignUp } from "@clerk/nextjs";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Btn } from "../ui/btn";
@@ -153,7 +154,7 @@ export default function AuthPageClient() {
         <h1 className="font-display text-4xl leading-none">
           Jobi<span className="text-app-primary">.sh</span>
         </h1>
-        <section className="mx-auto flex min-h-dvh w-full flex-col gap-4">
+        <section className="mx-auto flex min-h-dvh w-full max-w-150 self-center flex-col gap-4">
           <div className="flex w-full flex-1 flex-col items-center justify-center gap-4">
             <h2 className="text-2xl">Verifiera e-post</h2>
             <p>
@@ -214,6 +215,19 @@ export default function AuthPageClient() {
                 </Btn>
               </div>
             </form>
+            <p className="text-center text-sm text-app-muted">
+              <Link className="underline underline-offset-2" href="/gdpr">
+                GDPR-information
+              </Link>{" "}
+              ·{" "}
+              <Link className="underline underline-offset-2" href="/terms">
+                Användarvillkor
+              </Link>{" "}
+              ·{" "}
+              <Link className="underline underline-offset-2" href="/privacy">
+                Integritetspolicy
+              </Link>
+            </p>
           </div>
         </section>
       </main>
@@ -228,7 +242,7 @@ export default function AuthPageClient() {
             Jobi<span className="text-app-primary">.sh</span>
           </h1>
         </div>
-        <div className="flex w-full flex-1 flex-col items-center justify-center gap-4">
+        <div className="flex w-full flex-1 flex-col max-w-150 self-center items-center justify-center gap-4">
           <h2 className="text-2xl">Logga in eller skapa konto</h2>
           <form
             onSubmit={handleSubmit}
@@ -258,6 +272,19 @@ export default function AuthPageClient() {
               {loading === "submit" ? "Loggar in..." : "Fortsätt"}
             </Btn>
             <div id="clerk-captcha" />
+            <p className="text-center text-sm text-app-muted">
+              <Link className="underline underline-offset-2" href="/gdpr">
+                GDPR-information
+              </Link>{" "}
+              ·{" "}
+              <Link className="underline underline-offset-2" href="/terms">
+                Användarvillkor
+              </Link>{" "}
+              ·{" "}
+              <Link className="underline underline-offset-2" href="/privacy">
+                Integritetspolicy
+              </Link>
+            </p>
           </form>
         </div>
       </section>

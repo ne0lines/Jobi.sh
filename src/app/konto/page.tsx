@@ -79,16 +79,21 @@ export default async function AccountPage() {
               Integritet & Data
             </dt>
             <dd>
+              <Link href='/gdpr' className='text-app-muted underline underline-offset-4'>
+                GDPR-information
+              </Link>
+            </dd>
+            <dd>
+              <Link href='/terms' className='text-app-muted underline underline-offset-4'>
+                Användarvillkor
+              </Link>
+            </dd>
+            <dd>
               <Link
                 href='/privacy'
                 className='text-app-muted underline underline-offset-4'
               >
                 Integritetspolicy
-              </Link>
-            </dd>
-            <dd>
-              <Link href='/gdpr' className='text-app-muted underline underline-offset-4'>
-                GDPR-information
               </Link>
             </dd>
             <dd>Vid radering av konto raderas samtliga personuppgifter.</dd>

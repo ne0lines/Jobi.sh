@@ -1,5 +1,4 @@
 import { Job, JobStatus } from "@/app/types";
-import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import Board from "./board";
 import { QuickImportInput } from "./quick-import-input";
@@ -232,8 +231,10 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
           <Board
             jobs={applied}
             label={"Ansökt"}
-            borderColor="border-blue-400"
-            bgColor="bg-blue-100"
+            borderColor="border-transparent"
+            bgColor="bg-blue-100 dark:bg-[#123348]"
+            titleClassName="text-[#295a99] dark:text-[#9bc2ff]"
+            itemBgColor="bg-[#295a99]/18 dark:bg-[#9bc2ff]/12"
           />
         )}
 
@@ -241,8 +242,10 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
           <Board
             jobs={inProcess}
             label={"Pågår"}
-            borderColor="border-amber-400"
-            bgColor="bg-amber-100"
+            borderColor="border-transparent"
+            bgColor="bg-[#e8cb72] dark:bg-[#3a2a0f]"
+            titleClassName="text-[#7a4b00] dark:text-[#ffd38a]"
+            itemBgColor="bg-[#7a4b00]/18 dark:bg-[#ffd38a]/12"
           />
         )}
 
@@ -250,19 +253,31 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
           <Board
             jobs={interviewed}
             label={"Intervju"}
-            borderColor="border-cyan-400"
-            bgColor="bg-cyan-100"
+            borderColor="border-transparent"
+            bgColor="bg-cyan-100 dark:bg-[#123348]"
+            titleClassName="text-app-cyan-strong dark:text-[#8edcff]"
+            itemBgColor="bg-[#0e6b8c]/16 dark:bg-[#8edcff]/12"
           />
         )}
         {offers.length > 0 && (
           <Board
             jobs={offers}
             label={"Erbjudande"}
-            borderColor="border-green-400"
-            bgColor="bg-green-100"
+            borderColor="border-transparent"
+            bgColor="bg-green-100 dark:bg-[#143325]"
+            titleClassName="text-app-green-strong dark:text-[#7ee0a7]"
+            itemBgColor="bg-[#1f7a43]/16 dark:bg-[#7ee0a7]/12"
           />
         )}
-        {saved.length > 0 && <Board jobs={saved} label={"Sparat"} />}
+        {saved.length > 0 && (
+          <Board
+            jobs={saved}
+            label={"Sparat"}
+            borderColor="border-transparent"
+            titleClassName="text-app-ink"
+            itemBgColor="bg-white/55 dark:bg-white/10"
+          />
+        )}
       </div>
     </section>
   );
