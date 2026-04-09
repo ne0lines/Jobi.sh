@@ -32,11 +32,14 @@ export type Job = {
   timeline: JobTimelineItem[];
   notes?: string;
   status: JobStatus;
+  archivedAt: string | null;
 };
 
-export type CreateJobInput = Omit<Job, "id" | "userId">;
+export type CreateJobInput = Omit<Job, "id" | "userId" | "archivedAt">;
 
-export type UpdateJobInput = Partial<CreateJobInput>;
+export type UpdateJobInput = Partial<CreateJobInput> & {
+  archivedAt?: string | null;
+};
 
 export type JobFormState = {
   title: string;

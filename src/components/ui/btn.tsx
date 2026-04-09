@@ -1,5 +1,8 @@
+"use client"
+
 import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
+import { trackButtonEvent, type TrackableEvent } from '@/lib/analytics'
 
 type BtnVariant = "primary" | "secondary" | "tertiary" | "red" | "muted";
 type BtnIconPosition = "left" | "right";
@@ -21,13 +24,12 @@ type SharedProps = {
   hex?: string
   icon?: BtnIconProp
   style?: React.CSSProperties
+  track?: TrackableEvent
   variant?: BtnVariant
 }
 
-type LinkBtnProps = SharedProps & {
+type LinkBtnProps = SharedProps & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof SharedProps | 'href'> & {
   href: string;
-  target?: React.HTMLAttributeAnchorTarget;
-  rel?: string;
 };
 
 type ButtonBtnProps = SharedProps &
@@ -42,13 +44,13 @@ const baseClassName =
 
 const variantClassNames: Record<BtnVariant, string> = {
   primary:
-    "bg-gradient-to-r from-app-primary to-app-primary-strong text-white shadow-lg visited:text-white",
+    "bg-[linear-gradient(90deg,#6e33eb_0%,#8148ff_100%)] text-white shadow-[0_10px_22px_rgba(110,51,235,0.26)] visited:text-white",
   secondary: "border border-app-stroke bg-white/70 text-app-ink",
   tertiary:
-    "bg-gradient-to-r from-app-green-strong to-app-green-strong text-white/70 shadow-lg visited:text-white",
+    "bg-[linear-gradient(90deg,#1f7a43_0%,#1f7a43_100%)] text-white shadow-[0_10px_22px_rgba(31,122,67,0.22)] visited:text-white",
   muted:
     "border border-app-stroke bg-app-muted-surface text-app-muted-ink hover:bg-app-muted-hover",
-  red: "bg-gradient-to-r from-app-red to-app-red-strong text-white shadow-lg visited:text-white",
+  red: "bg-[linear-gradient(90deg,#ff4d4f_0%,#d32f2f_100%)] text-white shadow-[0_10px_22px_rgba(211,47,47,0.22)] visited:text-white",
 };
 
 function cn(...values: Array<string | undefined | false>) {
@@ -118,6 +120,7 @@ export function Btn({
   hex,
   icon,
   style,
+  track,
   variant = "primary",
   ...props
 }: BtnProps) {
@@ -164,7 +167,7 @@ export function Btn({
   );
 
   if (typeof props.href === "string") {
-    const { href, rel, target } = props;
+    const { href, rel, target, ...linkProps } = props;
     const isExternal =
       href.startsWith("http://") || href.startsWith("https://");
 
@@ -173,9 +176,11 @@ export function Btn({
         <a
           className={classes}
           href={href}
+          {...linkProps}
           rel={rel}
           style={resolvedStyle}
           target={target}
+          onClick={() => { if (track) trackButtonEvent(track); }}
         >
           {content}
         </a>
@@ -183,14 +188,28 @@ export function Btn({
     }
 
     return (
-      <Link className={classes} href={href} style={resolvedStyle}>
+      <Link
+        className={classes}
+        href={href}
+        style={resolvedStyle}
+        onClick={() => { if (track) trackButtonEvent(track); }}
+      >
         {content}
       </Link>
     );
   }
 
+  const { onClick, ...buttonProps } = props as ButtonBtnProps;
   return (
-    <button className={classes} style={resolvedStyle} {...props}>
+    <button
+      className={classes}
+      style={resolvedStyle}
+      {...buttonProps}
+      onClick={(e) => {
+        if (track) trackButtonEvent(track);
+        onClick?.(e);
+      }}
+    >
       {content}
     </button>
   );

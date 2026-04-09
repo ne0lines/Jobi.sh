@@ -1,4 +1,6 @@
 import { type AutofillPayload, JobStatus } from "@/app/types";
+import { logger } from "@/lib/logger";
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 type AfContact = {
@@ -85,15 +87,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Ogiltig annonslänk." }, { status: 400 });
   }
 
-  const upstream = await fetch(
-    `https://platsbanken-api.arbetsformedlingen.se/jobs/v1/job/${jobId}`,
-    {
-      headers: {
-        accept: "application/json",
+  let upstream;
+  try {
+    upstream = await fetch(
+      `https://platsbanken-api.arbetsformedlingen.se/jobs/v1/job/${jobId}`,
+      {
+        headers: {
+          accept: "application/json",
+        },
+        cache: "no-store",
       },
-      cache: "no-store",
-    },
-  );
+    );
+  } catch (err) {
+    logger.error("Arbetsformedlingen API unreachable", { jobId });
+    Sentry.captureException(err, {
+      tags: { route: "GET /api/arbetsformedlingen", external: true },
+    });
+    return NextResponse.json(
+      { error: "Kunde inte nå Arbetsförmedlingens API." },
+      { status: 503 },
+    );
+  }
 
   if (!upstream.ok) {
     return NextResponse.json(

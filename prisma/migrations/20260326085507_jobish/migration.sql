@@ -1,0 +1,3 @@
+ALTER TABLE "Job"
+ADD COLUMN "startDate" TIMESTAMP(3),
+ADD COLUMN "closingDate" TIMESTAMP(3);

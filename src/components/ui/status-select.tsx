@@ -1,7 +1,7 @@
 "use client";
 
-import { updateJob } from "@/app/services/services";
 import { JobStatus } from "@/app/types";
+import { useUpdateJob } from "@/lib/hooks/jobs";
 import {
   Select,
   SelectContent,
@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -32,31 +31,31 @@ type StatusSelectProps = {
 };
 
 export function StatusSelect({ jobId, initialStatus }: Readonly<StatusSelectProps>) {
-  const router = useRouter();
   const [status, setStatus] = useState<JobStatus>(initialStatus);
+  const updateJob = useUpdateJob();
 
-  async function handleChange(nextStatus: string | null) {
+  function handleChange(nextStatus: string | null) {
     const resolvedStatus = (nextStatus ?? initialStatus) as JobStatus;
     const previousStatus = status;
 
-    if (resolvedStatus === previousStatus) {
-      return;
-    }
+    if (resolvedStatus === previousStatus) return;
 
     setStatus(resolvedStatus);
 
-    try {
-      await updateJob(jobId, { status: resolvedStatus });
-      toast.success(`Status ändrad till ${statusLabelByValue[resolvedStatus].toLowerCase()}.`);
-      router.refresh();
-    } catch (error) {
-      setStatus(previousStatus);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Jobbet kunde inte uppdateras just nu.",
-      );
-    }
+    updateJob.mutate(
+      { id: jobId, updates: { status: resolvedStatus } },
+      {
+        onSuccess: () => {
+          toast.success(`Status ändrad till ${statusLabelByValue[resolvedStatus].toLowerCase()}.`);
+        },
+        onError: (error) => {
+          setStatus(previousStatus);
+          toast.error(
+            error instanceof Error ? error.message : "Jobbet kunde inte uppdateras just nu.",
+          );
+        },
+      },
+    );
   }
 
   return (

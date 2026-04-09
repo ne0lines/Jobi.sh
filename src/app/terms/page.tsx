@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import Link from "next/link";
 import { Btn } from "@/components/ui/btn";
 import { TERMS_VERSION } from "@/lib/legal";
 
@@ -7,7 +9,7 @@ export const metadata: Metadata = {
   description: "Användarvillkor för Jobi.sh",
 };
 
-const sections = [
+const sections: { title: string; body: ReactNode[] }[] = [
   {
     title: "1. Tjänstens Syfte och Funktion",
     body: [
@@ -32,11 +34,21 @@ const sections = [
     ],
   },
   {
-    title: "4. Analys, Spårning och Google Analytics 4 (GA4)",
+    title: "4. Analys, felövervakning och förbättring av tjänsten",
     body: [
-      "För att förstå hur vår tjänst används och för att kontinuerligt kunna förbättra användarupplevelsen använder vi Google Analytics 4 (GA4).",
-      "Genom GA4 samlar vi in anonymiserad statistik kring användarbeteende, såsom vilka funktioner som används mest, sidvisningar och generell interaktion med appen.",
-      "Vi säljer aldrig din personliga ansökningshistorik till tredje part. För fullständig information om hur vi hanterar dina personuppgifter (enligt GDPR), vänligen läs vår [Länk till Integritetspolicy/Privacy Policy].",
+      "För att förstå hur tjänsten används och för att förbättra stabilitet och användarupplevelse använder vi PostHog för anonymiserad produktanalys och Sentry för felövervakning och prestandadata.",
+      "PostHog är konfigurerat utan personprofiler och utan spårningscookies. Sentry är konfigurerat för att inte skicka standard-PII, och text samt media maskeras i replay-data.",
+      <>
+        Vi säljer aldrig din personliga ansökningshistorik till tredje part. För
+        fullständig information om hur vi hanterar personuppgifter, läs vår{" "}
+        <Link
+          className="font-semibold text-app-primary underline underline-offset-2"
+          href="/privacy"
+        >
+          integritetspolicy
+        </Link>
+        .
+      </>,
     ],
   },
   {
@@ -105,8 +117,7 @@ const sections = [
     title: "14. Kontaktuppgifter",
     body: [
       "Om du har frågor om dessa användarvillkor, tjänsten i övrigt, eller vill komma i kontakt med oss gällande företagsavtal, vänligen kontakta oss på:",
-      "E-post: [Er gemensamma e-postadress, t.ex. hej@appnamn.se]",
-      "Utvecklare: [Ert teamnamn/Företagsnamn om ni har ett]",
+      "E-post: jobbi.sh@proton.me",
     ],
   },
 ];
@@ -115,12 +126,12 @@ export default function TermsPage() {
   return (
     <main className="min-h-dvh px-4 py-6">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <div className="rounded-[2rem] border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(242,245,251,0.84))] p-6 shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.12)] ring-1 ring-black/6">
+        <div className="space-y-6 rounded-[2rem] border border-app-stroke bg-white p-6 shadow-[0_10px_24px_rgba(17,23,40,0.08)]">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-app-primary">
             Jobi.sh
           </p>
           <h1 className="mt-3 text-4xl leading-none">
-            Användarvillkor (Terms of Service) för [Jobi.sh]
+            Användarvillkor (Terms of Service) för Jobi.sh
           </h1>
           <p className="mt-4 max-w-2xl text-base text-app-muted">
             Senast uppdaterad: <strong>{TERMS_VERSION}</strong>
@@ -136,8 +147,8 @@ export default function TermsPage() {
           {sections.map((section) => (
             <section key={section.title} className="space-y-3">
               <h2 className="text-2xl leading-tight">{section.title}</h2>
-              {section.body.map((paragraph) => (
-                <p key={paragraph} className="text-base leading-7 text-app-muted">
+              {section.body.map((paragraph, index) => (
+                <p key={`${section.title}-${index}`} className="text-base leading-7 text-app-muted">
                   {paragraph}
                 </p>
               ))}

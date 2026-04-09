@@ -1,11 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
+import { PostHogProvider } from "@/components/providers/posthog-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { PostHogPageView } from "@/components/analytics/posthog-page-view";
+import { PostHogServerPageView } from "@/components/analytics/posthog-server-page-view";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
+import { CookieNotice } from "@/components/gdpr/cookie-notice";
+import {
+  DEFAULT_THEME_PREFERENCE,
+  themeInitializationScript,
+} from "@/lib/theme";
 import { cn } from "@/lib/utils";
+import { Suspense } from "react";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -60,16 +72,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" className={cn("font-sans", geist.variable)}>
-      <body
-        className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}
+    <PostHogProvider>
+      <html
+        lang="sv"
+        className={cn("font-sans", geist.variable)}
+        style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
+        suppressHydrationWarning
       >
-        <ClerkProvider>
-          <RegisterServiceWorker />
-          <AppNavigationShell>{children}</AppNavigationShell>
-          <Toaster />
-        </ClerkProvider>
-      </body>
-    </html>
+        <body
+          className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased p-3`}
+        >
+          <Script id="theme-preference-init" strategy="beforeInteractive">
+            {themeInitializationScript}
+          </Script>
+          <PostHogServerPageView />
+          <Suspense fallback={null}>
+            <PostHogPageView />
+          </Suspense>
+          <ClerkProvider>
+            <ThemeProvider>
+              <QueryProvider>
+                <RegisterServiceWorker />
+                <AppNavigationShell>{children}</AppNavigationShell>
+                <Toaster />
+                <CookieNotice />
+              </QueryProvider>
+            </ThemeProvider>
+          </ClerkProvider>
+        </body>
+      </html>
+    </PostHogProvider>
   );
 }

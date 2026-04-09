@@ -12,7 +12,7 @@ async function getJobs(cookieHeader: string): Promise<Job[]> {
   const host = headersList.get("host") ?? "localhost:3000";
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const res = await fetch(`${protocol}://${host}/api/jobs`, {
+  const res = await fetch(`${protocol}://${host}/api/jobs?includeArchived=true`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });

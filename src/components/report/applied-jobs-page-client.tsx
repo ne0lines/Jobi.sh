@@ -17,7 +17,7 @@ export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientPr
           <p className="text-lg text-app-muted">
             Det finns inga registrerade ansökningar att visa ännu.
           </p>
-          <Btn href="/" variant="secondary">
+          <Btn href="/" variant="secondary" track="back_click">
             Tillbaka
           </Btn>
         </section>

@@ -1,4 +1,4 @@
-# ApplyTrack
+# Jobi.sh
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16" />
@@ -10,244 +10,336 @@
 </p>
 
 <p align="center">
-  <strong>En mobile-first jobbtracker för ansökningar, uppföljning och pipeline-överblick.</strong>
+  <strong>En mobile-first jobbtracker för ansökningar, uppföljning och aktivitetsrapportering.</strong>
 </p>
 
 <p align="center">
-  ApplyTrack hjälper dig att hålla ihop hela jobbsökarflödet på ett ställe: från ny ansökan till intervju, uppföljning och nästa steg. Fokus ligger på tydlighet, tempo och ett gränssnitt som fungerar lika bra i mobilen som på större skärmar. ✨
+  Jobi.sh samlar jobbsökarflödet på ett ställe: spara jobb, följ upp ansökningar, bygg en tydlig pipeline och exportera underlag till Arbetsförmedlingens aktivitetsrapport. Appen är byggd för att kännas snabb i mobilen men fungera lika bra på större skärmar.
 </p>
-
-![ApplyTrack Screens](public/ApplyTrack%20Screens-2.png)
 
 ## Innehåll
 
-- [ApplyTrack](#applytrack)
-  - [Innehåll](#innehåll)
-  - [Vad appen gör](#vad-appen-gör)
-  - [Highlights](#highlights)
-  - [Teknikstack](#teknikstack)
-  - [Kom igång](#kom-igång)
-    - [Databas](#databas)
-  - [Scripts](#scripts)
-  - [Rutter](#rutter)
-  - [Datamodell](#datamodell)
-  - [Projektstruktur](#projektstruktur)
-  - [Designsystem](#designsystem)
-  - [Produktidé](#produktidé)
-  - [Roadmap](#roadmap)
-  - [Status](#status)
+- [Översikt](#översikt)
+- [Highlights](#highlights)
+- [Teknikstack](#teknikstack)
+- [Kom igång](#kom-igång)
+- [Miljövariabler](#miljövariabler)
+- [Scripts](#scripts)
+- [Rutter](#rutter)
+- [API-endpoints](#api-endpoints)
+- [Datamodell](#datamodell)
+- [Projektstruktur](#projektstruktur)
+- [Observabilitet och analytics](#observabilitet-och-analytics)
+- [Designsystem och PWA](#designsystem-och-pwa)
+- [Browser extension](#browser-extension)
 
-## Vad appen gör
+## Översikt
 
-ApplyTrack är byggd för att ge en snabb och tydlig överblick över aktiva jobbansökningar.
+Jobi.sh är byggd för att ge en snabb och tydlig överblick över aktiva jobbansökningar.
 
-I nuvarande version kan du:
-
-- se en dashboard med pipeline, statistik och påminnelser
-- öppna en detaljvy för varje jobb via dynamisk route
-- lägga till nya jobb via ett formulär
-- använda lokal mock-data för att utveckla UI och flöden utan riktig backend
+- Dashboard med pipeline, statistik och påminnelser
+- Detaljvy per jobb med kontaktperson, tidslinje och uppgifter
+- Manuell registrering och import av jobbdata från Arbetsförmedlingens öppna API
+- Aktivitetsrapport med månadsfiltrering och exportflöde mot Arbetsförmedlingen
+- Autentisering och profilflöde via Clerk
+- Stöd för arkivering av avslutade jobb
 
 ## Highlights
 
-- 📱 Mobile-first från grunden
-- 🧭 Tydlig pipeline för jobbstatus
-- 📝 Detaljvy med kontaktperson, annonslänk och historik
-- 🔐 Inloggning och sessionshantering med magic link
-- 🗄️ PostgreSQL-databas via Prisma med fullt definierat schema
-- 🤖 Auto-ifyllning av jobbinfo från Arbetsförmedlingens API
-- 📊 Statistik och månatliga ansökningsgrafer med ApexCharts
-- 🎯 Återanvändbara UI-komponenter med Tailwind
-- 🔤 Inter som grundfont och Bricolage Grotesque för rubriker
+- Mobile-first UI byggt för högt tempo i jobbsökandet
+- Tydlig pipeline för jobbstatus: sparad, ansökt, pågår, intervju, erbjudande, avslutad
+- Integrerad import från Arbetsförmedlingens annonsdata
+- Browser extension-flöde för aktivitetsrapportering och Platsbanken-import
+- PostgreSQL via Prisma med tydliga relationer mellan jobb, kontakter, tidslinje och tasks
+- TanStack Query för klient-cache och uppdateringar
+- Sentry för felspårning och prestanda
+- PostHog för anonym produktanalys utan personprofiler
 
 ## Teknikstack
 
-| Område   | Val                                       |
-| -------- | ----------------------------------------- |
-| Ramverk  | Next.js 16                                |
-| UI       | React 19                                  |
-| Språk    | TypeScript                                |
-| Styling  | Tailwind CSS 4                            |
-| Databas  | PostgreSQL via Prisma 7                   |
-| Auth     | Magic link – sessioner i httpOnly-cookies |
-| Grafer   | ApexCharts                                |
-| Mock-API | json-server                               |
+| Område | Val |
+| --- | --- |
+| Ramverk | Next.js 16 med App Router |
+| UI | React 19 |
+| Språk | TypeScript |
+| Styling | Tailwind CSS 4 |
+| Databas | PostgreSQL via Prisma 7 |
+| Auth | Clerk |
+| Datahantering | TanStack Query v5 |
+| Observabilitet | Sentry |
+| Analytics | PostHog |
+| Diagram | ApexCharts |
+| Mock-data | json-server |
 
 ## Kom igång
 
-**1. Installera beroenden:**
+**1. Installera beroenden**
 
 ```bash
 npm install
 ```
 
-**2. Konfigurera miljövariabler:**
-
-Kopiera `.example.env` till `.env` och fyll i värdena:
+**2. Skapa lokal miljöfil**
 
 ```bash
-cp .example.env .env
+cp .example.env .env.local
 ```
 
-| Variabel | Beskrivning |
-|---|---|
-| `DATABASE_URL` | PostgreSQL-anslutningssträng |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key — hämtas från [dashboard.clerk.com](https://dashboard.clerk.com) |
-| `CLERK_SECRET_KEY` | Clerk secret key |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Inloggningssida, t.ex. `/sign-in` |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL` | Redirect efter inloggning |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL` | Redirect efter registrering |
-| `SEED_USER_ID` | *(Valfritt)* Clerk user ID för att köra seed — hittas i Clerk-dashboarden |
-| `SEED_USER_EMAIL` | *(Valfritt)* E-post kopplad till seed-användaren |
+**3. Fyll i nödvändiga miljövariabler**
 
-**3. Kör databasmigrationer:**
+Minst databas och Clerk behöver vara satta för att appen ska fungera lokalt.
+
+**4. Kör databasmigrationer**
 
 ```bash
 npx prisma migrate dev
 ```
 
-**4. Starta appen:**
+**5. Starta utvecklingsservern**
 
 ```bash
 npm run dev
 ```
 
-Appen körs på `http://localhost:3000`.
+Appen körs sedan på `http://localhost:3000`.
 
-**5. (Valfritt) Importera exempeldata:**
-
-Sätt `SEED_USER_ID` och `SEED_USER_EMAIL` i `.env`, kör sedan:
+**6. Valfritt: lägg in seed-data**
 
 ```bash
-tsx prisma/seed.ts
+npx tsx prisma/seed.ts
 ```
+
+Sätt då `SEED_USER_ID` och `SEED_USER_EMAIL` i `.env.local` först.
+
+Om du vill köra med lokal mock-server parallellt finns även:
+
+```bash
+npm run dev:mock
+```
+
+## Miljövariabler
+
+Utgå från `.example.env`.
+
+| Variabel | Beskrivning |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL-anslutningssträng för Prisma |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
+| `CLERK_SECRET_KEY` | Clerk secret key |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Inloggningssida, normalt `/auth` |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL` | Redirect efter inloggning |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL` | Redirect efter registrering |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN |
+| `SENTRY_ORG` | Sentry organisation |
+| `SENTRY_PROJECT` | Sentry projekt |
+| `SENTRY_AUTH_TOKEN` | Auth token för source map-upload vid build |
+| `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project key |
+| `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host, normalt `https://eu.i.posthog.com` |
+| `SEED_USER_ID` | Valfri Clerk user ID för seed-script |
+| `SEED_USER_EMAIL` | Valfri e-post för seed-script |
 
 ## Scripts
 
-| Script                | Beskrivning                                     |
-| --------------------- | ----------------------------------------------- |
-| `npm run dev`         | Startar Next.js i utvecklingsläge               |
-| `npm run mock-server` | Startar `json-server` med `src/server/db.json`  |
-| `npm run dev:mock`    | Startar både Next.js och mock-servern samtidigt |
-| `npm run build`       | Skapar produktionsbuild                         |
-| `npm run start`       | Startar produktionsservern                      |
-| `npm run lint`        | Kör ESLint                                      |
+| Script | Beskrivning |
+| --- | --- |
+| `npm run dev` | Startar Next.js i utvecklingsläge |
+| `npm run mock-server` | Startar `json-server` på port `3001` med `src/server/db.json` |
+| `npm run dev:mock` | Startar både Next.js och mock-servern samtidigt |
+| `npm run build` | Skapar produktionsbuild och kör Sentry-integrationen i Next-konfigurationen |
+| `npm run start` | Startar produktionsservern |
+| `npm run lint` | Kör ESLint |
+| `npm run auth:reset-password` | Kör reset-script för auth-flödet |
 
 ## Rutter
 
-| Route           | Syfte                                          |
-| --------------- | ---------------------------------------------- |
-| `/`             | Dashboard med översikt, pipeline och statistik |
-| `/jobb/new`     | Formulär för att lägga till ett nytt jobb      |
-| `/jobb/[jobId]` | Dynamisk detaljsida för ett specifikt jobb     |
+Några centrala sidor i appen:
+
+| Route | Typ | Beskrivning |
+| --- | --- | --- |
+| `/` | Server | Dashboard med jobböversikt |
+| `/auth` | Server/Client | Clerk-baserat auth-flöde |
+| `/jobb` | Server | Lista över jobb |
+| `/jobb/new` | Client | Skapa nytt jobb eller importera från annonslänk |
+| `/jobb/[jobId]` | Client | Detaljsida för ett jobb |
+| `/jobb/[jobId]/edit` | Client | Redigera befintligt jobb |
+| `/konto` | Client | Kontosida |
+| `/konto/create-profile` | Client | Skapa eller komplettera användarprofil |
+| `/aktivitetsrapport` | Server | Rapportvy för Arbetsförmedlingen |
+| `/report` | Server | Delad report-datakälla i egen vy |
+| `/extension` | Server | Info om browser extension och store-länkar |
+| `/privacy` | Server | Integritetspolicy |
+| `/terms` | Server | Användarvillkor |
+| `/gdpr` | Server | GDPR-information och cookie-relaterad info |
+
+Publika sidor är auth- och legalsidorna. Övriga sidor skyddas via Clerk-middleware och profilkontroll.
+
+## API-endpoints
+
+Alla endpoints ligger under `/api/`:
+
+| Endpoint | Metoder | Beskrivning |
+| --- | --- | --- |
+| `/api/user` | `GET`, `POST` | Hämtar eller skapar användarprofil |
+| `/api/jobs` | `GET`, `POST` | Hämtar jobb eller skapar nytt jobb |
+| `/api/jobs/[jobId]` | `GET`, `PATCH`, `DELETE` | Hämtar, uppdaterar, arkiverar eller tar bort jobb |
+| `/api/arbetsformedlingen` | `GET` | Hämtar jobbdata från Arbetsförmedlingens öppna API |
+| `/api/sentry-example-api` | `GET` | Exempelroute för Sentry-testning |
+
+Notera att auth-flödet ligger i app-routen `/auth` snarare än i en traditionell `/api/auth`-endpoint.
 
 ## Datamodell
 
-Appen använder just nu en lokal datakälla i:
+Schemat finns i `prisma/schema.prisma` och Prisma-klienten genereras till `src/app/generated/prisma`.
 
-- `src/server/db.json`
+### User
 
-Filen innehåller en `applications`-array där varje jobbpost består av bland annat:
+| Fält | Typ | Beskrivning |
+| --- | --- | --- |
+| `id` | `String` | Användar-ID |
+| `email` | `String` | Unik e-postadress |
+| `name` | `String` | Namn |
+| `profession` | `String` | Yrke eller roll |
+| `role` | `Enum` | `user` eller `admin` |
+| `complete` | `Boolean` | Om profilen är komplett |
+| `termsAcceptedAt` | `DateTime?` | När användaren godkände villkoren |
+| `termsVersion` | `String?` | Version av godkända villkor |
 
-- `id`
-- `title`
-- `company`
-- `location`
-- `employmentType`
-- `workload`
-- `jobUrl`
-- `contactPerson`
-- `timeline`
+### Job
 
-Tillhörande TypeScript-typer finns i:
+| Fält | Typ | Beskrivning |
+| --- | --- | --- |
+| `id` | `String` | Jobb-ID |
+| `userId` | `String` | Ägare till jobbet |
+| `title` | `String` | Jobbtitel |
+| `company` | `String` | Företagsnamn |
+| `location` | `String` | Ort |
+| `employmentType` | `String` | Anställningsform |
+| `workload` | `String` | Omfattning |
+| `jobUrl` | `String` | Ursprunglig annonslänk |
+| `status` | `Enum` | `saved`, `applied`, `in_process`, `interview`, `offer`, `closed` |
+| `notes` | `String` | Fritextanteckningar |
+| `startDate` | `DateTime?` | Eventuell startdag |
+| `closingDate` | `DateTime?` | Sista ansökningsdag |
+| `archivedAt` | `DateTime?` | Sätter att jobbet är arkiverat |
 
-- `src/app/types.ts`
+### Relationer
 
-Exempel på struktur:
+- `Job` har en valfri `ContactPerson`
+- `Job` har flera `TimelineItem`
+- `Job` har flera `Task`
+- `User` har flera jobb och tasks
 
-```json
-{
-  "applications": [
-    {
-      "id": "1",
-      "title": "UI Developer",
-      "company": "PixelForge",
-      "location": "Stockholm / Remote"
-    }
-  ]
-}
-```
+App-typerna som används i frontend finns i `src/app/types.ts`.
 
 ## Projektstruktur
 
 ```text
 src/
   app/
+    api/
+      arbetsformedlingen/
+      jobs/
+        [jobId]/
+      sentry-example-api/
+      user/
+    auth/[[...auth]]/
+    aktivitetsrapport/
+    extension/
+    gdpr/
+    generated/prisma/
     jobb/
-      [jobId]/page.tsx
-      new/page.tsx
-    globals.css
+      [jobId]/
+        edit/
+      new/
+    konto/
+      create-profile/
+    loader/
+    privacy/
+    report/
+    sentry-example-page/
+    services/
+    terms/
+    error.tsx
+    global-error.tsx
     layout.tsx
+    manifest.ts
     page.tsx
     types.ts
   components/
+    account/
+    analytics/
+    auth/
+    dashboard/
+    gdpr/
+    jobs/
+    navigation/
+    providers/
+    pwa/
+    report/
     ui/
-      btn.tsx
-  server/
-    db.json
+  lib/
+    analytics.ts
+    extension-install.ts
+    legal.ts
+    logger.ts
+    posthog-server.ts
+    prisma.ts
+    theme.ts
+    utils.ts
+  instrumentation.ts
+  instrumentation-client.ts
+  proxy.ts
+prisma/
+  migrations/
+  schema.prisma
+  seed.ts
+chrome-extension/
+  manifest.json
+  background.js
+  content-af.js
+  content-jobish.js
+  content-platsbanken.js
 ```
 
-## Designsystem
+## Observabilitet och analytics
 
-ApplyTrack är byggd med några tydliga designprinciper:
+Appen har två separata spår för produktionstelemetri:
 
-- mobile-first layout i hela appen
-- Tailwind som enda stylingstrategi i komponenterna
-- färger definieras i `globals.css` som variabler och exponeras som Tailwind-tokens
-- Inter används som grundfont
-- Bricolage Grotesque används för rubriker
-- UI:t ska kännas enkelt, snabbt och tydligt snarare än tungt eller överdesignat
+- Sentry för felövervakning, traces och replay-stöd
+- PostHog för anonyma produkt- och klickevent
 
-## Produktidé
+Nuvarande implementation i koden innebär bland annat:
 
-Som användare vill jag kunna:
+- Sentry initieras för klient, server och edge
+- Next-konfigurationen tunnlar Sentry-trafik via `/monitoring`
+- Session replay i Sentry maskerar text och blockerar media
+- PostHog körs utan personprofiler, utan autocapture och utan beständig lagring
+- Server-side event skickas även vid skapande av jobb för att inte tappas vid navigation
 
-- lägga till jobb snabbt genom att klistra in eller fylla i information manuellt
-- få en tydlig överblick över mina ansökningar
-- följa historik, status och nästa steg för varje jobb
-- undvika att missa uppföljningar eller deadlines
+## Designsystem och PWA
 
-Nice to have framåt:
+- Tailwind CSS 4 används genom hela appen
+- Typografi laddas via `next/font` med Geist, Inter och Bricolage Grotesque
+- Temahantering och initialisering finns i `src/lib/theme.ts`
+- Service worker registreras från klienten via `src/components/pwa/register-service-worker.tsx`
+- Web app manifest exponeras via `src/app/manifest.ts`
 
-- se trender i min ansökningsprocess 📈
-- filtrera jobb utifrån status
-- skapa flera boards för olika karriärspår
-- exportera data till PDF eller rapportformat
-- få smarta påminnelser baserat på status och datum
+## Browser extension
 
-## Roadmap
+Repot innehåller en lokal browser extension i `chrome-extension/` som knyter ihop Jobi.sh med Arbetsförmedlingens aktivitetsrapport och Platsbanken.
 
-Nästa naturliga steg för projektet:
+Den används till två huvudsakliga flöden:
 
-1. Rendera dashboarden dynamiskt från `db.json`
-2. Koppla formuläret till mock-API eller riktig backend
-3. Införa statusflöden som `Ansökt`, `Intervju`, `Erbjudande` och `Avslag`
-4. Lägga till filtrering, sortering och sökning
-5. Förbereda appen för riktig persistens med databas
+1. Skicka jobb från `/aktivitetsrapport` till Arbetsförmedlingens formulär.
+2. Lägg till jobb från Platsbanken direkt till `/jobb/new`.
 
-## Status
+### Lokal installation i Chrome
 
-Projektet är i ett tidigt produkt- och UI-skede, men har redan en tydlig struktur för vidareutveckling. README:n är skriven för att göra det snabbt att förstå appens riktning, köra den lokalt och bygga vidare utan att behöva läsa hela kodbasen först.
+1. Öppna `chrome://extensions`
+2. Aktivera `Developer mode`
+3. Välj `Load unpacked`
+4. Peka på mappen `chrome-extension`
 
-## Chrome Extension för aktivitetsrapport
-
-Repot innehåller nu också en unpacked Chrome Extension i [chrome-extension](chrome-extension) som kan ta emot ett jobb från [src/components/report/report-page-client.tsx](src/components/report/report-page-client.tsx) och försöka fylla i aktivitetsrapporten hos Arbetsförmedlingen.
-
-Snabbstart:
-
-1. Öppna `chrome://extensions`.
-2. Aktivera `Developer mode`.
-3. Ladda in mappen `chrome-extension` via `Load unpacked`.
-4. Gå till `/aktivitetsrapport` i appen och klicka på `Rapportera hos AF`.
+Chrome-mappen används även som bas för fortsatt paketering mot Chrome Web Store, Safari och Firefox. Store-länkarna exponeras i appen på `/extension` när publicering finns på plats.
 
 Mer detaljer finns i [chrome-extension/README.md](chrome-extension/README.md).

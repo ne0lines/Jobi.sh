@@ -1,6 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
+import { getPostHogServer } from "@/lib/posthog-server";
 import type { CreateJobInput, Job } from "@/app/types";
 import { JobStatus } from "@/app/types";
 
@@ -26,17 +29,29 @@ const appStatusToPrisma: Record<string, string> = {
   [JobStatus.CLOSED]: "closed",
 };
 
-export async function GET(): Promise<NextResponse<JobsResponse | { error: string }>> {
+export async function GET(request: NextRequest): Promise<NextResponse<JobsResponse | { error: string }>> {
   const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
-  const jobs = await prisma.job.findMany({
-    where: { userId },
-    include: { contactPerson: true, timeline: true },
-  });
+  const includeArchived = request.nextUrl.searchParams.get("includeArchived") === "true";
+
+  let jobs;
+  try {
+    jobs = await prisma.job.findMany({
+      where: {
+        userId,
+        ...(includeArchived ? {} : { archivedAt: null }),
+      },
+      include: { contactPerson: true, timeline: true },
+    });
+  } catch (err) {
+    logger.error("Failed to fetch jobs", { userId });
+    Sentry.captureException(err, { tags: { route: "GET /api/jobs" } });
+    return NextResponse.json({ error: "Det gick inte att hämta jobben." }, { status: 500 });
+  }
 
   const applications: Job[] = jobs.map((job) => ({
     id: job.id,
@@ -49,6 +64,7 @@ export async function GET(): Promise<NextResponse<JobsResponse | { error: string
     jobUrl: job.jobUrl,
     notes: job.notes,
     status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
+    archivedAt: job.archivedAt?.toISOString() ?? null,
     contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
     timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
   }));
@@ -69,26 +85,51 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
     return NextResponse.json({ error: "Jobbtitel och företag måste anges." }, { status: 400 });
   }
 
-  const job = await prisma.job.create({
-    data: {
-      userId,
-      title: payload.title,
-      company: payload.company,
-      location: payload.location ?? "",
-      employmentType: payload.employmentType ?? "",
-      workload: payload.workload ?? "",
-      jobUrl: payload.jobUrl ?? "",
-      notes: payload.notes ?? "",
-      status: appStatusToPrisma[payload.status] as never ?? "saved",
-      contactPerson: payload.contactPerson
-        ? { create: payload.contactPerson }
-        : undefined,
-      timeline: payload.timeline?.length
-        ? { create: payload.timeline }
-        : undefined,
-    },
-    include: { contactPerson: true, timeline: true },
-  });
+  let job;
+  try {
+    job = await prisma.job.create({
+      data: {
+        userId,
+        title: payload.title,
+        company: payload.company,
+        location: payload.location ?? "",
+        employmentType: payload.employmentType ?? "",
+        workload: payload.workload ?? "",
+        jobUrl: payload.jobUrl ?? "",
+        notes: payload.notes ?? "",
+        status: appStatusToPrisma[payload.status] as never ?? "saved",
+        contactPerson: payload.contactPerson
+          ? { create: payload.contactPerson }
+          : undefined,
+        timeline: payload.timeline?.length
+          ? { create: payload.timeline }
+          : undefined,
+      },
+      include: { contactPerson: true, timeline: true },
+    });
+  } catch (err) {
+    logger.error("Failed to create job", { userId });
+    Sentry.captureException(err, { tags: { route: "POST /api/jobs" } });
+    return NextResponse.json({ error: "Det gick inte att skapa jobbet." }, { status: 500 });
+  }
+
+  // Track job creation server-side — reliable even when browser navigates away immediately
+  try {
+    const posthog = getPostHogServer();
+    const domain = job.jobUrl
+      ? (() => { try { return new URL(job.jobUrl).hostname.replace(/^www\./, ""); } catch { return null; } })()
+      : null;
+
+    posthog.capture({
+      distinctId: "anonymous",
+      event: "job_created",
+      properties: {
+        ...(domain ? { source_domain: domain } : {}),
+        $process_person_profile: false, // match client-side person_profiles: "never"
+      },
+    });
+    await posthog.flush();
+  } catch { /* analytics failure must never affect the response */ }
 
   return NextResponse.json({
     id: job.id,
@@ -101,6 +142,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
     jobUrl: job.jobUrl,
     notes: job.notes,
     status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
+    archivedAt: job.archivedAt?.toISOString() ?? null,
     contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
     timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
   } satisfies Job, { status: 201 });

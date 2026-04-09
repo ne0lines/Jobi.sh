@@ -54,6 +54,7 @@ model Job {
   notes          String    @default("")
   startDate      DateTime?
   closingDate    DateTime?
+  archivedAt     DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 

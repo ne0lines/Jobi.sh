@@ -333,6 +333,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                 target="_blank"
                 rel="noreferrer"
                 icon={{ component: ExternalLink, position: "right", size: 18 }}
+                track="install_extension_click"
               >
                 {installTarget.installLabel}
               </Btn>
