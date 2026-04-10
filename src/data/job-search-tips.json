@@ -1,0 +1,746 @@
+[
+  {
+    "id": "anpassa-cv",
+    "title": "Dagens tips: Anpassa ditt CV",
+    "body": "Läs annonsen igen och justera de första raderna i ditt CV så att de speglar rollen du söker.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-upp-smart",
+    "title": "Dagens tips: Följ upp smart",
+    "body": "Välj en ansökan du skickat tidigare och skriv ett kort, tydligt uppföljningsmail med fråga om nästa steg.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbered-intervju",
+    "title": "Dagens tips: Förbered intervjusvar",
+    "body": "Skriv ner tre konkreta exempel på resultat du skapat. Det är ofta det snabbaste sättet att lyfta en intervju.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "se-over-profilen",
+    "title": "Dagens tips: Se över din profil",
+    "body": "Kontrollera att din LinkedIn-rubrik, plats och senaste erfarenhet matchar de jobb du söker just nu.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spara-lardomar",
+    "title": "Dagens tips: Dokumentera vad som funkar",
+    "body": "Notera en formulering eller ett CV-avsnitt som gett svar tidigare, så att du kan återanvända det i nya ansökningar.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prioritera-ratt",
+    "title": "Dagens tips: Prioritera rätt roller",
+    "body": "Välj ut en roll du faktiskt vill lägga energi på i dag och fokusera på kvalitet framför att skicka många snabba ansökningar.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "natverka-latt",
+    "title": "Dagens tips: Nätverka utan krångel",
+    "body": "Hitta en person på företaget du är nyfiken på och skriv ett kort meddelande med en konkret fråga om teamet eller rollen.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bryt-ner-kravprofilen",
+    "title": "Dagens tips: Bryt ner kravprofilen",
+    "body": "Markera de tre viktigaste kraven i annonsen och se till att de syns tydligt i ditt CV eller personliga brev.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "utforska-utbildning",
+    "title": "Dagens tips: Utforska utbildning",
+    "body": "Fundera på om en kort kurs, YH-utbildning eller certifiering kan öppna fler dörrar inom ett område du är nyfiken på.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kartlagg-bristyrken",
+    "title": "Dagens tips: Titta på bristyrken",
+    "body": "Sök upp yrken där efterfrågan är hög och fundera på om din erfarenhet kan översättas dit med små justeringar.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "overvaeg-flytt",
+    "title": "Dagens tips: Överväg flytt",
+    "body": "Om drömjobbet nästan alltid finns i en annan stad kan det vara värt att undersöka hur realistisk en flytt faktiskt är.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "testa-pendlingsradie",
+    "title": "Dagens tips: Testa större pendlingsradie",
+    "body": "Bredda sökningen med några mil eller minuter och se om du plötsligt hittar betydligt fler relevanta roller.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "inventera-karriarbyte",
+    "title": "Dagens tips: Inventera karriärbyte",
+    "body": "Skriv ner vilka delar av ditt nuvarande arbete du faktiskt gillar. Det är ofta där nästa yrkessteg finns gömt.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "oversatt-erfarenhet",
+    "title": "Dagens tips: Översätt din erfarenhet",
+    "body": "Byt ut interna ord och gamla titlar mot språk som en ny bransch eller arbetsgivare snabbt förstår.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-upp-andra-gangen",
+    "title": "Dagens tips: Följ upp en andra gång",
+    "body": "Om du redan har följt upp en gång kan ett kort och vänligt andra meddelande ibland vara det som får dig tillbaka på radarn.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ring-istallet-for-att-vanta",
+    "title": "Dagens tips: Ring i stället för att vänta",
+    "body": "Om kontaktuppgifter finns kan ett kort samtal ge mer än ännu ett mejl som lätt försvinner i inkorgen.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "be-om-feedback",
+    "title": "Dagens tips: Be om feedback",
+    "body": "När du får ett nej, fråga om en konkret sak du kan förbättra till nästa gång. Små insikter gör stor skillnad över tid.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "samla-referenser",
+    "title": "Dagens tips: Samla referenser i tid",
+    "body": "Kontakta personer som kan vara referenser redan nu så att du slipper jaga dem när processen väl går fort.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-enkel-portfolio",
+    "title": "Dagens tips: Bygg en enkel portfolio",
+    "body": "Du behöver inte vänta på en perfekt webbplats. Samla två eller tre arbetsprover i ett dokument eller en mapp och länka till det.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "visa-initiativ",
+    "title": "Dagens tips: Visa initiativ",
+    "body": "Lyft ett exempel där du själv såg ett problem och drev förbättringen. Arbetsgivare letar ofta efter just det.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-bredare",
+    "title": "Dagens tips: Sök bredare",
+    "body": "Om du bara söker på en titel, testa tre angränsande titlar också. Samma jobb kan heta olika på olika företag.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "hitta-din-nisch",
+    "title": "Dagens tips: Hitta din nisch",
+    "body": "Om du söker för brett, testa att välja ett område där din profil sticker ut tydligare än i mängden.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "satt-vecko-mal",
+    "title": "Dagens tips: Sätt veckomål",
+    "body": "Bestäm i förväg hur många ansökningar, uppföljningar eller nätverkskontakter du vill hinna varje vecka.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "boka-jobbpass",
+    "title": "Dagens tips: Boka in jobbsök som ett pass",
+    "body": "Lägg in jobbsöket i kalendern som om det vore ett viktigt möte. Det gör det svårare att skjuta upp.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "rensa-bort-brus",
+    "title": "Dagens tips: Rensa bort brus i CV:t",
+    "body": "Ta bort sådant som inte hjälper dig mot rollen. Ett tydligare CV är nästan alltid ett starkare CV.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lyft-resultat-tidigt",
+    "title": "Dagens tips: Lyft resultat tidigt",
+    "body": "Sätt dina starkaste prestationer högt upp så att de syns innan läsaren tappar fokus.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-ny-inledning",
+    "title": "Dagens tips: Skriv en ny inledning",
+    "body": "Testa att skriva om första stycket i ditt personliga brev så att det känns mer konkret, mindre generiskt och mer drivet.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spara-annonsfraser",
+    "title": "Dagens tips: Spara starka annonsfraser",
+    "body": "När en annons beskriver rollen bra, spara formuleringarna. De kan hjälpa dig att förstå hur du ska spegla din profil.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "aktivera-ditt-natverk",
+    "title": "Dagens tips: Aktivera ditt nätverk",
+    "body": "Berätta tydligt för några personer vad du söker nu. Många vill hjälpa men vet inte hur förrän du konkretiserar det.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ateruppta-gammal-kontakt",
+    "title": "Dagens tips: Återuppta en gammal kontakt",
+    "body": "Skriv till någon du inte pratat med på länge och fråga hur deras arbetsplats eller bransch ser ut just nu.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ga-pa-traff",
+    "title": "Dagens tips: Gå på en träff",
+    "body": "Ett event, meetup eller branschfrukost kan ge både energi och nya perspektiv när sökandet känns segt.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-om-praktik",
+    "title": "Dagens tips: Fråga om praktik eller skuggning",
+    "body": "Om du vill byta spår kan en kort praktik, hospitering eller skuggdag ge riktiga insikter och nya kontakter.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-om-timjobb",
+    "title": "Dagens tips: Fråga om timjobb",
+    "body": "En mindre anställning kan bli en väg in till något större. Tänk inte bara heltid eller inget.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-konsultspar",
+    "title": "Dagens tips: Prova konsultspåret",
+    "body": "Om direktanställning går trögt kan konsultuppdrag vara ett sätt att komma in och visa vad du går för.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-vikariat",
+    "title": "Dagens tips: Sök vikariat",
+    "body": "Tillfälliga roller kan ge dig ny erfarenhet, referenser och ett mycket snabbare vägval framåt än du tror.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-sasongsjobb",
+    "title": "Dagens tips: Titta på säsongsjobb",
+    "body": "Säsongsjobb kan vara ett sätt att bryta en stillastående period och samtidigt bygga erfarenhet och självförtroende.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "testa-deltid",
+    "title": "Dagens tips: Testa deltid som ingång",
+    "body": "Ibland är en deltidsroll bättre än att vänta på den perfekta heltidstjänsten. Ingångar kan växa.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kombinera-flera-vagar",
+    "title": "Dagens tips: Kombinera flera vägar",
+    "body": "Sök jobb, följ upp och nätverka parallellt. När allt läggs på samma spår blir processen ofta skörare.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lar-dig-ett-verktyg",
+    "title": "Dagens tips: Lär dig ett nytt verktyg",
+    "body": "Välj ett verktyg som ofta dyker upp i annonserna du gillar och lägg 30 minuter på att förstå grunderna.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ga-en-mikrokurs",
+    "title": "Dagens tips: Gå en mikrokurs",
+    "body": "En kort kurs kan ge dig nytt språk för att beskriva din kompetens, även innan du hunnit bli expert.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-en-certifiering",
+    "title": "Dagens tips: Kolla en certifiering",
+    "body": "Om många annonser nämner samma certifiering kan det vara värt att undersöka hur mycket den faktiskt betyder.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "uppdatera-github",
+    "title": "Dagens tips: Uppdatera ditt arbetsprov",
+    "body": "Lägg några minuter på att städa ett repo, en PDF eller en portfolio så att den känns levande och aktuell.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "publicera-ett-case",
+    "title": "Dagens tips: Publicera ett case",
+    "body": "Beskriv ett projekt du gjort med fokus på problem, lösning och resultat. Det gör din kompetens mycket lättare att förstå.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbattra-rubriken",
+    "title": "Dagens tips: Förbättra din rubrik",
+    "body": "Rubriken i CV eller LinkedIn behöver inte bara vara din titel. Testa att skriva vad du hjälper till att lösa.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "uppdatera-profilbild",
+    "title": "Dagens tips: Se över din profilbild",
+    "body": "En tydlig och professionell bild kan ge ett mer genomarbetat första intryck i digitala processer.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spela-in-hisspitch",
+    "title": "Dagens tips: Spela in din hisspitch",
+    "body": "Öva på att kort beskriva vem du är, vad du kan och vad du söker. Det blir lättare att låta trygg när det väl gäller.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forklara-cv-luckor",
+    "title": "Dagens tips: Förbered svar på luckor",
+    "body": "Om du har luckor i CV:t, skriv ner hur du vill förklara dem på ett lugnt och sakligt sätt.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "formulera-karriarbyte",
+    "title": "Dagens tips: Formulera ditt karriärbyte",
+    "body": "Förklara inte bara att du vill byta. Beskriv varför din tidigare erfarenhet är relevant i det nya spåret.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "valj-dromstad",
+    "title": "Dagens tips: Välj en drömstad",
+    "body": "Om du får välja fritt, i vilken stad finns flest roller som lockar dig? Den frågan kan förändra hela strategin.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kartlagg-foretag-i-staden",
+    "title": "Dagens tips: Kartlägg företag i rätt stad",
+    "body": "När du hittat en ort med intressanta jobb, gör en egen lista på företag där i stället för att vänta på annonser.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-foretag",
+    "title": "Dagens tips: Följ bolag du gillar",
+    "body": "Följ arbetsgivare på LinkedIn eller deras karriärsidor så att du fångar möjligheter tidigare än andra.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skicka-spontanansokan",
+    "title": "Dagens tips: Skicka en spontanansökan",
+    "body": "Om rätt roll inte ligger ute just nu kan en genomtänkt spontanansökan ändå öppna en dörr.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lista-tio-arbetsgivare",
+    "title": "Dagens tips: Lista tio arbetsgivare",
+    "body": "Skriv ner tio arbetsgivare du skulle vilja jobba för och börja med att undersöka tre av dem i dag.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "visa-motivation",
+    "title": "Dagens tips: Visa riktig motivation",
+    "body": "Byt ut allmänna ord som engagerad och driven mot konkreta exempel på varför just den här rollen lockar dig.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "analysera-avslag",
+    "title": "Dagens tips: Analysera dina avslag",
+    "body": "Titta efter mönster i de jobb där du får nej eller inget svar. Det kan visa var du behöver justera strategin.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ateruppliva-ett-sparat-jobb",
+    "title": "Dagens tips: Återuppliva ett sparat jobb",
+    "body": "Välj ett jobb du sparat men inte agerat på och bestäm i dag om du ska söka, följa upp eller släppa det.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-det-latt-att-borja",
+    "title": "Dagens tips: Gör det lätt att börja",
+    "body": "Om motståndet är högt, börja med fem minuter. Det räcker ofta för att komma in i arbetet.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-innan-det-kanns-perfekt",
+    "title": "Dagens tips: Sök innan allt känns perfekt",
+    "body": "Du behöver inte känna dig hundraprocentigt redo för att vara relevant. Vänta inte bort möjligheter.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "tacka-efter-intervju",
+    "title": "Dagens tips: Tacka efter intervju",
+    "body": "Ett kort tackmejl kan förstärka ett bra intryck och påminna om varför du passar för rollen.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbered-loneansprak",
+    "title": "Dagens tips: Förbered löneanspråk",
+    "body": "Ta reda på ditt spann i förväg så att du inte blir överrumplad när frågan kommer.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "tank-angransande-branscher",
+    "title": "Dagens tips: Tänk angränsande branscher",
+    "body": "Samma kompetens kan vara värdefull i flera branscher. Testa att bredda där utan att tappa riktning.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "anvand-hobbyer",
+    "title": "Dagens tips: Använd dina sidoprojekt",
+    "body": "Hobbyer, projekt och fritidsengagemang kan visa driv, lärande och ansvar även när de inte är ett formellt jobb.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lyft-ideellt-arbete",
+    "title": "Dagens tips: Lyft ideellt arbete",
+    "body": "Ideellt arbete kan vara ett starkt bevis på samarbete, ledarskap och initiativ. Gömm det inte längst ner.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "mark-ut-sprak",
+    "title": "Dagens tips: Synliggör språk och verktyg",
+    "body": "Om du kan språk eller system som arbetsgivaren nämner, se till att det går snabbt att hitta i din profil.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-en-ingangsroll",
+    "title": "Dagens tips: Tänk ingångsroll",
+    "body": "Ibland är bästa vägen till drömrollen att först kliva in via en närliggande roll i samma miljö.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "vaga-soka-juniorare",
+    "title": "Dagens tips: Våga söka lite juniorare",
+    "body": "Om du vill byta spår kan en mindre senior roll vara en snabbare väg in än att vänta på exakt rätt nivå.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "vaga-soka-stretchroll",
+    "title": "Dagens tips: Våga söka en stretchroll",
+    "body": "Alla krav behöver inte vara uppfyllda till hundra procent. Om du matchar kärnan kan det ändå vara värt att försöka.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-distansjobb",
+    "title": "Dagens tips: Titta på distansjobb",
+    "body": "En geografiskt friare sökning kan öppna helt andra marknader än den lokala.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-hybridjobb",
+    "title": "Dagens tips: Prova hybridroller",
+    "body": "Hybridjobb kan vara en bra kompromiss om du vill utöka sökradien utan att flytta direkt.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "strukturera-din-pipeline",
+    "title": "Dagens tips: Strukturera din pipeline",
+    "body": "Se till att du vet vilka jobb som väntar på ansökan, uppföljning eller beslut. Struktur sparar mental energi.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "mata-svarsfrekvens",
+    "title": "Dagens tips: Mät svarsfrekvensen",
+    "body": "Om du mäter hur ofta du får svar ser du snabbare om strategin faktiskt blir bättre.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "stark-forsta-halvsidan",
+    "title": "Dagens tips: Gör första halvsidan stark",
+    "body": "Det viktigaste i CV:t ska synas direkt. Tänk på vad någon uppfattar under de första sekunderna.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skicka-ansokan-pa-formiddagen",
+    "title": "Dagens tips: Skicka på förmiddagen",
+    "body": "Om du kan välja tid kan en ansökan som kommer tidigt på dagen ibland få bättre chans att bli sedd.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-mallbibliotek",
+    "title": "Dagens tips: Bygg ett mallbibliotek",
+    "body": "Spara bra formuleringar för olika typer av roller så att du kan vara snabb utan att bli slentrianmässig.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spegla-nyckelord",
+    "title": "Dagens tips: Spegla nyckelord",
+    "body": "Om en annons upprepar vissa ord är det ofta en signal om vad som bör synas tydligt i din ansökan.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lasa-pa-om-bolaget",
+    "title": "Dagens tips: Läs på om bolaget",
+    "body": "Fem minuter på företagets hemsida kan ge dig bättre frågor, bättre formuleringar och bättre tajming.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbered-egna-fragor",
+    "title": "Dagens tips: Förbered egna frågor",
+    "body": "Bra frågor i slutet av intervjun visar både intresse och omdöme. Skriv ner några i förväg.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "trana-med-fejkintervju",
+    "title": "Dagens tips: Träna med en fejkintervju",
+    "body": "Be någon ställa vanliga intervjufrågor eller spela in dig själv. Det gör svaren tryggare när det gäller.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spela-in-ditt-svar",
+    "title": "Dagens tips: Spela in ett svar",
+    "body": "Lyssna på hur du berättar om dig själv. Det är ett snabbt sätt att upptäcka om du låter tydlig eller diffus.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ett-litet-steg-idag",
+    "title": "Dagens tips: Ta ett litet steg i dag",
+    "body": "Om motivationen är låg, välj en enda konkret uppgift som går att avsluta på tio minuter.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "belona-framsteg",
+    "title": "Dagens tips: Belöna framsteg",
+    "body": "Fira när du skickar något, följer upp eller vågar testa nytt. Jobbsök blir lättare om framstegen märks.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "byt-sokstrategi",
+    "title": "Dagens tips: Byt strategi när det behövs",
+    "body": "Om du gjort samma sak länge utan effekt är det inte ett misslyckande att byta metod. Det är ett tecken på att du lär dig.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kontakta-rekryterare-direkt",
+    "title": "Dagens tips: Kontakta rekryteraren direkt",
+    "body": "Om annonsen har en kontaktperson, använd det. En kort fråga kan ge dig både klarhet och ett namn i processen.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "registrera-dig-hos-bemanningsbolag",
+    "title": "Dagens tips: Registrera dig hos bemanningsbolag",
+    "body": "Bemanning och rekrytering kan ge tillgång till jobb som inte alltid marknadsförs på samma sätt som vanliga annonser.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prata-med-vagledare",
+    "title": "Dagens tips: Prata med en vägledare",
+    "body": "En studie- och yrkesvägledare eller coach kan hjälpa dig se fler alternativ än de du själv fastnat i.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "undersok-yh-och-kurser",
+    "title": "Dagens tips: Undersök YH och korta kurser",
+    "body": "Det finns ofta snabbare utbildningsvägar än man tror, särskilt om du vill byta riktning utan att börja om helt.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-en-kvallskurs",
+    "title": "Dagens tips: Prova en kvällskurs",
+    "body": "En mindre kurs kan räcka för att testa om ett nytt område faktiskt känns rätt innan du satsar större.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-erfarenhet-genom-frilans",
+    "title": "Dagens tips: Bygg erfarenhet genom frilans",
+    "body": "Små uppdrag kan bli både arbetsprov, referens och självförtroende när du vill komma vidare.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "be-om-cv-granskning",
+    "title": "Dagens tips: Be om CV-granskning",
+    "body": "Be någon annan läsa ditt CV med färska ögon. Det som känns självklart för dig kan vara otydligt för andra.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "be-om-linkedin-granskning",
+    "title": "Dagens tips: Be om profilgranskning",
+    "body": "Låt någon du litar på säga vad de förstår om dig efter 30 sekunder på din profil. Det avslöjar mycket.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "stamma-av-med-referenser",
+    "title": "Dagens tips: Stäm av med referenser",
+    "body": "Berätta för dina referenser vilka typer av roller du söker så att de kan beskriva dig mer träffsäkert.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-ner-prestationer",
+    "title": "Dagens tips: Skriv ner prestationer",
+    "body": "Gör en lista över vad du faktiskt åstadkommit. Den blir guld värd i både ansökningar och intervjuer.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-pa-andra-titlar",
+    "title": "Dagens tips: Sök på fler titlar",
+    "body": "Testa alternativa titlar, engelska benämningar och äldre yrkesnamn. Du kanske missar annonser i onödan.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "tank-internationellt",
+    "title": "Dagens tips: Tänk internationellt",
+    "body": "Om språket räcker kan internationella arbetsgivare och engelskspråkiga roller bredda möjligheterna mycket.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "overvaeg-egna-projekt",
+    "title": "Dagens tips: Starta ett eget litet projekt",
+    "body": "Ett eget initiativ kan ge dig färsk erfarenhet och konkreta saker att prata om när jobbprocessen går långsamt.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-kompetenskarta",
+    "title": "Dagens tips: Gör en kompetenskarta",
+    "body": "Dela upp vad du kan i verktyg, ansvar, resultat och personliga styrkor. Då ser du tydligare vad du kan sälja in.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-upp-efter-tystnad",
+    "title": "Dagens tips: Följ upp efter tystnad",
+    "body": "Om du inte hört något på ett tag, skicka ett vänligt meddelande. Tystnad betyder inte alltid att processen är över.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "oppna-for-omlokalisering",
+    "title": "Dagens tips: Öppna för omlokalisering",
+    "body": "Tänk igenom om en tillfällig flytt eller provperiod i en annan stad kan vara möjlig om rätt jobb dyker upp.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "satsa-pa-kvalitet",
+    "title": "Dagens tips: Satsa på kvalitet",
+    "body": "Tre genomtänkta ansökningar kan ge mer än tio hafsiga. Påminn dig om att kvalitet ofta vinner.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "planera-nasta-manad",
+    "title": "Dagens tips: Planera nästa månad",
+    "body": "Tänk längre än bara dagens ansökan. Vad vill du ha testat, lärt dig eller följt upp innan månaden är slut?",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-om-din-berattelse",
+    "title": "Dagens tips: Skriv om din berättelse",
+    "body": "Hur beskriver du din resa hittills? En tydlig berättelse gör det lättare för arbetsgivare att förstå riktningen framåt.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-lista-over-dromjobb",
+    "title": "Dagens tips: Lista dina drömjobb",
+    "body": "Skriv ner fem jobb du verkligen vill ha och se vad de har gemensamt. Det hjälper dig fokusera smartare.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "jamfor-annonser",
+    "title": "Dagens tips: Jämför flera annonser",
+    "body": "Läs tre liknande annonser sida vid sida. Då blir det tydligare vilka krav som återkommer och vad du bör lyfta fram.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skapa-energirutin",
+    "title": "Dagens tips: Skapa en energirutin",
+    "body": "Hitta när på dagen du tänker bäst och lägg svårare ansökningar där. Det gör större skillnad än man tror.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-paus-med-ansvar",
+    "title": "Dagens tips: Ta paus med ansvar",
+    "body": "Om du är helt dränerad kan en planerad paus vara bättre än att försöka tvinga fram halvdant arbete.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-uppfoljningslista",
+    "title": "Dagens tips: Gör en uppföljningslista",
+    "body": "Separera jobb du ska följa upp från jobb du ska söka. Det gör det lättare att faktiskt stänga loopar.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "formulera-ditt-varfor",
+    "title": "Dagens tips: Formulera ditt varför",
+    "body": "När du vet varför du söker en viss typ av roll blir det lättare att hålla motivationen uppe när processen drar ut på tiden.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-pa-sjalvfortroendet",
+    "title": "Dagens tips: Bygg på självförtroendet",
+    "body": "Läs igenom gamla positiva kommentarer, referenser eller resultat. Påminn dig om att du faktiskt har något att bidra med.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gora-om-nej-till-data",
+    "title": "Dagens tips: Gör nej till data",
+    "body": "Varje nej innehåller information. Använd det för att justera, inte för att döma ut dig själv.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-vad-de-soker",
+    "title": "Dagens tips: Fråga vad de verkligen söker",
+    "body": "Om kontakt finns, fråga vilket problem den här rollen främst ska lösa. Då kan du anpassa ansökan mycket bättre.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-kortare",
+    "title": "Dagens tips: Skriv kortare och skarpare",
+    "body": "Om du tvekar, korta ner. Tydlighet slår nästan alltid längd i både CV och brev.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lyft-siffror",
+    "title": "Dagens tips: Lyft siffror där du kan",
+    "body": "Siffror på resultat, ansvar eller förbättringar gör din erfarenhet mer trovärdig och konkret.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "titta-pa-smabolag",
+    "title": "Dagens tips: Titta på mindre bolag",
+    "body": "Mindre företag kan vara snabbare i processen och mer öppna för profiler som inte passar perfekt i en mall.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "titta-pa-storbolag",
+    "title": "Dagens tips: Titta på större bolag",
+    "body": "Större arbetsgivare har ofta fler ingångar, interna vägar och roller som kan passa på sikt även om första steget är smalare.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "vanta-inte-pa-inspiration",
+    "title": "Dagens tips: Vänta inte på inspiration",
+    "body": "Jobbsök blir ofta lättare när du börjar jobba, inte när du väntar på att rätt känsla ska dyka upp.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-ett-utkast-direkt",
+    "title": "Dagens tips: Skriv ett utkast direkt",
+    "body": "Öppna dokumentet och skriv första versionen utan att redigera för mycket. Fart är ofta bättre än perfektion i början.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "avgransa-ditt-mal",
+    "title": "Dagens tips: Avgränsa dagens mål",
+    "body": "Bestäm redan nu vad som räcker för att dagen ska kännas bra. Då blir det lättare att hålla kursen.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gora-plats-for-ny-riktning",
+    "title": "Dagens tips: Ge plats åt en ny riktning",
+    "body": "Om ditt gamla mål inte längre känns rätt kan det vara modigare att tänka om än att hålla fast av vana.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-vad-vanner-ser",
+    "title": "Dagens tips: Fråga vad andra ser i dig",
+    "body": "Be någon beskriva dina styrkor med egna ord. Andra ser ofta värden du själv tonar ner.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-hjalp-av-ai-med-urskiljning",
+    "title": "Dagens tips: Ta hjälp med urskiljning",
+    "body": "Använd verktyg för att sammanfatta annonser eller hitta nyckelord, men låt alltid slutversionen kännas som du.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-en-breddlista",
+    "title": "Dagens tips: Bygg en breddlista",
+    "body": "Gör en lista över roller du kan söka direkt, roller du kan växa in i och roller du kan nå efter utbildning.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-tremansplan",
+    "title": "Dagens tips: Gör en tremånadersplan",
+    "body": "Tänk på vad du vill ha testat, lärt dig och sökt inom tre månader. Det ger riktning även när svaren dröjer.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-roligare-an-du-tror",
+    "title": "Dagens tips: Sök något som känns roligare",
+    "body": "Ibland väcks energin igen när du söker en roll som känns lite mer spännande än de du fastnat i av vana.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ge-dig-sjalv-fler-chanser",
+    "title": "Dagens tips: Ge dig själv fler chanser",
+    "body": "Ju fler genomtänkta försök du gör, desto större chans att rätt person ser just dig vid rätt tidpunkt.",
+    "url": "/dashboard"
+  }
+]

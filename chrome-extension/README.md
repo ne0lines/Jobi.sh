@@ -47,7 +47,7 @@ Firefox-versionen är inte distribuerad här ännu. Den här guiden är platsen 
 ## Import från platsannons
 
 1. Öppna en annons i Platsbanken, till exempel `https://arbetsformedlingen.se/platsbanken/annonser/...`.
-2. Klicka på knappen `Lägg till i Jobi.sh` som extensionen visar nere till höger.
+2. Klicka på knappen `Lägg till i Jobi.sh` som extensionen visar nere till höger, eller högerklicka på en annonslänk och välj `Spara jobbannons i Jobi.sh`.
 3. Extensionen öppnar Jobi.sh på `/jobb/new?url=<annonslänk>`.
 4. Jobi.sh hämtar annonsdata via den befintliga importen från Arbetsförmedlingen.
 
@@ -55,4 +55,5 @@ Firefox-versionen är inte distribuerad här ännu. Den här guiden är platsen 
 
 - Extensionen använder heuristik baserat på formulärets labels och attribut. Om Arbetsförmedlingen ändrar markup eller texter kan en eller flera selektorer behöva justeras.
 - Importknappen på Platsbanken använder den senast kända Jobi.sh-origin som extensionen sett, eller faller tillbaka till `https://jobi.sh` om ingen Jobi.sh-flik har öppnats ännu.
+- Högerklicksmenyn visas bara för länkar som pekar på `https://arbetsformedlingen.se/platsbanken/annonser/*`.
 - Matchning finns för `localhost:3000`, `127.0.0.1:3000`, `jobi.sh` och subdomäner till `jobi.sh`. Lägg till fler URL:er i `manifest.json` om du kör appen på en annan domän.

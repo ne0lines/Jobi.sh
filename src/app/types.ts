@@ -32,11 +32,14 @@ export type Job = {
   timeline: JobTimelineItem[];
   notes?: string;
   status: JobStatus;
+  archivedAt: string | null;
 };
 
-export type CreateJobInput = Omit<Job, "id" | "userId">;
+export type CreateJobInput = Omit<Job, "id" | "userId" | "archivedAt">;
 
-export type UpdateJobInput = Partial<CreateJobInput>;
+export type UpdateJobInput = Partial<CreateJobInput> & {
+  archivedAt?: string | null;
+};
 
 export type JobFormState = {
   title: string;
@@ -53,6 +56,26 @@ export type JobFormState = {
   contactEmail: string;
   contactPhone: string;
   notes: string;
+};
+
+export type PushSubscriptionInput = {
+  endpoint: string;
+  expirationTime: number | null;
+  keys: {
+    auth: string;
+    p256dh: string;
+  };
+};
+
+export type PushNotificationSettings = {
+  subscriptionCount: number;
+  tipNotificationsEnabled: boolean;
+  todoNotificationsEnabled: boolean;
+};
+
+export type UpdatePushNotificationSettingsInput = {
+  tipNotificationsEnabled: boolean;
+  todoNotificationsEnabled: boolean;
 };
 
 export type AutofillPayload = {
@@ -73,5 +96,11 @@ export type AutofillPayload = {
 
 export type Db = {
   applications: Job[];
+};
+
+export type UserOnboardingFlags = {
+  onboardingDismissed: boolean;
+  onboardingPipelineExplored: boolean;
+  onboardingReportViewed: boolean;
 };
 

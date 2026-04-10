@@ -2,6 +2,7 @@
 
 import { Btn } from "@/components/ui/btn";
 import { useClerk } from "@clerk/nextjs";
+import posthog from "posthog-js";
 import { useTranslations } from "next-intl";
 
 type LogoutBtnProps = {
@@ -15,7 +16,10 @@ export function LogoutBtn({ className }: Readonly<LogoutBtnProps>) {
   return (
     <Btn
       className={className}
-      onClick={() => signOut({ redirectUrl: "/" })}
+      onClick={() => {
+        posthog.capture("logout_click", undefined, { send_instantly: true });
+        signOut({ redirectUrl: "/" });
+      }}
       variant="red"
     >
       {t("logout")}

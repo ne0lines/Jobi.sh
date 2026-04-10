@@ -54,10 +54,10 @@ export function AppNavigationShell({
 
   const navItems = [
     {
-      href: "/",
+      href: "/dashboard",
       icon: House,
       label: t("overview"),
-      match: (p: string) => p === "/",
+      match: (p: string) => p === "/dashboard",
     },
     {
       href: "/jobb",
@@ -80,21 +80,24 @@ export function AppNavigationShell({
   ] as const;
 
   const hideNavigation =
+    pathname === "/" ||
     pathname.startsWith("/auth") ||
+    pathname.startsWith("/landing") ||
     pathname.startsWith("/konto/create-profile") ||
     pathname.startsWith("/terms") ||
-    pathname.startsWith("/gdpr");
+    pathname.startsWith("/gdpr") ||
+    pathname.startsWith("/privacy");
   const showNavigation = !hideNavigation;
 
   return (
     <>
       {showNavigation ? (
-        <div className="mx-auto w-full max-w-270 md:px-4">
+        <div className="mx-auto w-full max-w-270">
           <div className="md:flex md:items-start md:gap-8">
             <aside className="hidden md:block md:w-72 md:shrink-0 md:py-4">
               <div className={cn(navShellClassName, "fixed top-4 flex h-[calc(100svh-2rem)] w-72 flex-col p-4")}>
                 <Link
-                  href="/"
+                  href="/dashboard"
                   className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30 dark:hover:bg-white/4"
                 >
                   <h1 className="w-full text-[3.5rem] leading-none tracking-[-0.04em]">
@@ -165,7 +168,7 @@ export function AppNavigationShell({
 
                 <div className="mt-auto flex flex-col gap-3 pt-6">
                   <LanguageSwitcher />
-                  <Btn className="w-full" href="/jobb/new" icon={Plus}>
+                  <Btn className="w-full" href="/jobb/new" icon={Plus} track="add_job_click">
                     {t("addJob")}
                   </Btn>
                   <LogoutBtn className="w-full" />

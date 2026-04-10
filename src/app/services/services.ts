@@ -1,6 +1,10 @@
-import type { CreateJobInput, Job, UpdateJobInput } from "../types";
+import type { CreateJobInput, Job, UpdateJobInput, UserOnboardingFlags } from "../types";
 
 const API_BASE = "/api/jobs";
+
+type GetJobsOptions = {
+  includeArchived?: boolean;
+};
 
 async function getErrorMessage(response: Response, fallbackMessage: string): Promise<string> {
   try {
@@ -11,9 +15,21 @@ async function getErrorMessage(response: Response, fallbackMessage: string): Pro
   }
 }
 
+function buildJobsUrl(options: GetJobsOptions = {}): string {
+  const searchParams = new URLSearchParams();
+
+  if (options.includeArchived) {
+    searchParams.set("includeArchived", "true");
+  }
+
+  const query = searchParams.toString();
+
+  return query ? `${API_BASE}?${query}` : API_BASE;
+}
+
 /** GET all jobs */
-export async function getJobs(): Promise<Job[]> {
-  const res = await fetch(API_BASE, {
+export async function getJobs(options: GetJobsOptions = {}): Promise<Job[]> {
+  const res = await fetch(buildJobsUrl(options), {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to fetch jobs");
@@ -63,5 +79,19 @@ export async function deleteJob(id: string): Promise<void> {
   });
   if (!res.ok) {
     throw new Error(await getErrorMessage(res, `Failed to delete job ${id}`));
+  }
+}
+
+type PatchUserInput = Partial<UserOnboardingFlags>;
+
+/** PATCH onboarding flags on the current user */
+export async function patchUser(input: PatchUserInput): Promise<void> {
+  const res = await fetch("/api/user", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  if (!res.ok) {
+    throw new Error(await getErrorMessage(res, "Failed to update user"));
   }
 }

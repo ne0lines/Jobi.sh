@@ -15,10 +15,14 @@ import {
 import type { CreateJobInput, UpdateJobInput } from "@/app/types";
 import { jobKeys } from "@/lib/hooks/job-query-keys";
 
-export function useJobs() {
+type UseJobsOptions = {
+  includeArchived?: boolean;
+};
+
+export function useJobs(options: UseJobsOptions = {}) {
   return useQuery({
-    queryKey: jobKeys.all,
-    queryFn: getJobs,
+    queryKey: jobKeys.all(options),
+    queryFn: () => getJobs(options),
   });
 }
 
@@ -35,7 +39,7 @@ export function useCreateJob() {
   return useMutation({
     mutationFn: (input: CreateJobInput) => createJob(input),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: jobKeys.all });
+      void queryClient.invalidateQueries({ queryKey: jobKeys.root });
     },
   });
 }
@@ -47,7 +51,7 @@ export function useUpdateJob() {
       updateJob(id, updates),
     onSuccess: (_data, { id }) => {
       void queryClient.invalidateQueries({ queryKey: jobKeys.detail(id) });
-      void queryClient.invalidateQueries({ queryKey: jobKeys.all });
+      void queryClient.invalidateQueries({ queryKey: jobKeys.root });
     },
   });
 }
@@ -57,7 +61,7 @@ export function useDeleteJob() {
   return useMutation({
     mutationFn: (id: string) => deleteJob(id),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: jobKeys.all });
+      void queryClient.invalidateQueries({ queryKey: jobKeys.root });
     },
   });
 }

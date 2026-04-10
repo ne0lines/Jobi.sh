@@ -15,6 +15,9 @@ type User = {
   id: string;
   termsAcceptedAt: Date | null;
   termsVersion: string | null;
+  onboardingDismissed: boolean;
+  onboardingPipelineExplored: boolean;
+  onboardingReportViewed: boolean;
 };
 
 const userSelect = {
@@ -26,6 +29,9 @@ const userSelect = {
   role: true,
   termsAcceptedAt: true,
   termsVersion: true,
+  onboardingDismissed: true,
+  onboardingPipelineExplored: true,
+  onboardingReportViewed: true,
 } as const;
 
 export async function GET(
@@ -146,4 +152,54 @@ export async function POST(
   }
 
   return NextResponse.json(userData as User, { status: 201 });
+}
+
+type PatchUserInput = {
+  onboardingDismissed?: boolean;
+  onboardingPipelineExplored?: boolean;
+  onboardingReportViewed?: boolean;
+};
+
+export async function PATCH(
+  req: NextRequest,
+): Promise<NextResponse<{ ok: boolean } | { error: string }>> {
+  const clerkUser = await currentUser();
+
+  if (!clerkUser) {
+    return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
+  }
+
+  // id is always the Clerk user ID — POST /api/user sets it explicitly on create
+  const body = (await req.json()) as PatchUserInput;
+  const update: Partial<PatchUserInput> = {};
+
+  if (typeof body.onboardingDismissed === "boolean") {
+    update.onboardingDismissed = body.onboardingDismissed;
+  }
+  if (typeof body.onboardingPipelineExplored === "boolean") {
+    update.onboardingPipelineExplored = body.onboardingPipelineExplored;
+  }
+  if (typeof body.onboardingReportViewed === "boolean") {
+    update.onboardingReportViewed = body.onboardingReportViewed;
+  }
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json(
+      { error: "Inga fält att uppdatera." },
+      { status: 400 },
+    );
+  }
+
+  try {
+    await prisma.user.update({ where: { id: clerkUser.id }, data: update });
+  } catch (err) {
+    logger.error("Failed to update onboarding flags", { userId: clerkUser.id });
+    Sentry.captureException(err, { tags: { route: "PATCH /api/user" } });
+    return NextResponse.json(
+      { error: "Det gick inte att uppdatera profilen." },
+      { status: 500 },
+    );
+  }
+
+  return NextResponse.json({ ok: true });
 }

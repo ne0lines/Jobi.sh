@@ -2,6 +2,7 @@
 
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDeleteJob } from "@/lib/hooks/jobs";
+import { trackEvent } from "@/lib/analytics";
 import { Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -15,6 +16,7 @@ export function DeleteJobBtn({ jobId }: Readonly<{ jobId: string }>) {
   function handleTrigger(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    trackEvent("delete_job_click");
     setOpen(true);
   }
 

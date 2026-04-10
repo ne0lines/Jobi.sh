@@ -1,5 +1,8 @@
+"use client"
+
 import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
+import { trackButtonEvent, type TrackableEvent } from '@/lib/analytics'
 
 type BtnVariant = "primary" | "secondary" | "tertiary" | "red" | "muted";
 type BtnIconPosition = "left" | "right";
@@ -21,13 +24,12 @@ type SharedProps = {
   hex?: string
   icon?: BtnIconProp
   style?: React.CSSProperties
+  track?: TrackableEvent
   variant?: BtnVariant
 }
 
-type LinkBtnProps = SharedProps & {
+type LinkBtnProps = SharedProps & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof SharedProps | 'href'> & {
   href: string;
-  target?: React.HTMLAttributeAnchorTarget;
-  rel?: string;
 };
 
 type ButtonBtnProps = SharedProps &
@@ -118,6 +120,7 @@ export function Btn({
   hex,
   icon,
   style,
+  track,
   variant = "primary",
   ...props
 }: BtnProps) {
@@ -164,7 +167,7 @@ export function Btn({
   );
 
   if (typeof props.href === "string") {
-    const { href, rel, target } = props;
+    const { href, rel, target, ...linkProps } = props;
     const isExternal =
       href.startsWith("http://") || href.startsWith("https://");
 
@@ -173,9 +176,11 @@ export function Btn({
         <a
           className={classes}
           href={href}
+          {...linkProps}
           rel={rel}
           style={resolvedStyle}
           target={target}
+          onClick={() => { if (track) trackButtonEvent(track); }}
         >
           {content}
         </a>
@@ -183,14 +188,28 @@ export function Btn({
     }
 
     return (
-      <Link className={classes} href={href} style={resolvedStyle}>
+      <Link
+        className={classes}
+        href={href}
+        style={resolvedStyle}
+        onClick={() => { if (track) trackButtonEvent(track); }}
+      >
         {content}
       </Link>
     );
   }
 
+  const { onClick, ...buttonProps } = props as ButtonBtnProps;
   return (
-    <button className={classes} style={resolvedStyle} {...props}>
+    <button
+      className={classes}
+      style={resolvedStyle}
+      {...buttonProps}
+      onClick={(e) => {
+        if (track) trackButtonEvent(track);
+        onClick?.(e);
+      }}
+    >
       {content}
     </button>
   );

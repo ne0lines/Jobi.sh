@@ -9,7 +9,7 @@
     "48": "icons/jobish-48.png",
     "128": "icons/jobish-128.png"
   },
-  "permissions": ["storage", "tabs"],
+  "permissions": ["contextMenus", "storage", "tabs"],
   "host_permissions": [
     "http://localhost:3000/*",
     "http://127.0.0.1:3000/*",

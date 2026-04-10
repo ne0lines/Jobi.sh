@@ -1,6 +1,8 @@
 import { getReportPageData } from "@/app/report/report-page-data";
 import type { Job } from "@/app/types";
 import { ReportPageClient } from "@/components/report/report-page-client";
+import { ReportViewedTracker } from "@/components/report/report-viewed-tracker";
+import { getUserOnboardingFlags } from "@/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -12,7 +14,7 @@ async function getJobs(cookieHeader: string): Promise<Job[]> {
   const host = headersList.get("host") ?? "localhost:3000";
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const res = await fetch(`${protocol}://${host}/api/jobs`, {
+  const res = await fetch(`${protocol}://${host}/api/jobs?includeArchived=true`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });
@@ -31,7 +33,10 @@ export default async function ActivityReportPage() {
   }
 
   const headersList = await headers();
-  const applications = await getJobs(headersList.get("cookie") ?? "");
+  const [applications, userFlags] = await Promise.all([
+    getJobs(headersList.get("cookie") ?? ""),
+    getUserOnboardingFlags(),
+  ]);
 
   if (applications.length === 0) {
     redirect("/jobb/new");
@@ -39,5 +44,11 @@ export default async function ActivityReportPage() {
 
   const { jobs, options } = getReportPageData(applications);
 
-  return <ReportPageClient jobs={jobs} options={options} />;
+  return (
+    <>
+      {/* Default to true when userFlags is null: no profile means PATCH would fail anyway */}
+      <ReportViewedTracker alreadyTracked={userFlags?.onboardingReportViewed ?? true} />
+      <ReportPageClient jobs={jobs} options={options} />
+    </>
+  );
 }

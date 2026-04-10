@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ClerkProvider } from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
@@ -10,8 +11,10 @@ import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { PostHogPageView } from "@/components/analytics/posthog-page-view";
+import { PostHogServerPageView } from "@/components/analytics/posthog-server-page-view";
 import { RegisterServiceWorker } from "@/components/pwa/register-service-worker";
 import { Toaster } from "@/components/ui/sonner";
+import { CookieNotice } from "@/components/gdpr/cookie-notice";
 import {
   DEFAULT_THEME_PREFERENCE,
   themeInitializationScript,
@@ -75,35 +78,40 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <PostHogProvider>
-      <html
-        lang={locale}
-        className={cn("font-sans", geist.variable)}
-        style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
-        suppressHydrationWarning
-      >
-        <body
-          className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased`}
+    <>
+      <SpeedInsights />
+      <PostHogProvider>
+        <html
+          lang={locale}
+          className={cn("font-sans", geist.variable)}
+          style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
+          suppressHydrationWarning
         >
-          <Script id="theme-preference-init" strategy="beforeInteractive">
-            {themeInitializationScript}
-          </Script>
-          <Suspense fallback={null}>
-            <PostHogPageView />
-          </Suspense>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <ClerkProvider>
-              <ThemeProvider>
-                <QueryProvider>
-                  <RegisterServiceWorker />
-                  <AppNavigationShell>{children}</AppNavigationShell>
-                  <Toaster />
-                </QueryProvider>
-              </ThemeProvider>
-            </ClerkProvider>
-          </NextIntlClientProvider>
-        </body>
-      </html>
-    </PostHogProvider>
+          <body
+            className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased p-3 md:p-4`}
+          >
+            <Script id="theme-preference-init" strategy="beforeInteractive">
+              {themeInitializationScript}
+            </Script>
+            <PostHogServerPageView />
+            <Suspense fallback={null}>
+              <PostHogPageView />
+            </Suspense>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <ClerkProvider>
+                <ThemeProvider>
+                  <QueryProvider>
+                    <RegisterServiceWorker />
+                    <AppNavigationShell>{children}</AppNavigationShell>
+                    <Toaster />
+                    <CookieNotice />
+                  </QueryProvider>
+                </ThemeProvider>
+              </ClerkProvider>
+            </NextIntlClientProvider>
+          </body>
+        </html>
+      </PostHogProvider>
+    </>
   );
 }

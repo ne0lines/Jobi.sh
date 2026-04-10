@@ -16,12 +16,12 @@ export default async function JobsPage() {
   const queryClient = makeQueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: jobKeys.all,
-    queryFn: getJobsServer,
+    queryKey: jobKeys.all({ includeArchived: true }),
+    queryFn: () => getJobsServer({ includeArchived: true }),
   });
 
   return (
-    <main className="min-h-svh px-4 pt-4">
+    <main className="app-page">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <JobsContent />
       </HydrationBoundary>

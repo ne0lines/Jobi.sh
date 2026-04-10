@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import type { Job } from "@/app/types";
+import type { Job, UserOnboardingFlags } from "@/app/types";
 import { JobStatus } from "@/app/types";
 import { auth } from "@clerk/nextjs/server";
 
@@ -12,16 +12,37 @@ const prismaStatusToAppStatus: Record<string, JobStatus> = {
   closed: JobStatus.CLOSED,
 };
 
-export async function getJobsServer(): Promise<Job[]> {
-  const { userId } = await auth();
-  if (!userId) return [];
+type GetJobsServerOptions = {
+  includeArchived?: boolean;
+};
 
-  const jobs = await prisma.job.findMany({
-    where: { userId },
-    include: { contactPerson: true, timeline: true },
-  });
+type JobRecord = {
+  archivedAt: Date | null;
+  company: string;
+  contactPerson: {
+    email: string;
+    name: string;
+    phone: string;
+    role: string;
+  } | null;
+  employmentType: string;
+  id: string;
+  jobUrl: string;
+  location: string;
+  notes: string;
+  status: string;
+  timeline: Array<{
+    date: string;
+    event: string;
+  }>;
+  title: string;
+  updatedAt?: Date;
+  userId: string;
+  workload: string;
+};
 
-  return jobs.map((job) => ({
+function toAppJob(job: JobRecord): Job {
+  return {
     id: job.id,
     userId: job.userId,
     title: job.title,
@@ -32,7 +53,79 @@ export async function getJobsServer(): Promise<Job[]> {
     jobUrl: job.jobUrl,
     notes: job.notes ?? undefined,
     status: prismaStatusToAppStatus[job.status] ?? JobStatus.SAVED,
+    archivedAt: job.archivedAt?.toISOString() ?? null,
     contactPerson: job.contactPerson ?? { name: "", role: "", email: "", phone: "" },
-    timeline: job.timeline.map((t) => ({ date: t.date, event: t.event })),
-  }));
+    timeline: job.timeline.map((timelineItem) => ({
+      date: timelineItem.date,
+      event: timelineItem.event,
+    })),
+  };
+}
+
+export async function getJobsServer(options: GetJobsServerOptions = {}): Promise<Job[]> {
+  const { userId } = await auth();
+  if (!userId) return [];
+
+  const jobs = await prisma.job.findMany({
+    where: {
+      userId,
+      ...(options.includeArchived ? {} : { archivedAt: null }),
+    },
+    include: { contactPerson: true, timeline: true },
+  });
+
+  return jobs.map((job) => toAppJob(job));
+}
+
+export async function getLandingJobsServer(): Promise<Job[]> {
+  const jobs = await prisma.job.findMany({
+    where: {
+      archivedAt: null,
+    },
+    select: {
+      archivedAt: true,
+      company: true,
+      employmentType: true,
+      id: true,
+      jobUrl: true,
+      location: true,
+      notes: true,
+      status: true,
+      title: true,
+      userId: true,
+      workload: true,
+      timeline: {
+        select: {
+          date: true,
+          event: true,
+        },
+      },
+      contactPerson: {
+        select: {
+          email: true,
+          name: true,
+          phone: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  return jobs.map((job) => toAppJob(job));
+}
+
+export async function getUserOnboardingFlags(): Promise<UserOnboardingFlags | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      onboardingDismissed: true,
+      onboardingPipelineExplored: true,
+      onboardingReportViewed: true,
+    },
+  });
+
+  return user ?? null;
 }

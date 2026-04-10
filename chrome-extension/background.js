@@ -10,11 +10,15 @@ const PENDING_JOB_STORAGE_KEY = "jobishPendingActivityReportJob";
 const PREFERRED_JOBISH_ORIGIN_KEY = "jobishPreferredOrigin";
 const AF_REPORT_URL = "https://arbetsformedlingen.se/for-arbetssokande/mina-sidor/aktivitetsrapportera/lagg-till-aktivitet";
 const DEFAULT_JOBISH_ORIGIN = "https://jobi.sh";
+const IMPORT_CONTEXT_MENU_ID = "jobish-import-platsbanken-link";
 const JOBISH_URL_PATTERNS = [
   "http://localhost:3000/*",
   "http://127.0.0.1:3000/*",
   "https://jobi.sh/*",
   "https://*.jobi.sh/*",
+];
+const PLATSBANKEN_AD_URL_PATTERNS = [
+  "https://arbetsformedlingen.se/platsbanken/annonser/*",
 ];
 
 async function setPendingJob(payload) {
@@ -54,6 +58,34 @@ function getOriginFromUrl(url) {
   }
 }
 
+function isSupportedImportUrl(url) {
+  if (typeof url !== "string" || !url) {
+    return false;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    return (
+      parsedUrl.origin === "https://arbetsformedlingen.se" &&
+      parsedUrl.pathname.startsWith("/platsbanken/annonser/")
+    );
+  } catch {
+    return false;
+  }
+}
+
+async function ensureContextMenus() {
+  await chrome.contextMenus.removeAll();
+
+  chrome.contextMenus.create({
+    id: IMPORT_CONTEXT_MENU_ID,
+    title: "Spara jobbannons i Jobi.sh",
+    contexts: ["link"],
+    documentUrlPatterns: ["https://arbetsformedlingen.se/*"],
+    targetUrlPatterns: PLATSBANKEN_AD_URL_PATTERNS,
+  });
+}
+
 async function resolveJobishOrigin() {
   const tabs = await chrome.tabs.query({ url: JOBISH_URL_PATTERNS });
   const activeTab = tabs.find((tab) => tab.active) ?? tabs[0];
@@ -68,6 +100,10 @@ async function resolveJobishOrigin() {
 }
 
 async function openJobImportPage(sourceUrl) {
+  if (!isSupportedImportUrl(sourceUrl)) {
+    throw new Error("Kan bara importera länkar till jobbannonser från Platsbanken.");
+  }
+
   const origin = await resolveJobishOrigin();
   const importUrl = new URL("/jobb/new", origin);
   importUrl.searchParams.set("url", sourceUrl);
@@ -85,6 +121,14 @@ async function openJobImportPage(sourceUrl) {
 
   return await chrome.tabs.create({ url: importUrl.toString(), active: true });
 }
+
+chrome.runtime.onInstalled.addListener(() => {
+  void ensureContextMenus();
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  void ensureContextMenus();
+});
 
 async function openAfReportPage() {
   const existingTabs = await chrome.tabs.query({ url: `${AF_REPORT_URL}*` });
@@ -107,6 +151,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 
   chrome.tabs.sendMessage(tabId, { type: JOBISH_FILL_PENDING_REPORT_JOB }).catch(() => {
+    return undefined;
+  });
+});
+
+chrome.contextMenus.onClicked.addListener((info) => {
+  if (info.menuItemId !== IMPORT_CONTEXT_MENU_ID || !isSupportedImportUrl(info.linkUrl)) {
+    return;
+  }
+
+  void openJobImportPage(info.linkUrl).catch(() => {
     return undefined;
   });
 });

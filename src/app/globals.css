@@ -63,6 +63,16 @@
 	--sidebar-accent-foreground: oklch(0.205 0 0);
 	--sidebar-border: oklch(0.922 0 0);
 	--sidebar-ring: oklch(0.708 0 0);
+	--app-shell-inline: 1rem;
+	--app-shell-inline-lg: 1.5rem;
+	--app-page-top: 1rem;
+	--app-page-top-lg: 1.5rem;
+	--app-page-gap: 1.5rem;
+	--app-page-gap-compact: 1.25rem;
+	--app-card-padding: 1.25rem;
+	--app-card-padding-lg: 1.5rem;
+	--app-card-padding-compact: 1.25rem;
+	--app-card-padding-compact-lg: 1.5rem;
 }
 
 @theme inline {
@@ -427,6 +437,158 @@
 	}
   * {
     @apply border-border outline-ring/50;
+	}
+}
+
+@layer components {
+	.app-frame-nav {
+		margin-inline: auto;
+		width: 100%;
+		max-width: 67.5rem;
+		padding-inline: var(--app-shell-inline);
+	}
+
+	.app-frame-full {
+		margin-inline: auto;
+		width: 100%;
+		max-width: 75rem;
+		padding-inline: var(--app-shell-inline);
+	}
+
+	.app-page {
+		min-height: 100svh;
+		padding-top: var(--app-page-top);
+	}
+
+	.app-page-legal {
+		min-height: 100dvh;
+		padding-block: 1.5rem;
+	}
+
+	.app-page-content {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		gap: var(--app-page-gap);
+	}
+
+	.app-page-content-compact {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		gap: var(--app-page-gap-compact);
+	}
+
+	.app-heading-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.app-heading-stack-tight {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.app-form-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.app-form-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+	}
+
+	.app-card-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.app-feedback-card {
+		@apply rounded-2xl border border-app-stroke bg-app-card text-sm;
+		padding: 0.875rem 1rem;
+	}
+
+	.app-checkbox-card {
+		@apply rounded-2xl border border-app-stroke bg-app-card text-sm;
+		display: flex;
+		align-items: flex-start;
+		gap: 0.875rem;
+		padding: 1rem;
+	}
+
+	.app-card {
+		@apply rounded-3xl border border-app-stroke bg-app-card;
+		padding: var(--app-card-padding);
+	}
+
+	.app-card-dense {
+		@apply rounded-2xl border border-app-stroke bg-app-card;
+		padding: var(--app-card-padding-compact);
+	}
+
+	.app-card-elevated {
+		@apply rounded-3xl border border-app-stroke bg-white;
+		padding: var(--app-card-padding);
+		box-shadow: 0 10px 24px rgba(17, 23, 40, 0.08);
+	}
+
+	@media (min-width: 768px) {
+		.app-frame-nav,
+		.app-frame-full {
+			padding-inline: var(--app-shell-inline-lg);
+		}
+
+		.app-page {
+			padding-top: var(--app-page-top-lg);
+		}
+
+		.app-page-legal {
+			padding-block: 2rem;
+		}
+
+		.app-heading-stack {
+			gap: 1rem;
+		}
+
+		.app-heading-stack-tight {
+			gap: 0.75rem;
+		}
+
+		.app-form-stack {
+			gap: 1.5rem;
+		}
+
+		.app-form-field {
+			gap: 0.75rem;
+		}
+
+		.app-card-stack {
+			gap: 1rem;
+		}
+
+		.app-feedback-card {
+			padding: 1rem 1.25rem;
+		}
+
+		.app-checkbox-card {
+			gap: 1rem;
+			padding: 1.25rem;
+		}
+
+		.app-card,
+		.app-card-elevated {
+			padding: var(--app-card-padding-lg);
+		}
+
+		.app-card-dense {
+			padding: var(--app-card-padding-compact-lg);
+		}
 	}
 }
 
