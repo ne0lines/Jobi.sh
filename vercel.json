@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/todo-notifications",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/todo-notifications",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}

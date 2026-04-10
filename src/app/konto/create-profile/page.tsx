@@ -83,7 +83,7 @@ export default function CreateProfilePage() {
         return;
       }
 
-      router.push('/');
+      router.push('/dashboard');
       router.refresh();
     } catch {
       setFeedback('Kunde inte spara profilen.');

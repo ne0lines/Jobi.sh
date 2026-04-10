@@ -1,176 +1,40 @@
 import { Job, JobStatus } from "@/app/types";
+import { getTodoItems, type TodoItem } from "@/lib/job-insights";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Board from "./board";
 import { QuickImportInput } from "./quick-import-input";
 
-type TodoItem = {
-  dueAt: number;
-  id: string;
-  jobId: string;
-  text: string;
+const todoStateLabels: Record<TodoItem["state"], string> = {
+  overdue: "Försenad",
+  today: "Idag",
+  soon: "Snart",
+  upcoming: "Planera",
 };
 
-const monthMap: Record<string, number> = {
-  jan: 0,
-  januari: 0,
-  feb: 1,
-  februari: 1,
-  mar: 2,
-  mars: 2,
-  apr: 3,
-  april: 3,
-  maj: 4,
-  jun: 5,
-  juni: 5,
-  jul: 6,
-  juli: 6,
-  aug: 7,
-  augusti: 7,
-  sep: 8,
-  sept: 8,
-  september: 8,
-  okt: 9,
-  oktober: 9,
-  nov: 10,
-  november: 10,
-  dec: 11,
-  december: 11,
+const todoStateClassNames: Record<TodoItem["state"], string> = {
+  overdue: "bg-app-blush text-app-red-strong dark:bg-[#3d2823] dark:text-[#ff9395]",
+  today: "bg-app-sand text-[#7a4b00] dark:bg-[#3a2a0f] dark:text-[#ffd38a]",
+  soon: "bg-app-cyan text-app-cyan-strong dark:bg-[#123348] dark:text-[#8edcff]",
+  upcoming: "bg-blue-100 text-[#295a99] dark:bg-[#123348] dark:text-[#9bc2ff]",
 };
 
-function parseSwedishDate(value: string): Date | null {
-  const trimmedValue = value.trim().toLowerCase();
-  const match = /^(\d{1,2})\s+([^\s]+)\s+(\d{4})$/.exec(trimmedValue);
+const todoKindLabels: Record<TodoItem["kind"], string> = {
+  apply: "Ansökan",
+  deadline: "Deadline",
+  followUp: "Uppföljning",
+  checkIn: "Process",
+  decision: "Erbjudande",
+};
 
-  if (!match) {
-    return null;
-  }
-
-  const day = Number(match[1]);
-  const monthToken = match[2].replace(".", "");
-  const year = Number(match[3]);
-  const month = monthMap[monthToken];
-
-  if (month === undefined) {
-    return null;
-  }
-
-  return new Date(year, month, day);
-}
-
-function formatDueDate(date: Date): string {
-  return new Intl.DateTimeFormat("sv-SE", {
-    day: "numeric",
-    month: "long",
-  }).format(date);
-}
-
-function addDays(date: Date, days: number): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
-}
-
-function findTimelineDate(job: Job, matcher: (event: string) => boolean): Date | null {
-  const match = [...job.timeline]
-    .reverse()
-    .find((item) => matcher(item.event.toLowerCase()));
-
-  return match ? parseSwedishDate(match.date) : null;
-}
-
-function getSavedDate(job: Job): Date | null {
-  return findTimelineDate(job, (event) => event.includes("sparat"));
-}
-
-function getAppliedDate(job: Job): Date | null {
-  return findTimelineDate(job, (event) => event.includes("ansökan skickad"));
-}
-
-function getInterviewDate(job: Job): Date | null {
-  const interviewDate = findTimelineDate(job, (event) => event.includes("intervju"));
-
-  if (interviewDate) {
-    return interviewDate;
-  }
-
-  return getAppliedDate(job);
-}
-
-function getTodoItems(jobs: Job[]): TodoItem[] {
-  const now = new Date();
-
-  return jobs
-    .flatMap((job): TodoItem[] => {
-      if (job.status === JobStatus.SAVED) {
-        const savedDate = getSavedDate(job);
-
-        if (!savedDate) {
-          return [];
-        }
-
-        const dueDate = addDays(savedDate, 3);
-
-        return [
-          {
-            dueAt: dueDate.getTime(),
-            id: `${job.id}-saved`,
-            jobId: job.id,
-            text:
-              dueDate < now
-                ? `Skicka ansökan till ${job.company} för ${job.title} så snart som möjligt. Den borde ha skickats senast ${formatDueDate(dueDate)}.`
-                : `Skicka ansökan till ${job.company} för ${job.title} senast ${formatDueDate(dueDate)}.`,
-          },
-        ];
-      }
-
-      if (job.status === JobStatus.APPLIED) {
-        const appliedDate = getAppliedDate(job);
-
-        if (!appliedDate) {
-          return [];
-        }
-
-        const followUpDate = addDays(appliedDate, 14);
-
-        if (followUpDate > now) {
-          return [];
-        }
-
-        return [
-          {
-            dueAt: followUpDate.getTime(),
-            id: `${job.id}-applied`,
-            jobId: job.id,
-            text: `Följ upp ansökan hos ${job.company} för ${job.title}. Det har gått 14 dagar sedan du skickade ansökan.`,
-          },
-        ];
-      }
-
-      if (job.status === JobStatus.INTERVIEW) {
-        const interviewDate = getInterviewDate(job);
-
-        if (!interviewDate) {
-          return [];
-        }
-
-        const contactDate = addDays(interviewDate, 7);
-
-        if (contactDate > now) {
-          return [];
-        }
-
-        return [
-          {
-            dueAt: contactDate.getTime(),
-            id: `${job.id}-interview`,
-            jobId: job.id,
-            text: `Kontakta ${job.company} om ${job.title}. Det har gått 7 dagar sedan intervjun utan svar.`,
-          },
-        ];
-      }
-
-      return [];
-    })
-    .sort((firstItem, secondItem) => firstItem.dueAt - secondItem.dueAt);
-}
+const jobStatusLabels: Record<JobStatus, string> = {
+  [JobStatus.SAVED]: "Sparat",
+  [JobStatus.APPLIED]: "Ansökt",
+  [JobStatus.IN_PROCESS]: "Pågår",
+  [JobStatus.INTERVIEW]: "Intervju",
+  [JobStatus.OFFER]: "Erbjudande",
+  [JobStatus.CLOSED]: "Avslutad",
+};
 
 export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
   if (jobs.length === 0) {
@@ -205,17 +69,47 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
 
   return (
     <section className="w-full">
-      <article className="mt-4 rounded-2xl border border-app-stroke bg-app-card p-4">
-        <h3 className="mb-2 text-xl font-display">Att göra</h3>
+      <article>
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <h3 className="text-xl font-display">Att göra</h3>
+        </div>
         {todoItems.length > 0 ? (
-          <div className="divide-y divide-app-stroke text-base text-app-muted">
+          <div className="space-y-3">
             {todoItems.map((item) => (
               <Link
                 key={item.id}
                 href={`/jobb/${item.jobId}`}
-                className="block py-3 transition first:pt-0 last:pb-0 hover:text-app-primary"
+                className="block rounded-2xl border border-app-stroke bg-app-surface p-4 transition hover:-translate-y-0.5 hover:border-app-primary/30 hover:shadow-sm dark:bg-white/5"
               >
-                {item.text}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap gap-2">
+                      <span
+                        className={cn(
+                          "rounded-full px-3 py-1 text-xs font-semibold",
+                          todoStateClassNames[item.state],
+                        )}
+                      >
+                        {todoStateLabels[item.state]}
+                      </span>
+                      <span className="rounded-full bg-white/75 px-3 py-1 text-xs font-semibold text-app-muted dark:bg-white/10">
+                        {todoKindLabels[item.kind]}
+                      </span>
+                      <span className="rounded-full bg-app-card px-3 py-1 text-xs font-semibold text-app-muted dark:bg-white/8">
+                        {jobStatusLabels[item.status]}
+                      </span>
+                    </div>
+                    <strong className="mt-3 block text-base leading-snug text-app-ink sm:text-lg">
+                      {item.title}
+                    </strong>
+                    <p className="mt-1 text-sm leading-6 text-app-muted sm:text-base">
+                      {item.text}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-app-card px-3 py-1 text-sm font-medium text-app-muted dark:bg-white/8">
+                    {item.dueLabel}
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
@@ -274,6 +168,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
             jobs={saved}
             label={"Sparat"}
             borderColor="border-transparent"
+            bgColor="bg-gray-100 dark:bg-app-card"
             titleClassName="text-app-ink"
             itemBgColor="bg-white/55 dark:bg-white/10"
           />

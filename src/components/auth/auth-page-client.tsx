@@ -102,7 +102,7 @@ export default function AuthPageClient() {
 
     if (error) {
       if (isSignedIn) {
-        router.push("/");
+        router.push("/dashboard");
         return;
       }
 

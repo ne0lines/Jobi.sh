@@ -198,7 +198,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
           <p className="text-lg text-app-muted">
             Det finns inga registrerade ansökningsdatum att rapportera ännu.
           </p>
-          <Btn href="/" variant="secondary">
+          <Btn href="/dashboard" variant="secondary">
             Tillbaka
           </Btn>
         </section>

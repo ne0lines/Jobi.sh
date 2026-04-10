@@ -2,7 +2,9 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
+  "/",
   "/auth(.*)",
+  "/landing(.*)",
   "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
@@ -10,7 +12,9 @@ const isPublicRoute = createRouteMatcher([
 
 // Routes that don't require a DB profile (auth + the profile creation flow itself)
 const isProfileExempt = createRouteMatcher([
+  "/",
   "/auth(.*)",
+  "/landing(.*)",
   "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",

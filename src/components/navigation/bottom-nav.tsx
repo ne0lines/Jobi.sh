@@ -10,10 +10,10 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   {
-    href: "/",
+    href: "/dashboard",
     icon: House,
     label: "Översikt",
-    match: (pathname: string) => pathname === "/",
+    match: (pathname: string) => pathname === "/dashboard",
   },
   {
     href: "/jobb",
@@ -76,7 +76,9 @@ export function AppNavigationShell({
 }: Readonly<AppNavigationShellProps>) {
   const pathname = usePathname();
   const hideNavigation =
+    pathname === "/" ||
     pathname.startsWith("/auth") ||
+    pathname.startsWith("/landing") ||
     pathname.startsWith("/konto/create-profile") ||
     pathname.startsWith("/terms") ||
     pathname.startsWith("/gdpr") ||
@@ -91,7 +93,7 @@ export function AppNavigationShell({
             <aside className="hidden md:block md:w-72 md:shrink-0 md:py-4">
               <div className={cn(navShellClassName, "fixed top-4 flex h-[calc(100svh-2rem)] w-72 flex-col p-4")}>
                 <Link
-                  href="/"
+                  href="/dashboard"
                   className="block w-full rounded-2xl px-3 py-2 transition hover:bg-white/30 dark:hover:bg-white/4"
                 >
                   <h1 className="w-full text-[3.5rem] leading-none tracking-[-0.04em]">

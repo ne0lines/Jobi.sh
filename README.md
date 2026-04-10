@@ -135,6 +135,10 @@ Utgå från `.example.env`.
 | `SENTRY_AUTH_TOKEN` | Auth token för source map-upload vid build |
 | `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project key |
 | `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host, normalt `https://eu.i.posthog.com` |
+| `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY` | Publik VAPID-nyckel för browser subscriptions |
+| `WEB_PUSH_VAPID_PRIVATE_KEY` | Privat VAPID-nyckel som servern använder vid utskick |
+| `WEB_PUSH_CONTACT_EMAIL` | Kontaktmail som skickas med VAPID-signaturen, t.ex. `you@example.com` |
+| `TODO_NOTIFICATIONS_CRON_SECRET` | Delad hemlighet för den skyddade cron-routen som skickar todo-notiser |
 | `SEED_USER_ID` | Valfri Clerk user ID för seed-script |
 | `SEED_USER_EMAIL` | Valfri e-post för seed-script |
 
@@ -182,6 +186,8 @@ Alla endpoints ligger under `/api/`:
 | `/api/user` | `GET`, `POST` | Hämtar eller skapar användarprofil |
 | `/api/jobs` | `GET`, `POST` | Hämtar jobb eller skapar nytt jobb |
 | `/api/jobs/[jobId]` | `GET`, `PATCH`, `DELETE` | Hämtar, uppdaterar, arkiverar eller tar bort jobb |
+| `/api/notifications/push-subscription` | `GET`, `POST`, `DELETE` | Läser och hanterar browser subscriptions för pushnotiser |
+| `/api/cron/todo-notifications` | `POST` | Skyddad intern route som skickar pushnotiser när ett nytt todo blir aktivt |
 | `/api/arbetsformedlingen` | `GET` | Hämtar jobbdata från Arbetsförmedlingens öppna API |
 | `/api/sentry-example-api` | `GET` | Exempelroute för Sentry-testning |
 
@@ -230,6 +236,38 @@ Schemat finns i `prisma/schema.prisma` och Prisma-klienten genereras till `src/a
 - `User` har flera jobb och tasks
 
 App-typerna som används i frontend finns i `src/app/types.ts`.
+
+## Pushnotiser
+
+Appen har stöd för web push-notiser för nya `Att göra`-poster.
+
+- Användaren aktiverar pushnotiser från kontosidan.
+- Användaren kan slå av eller på kategorierna `Att göra` och `Tips` var för sig från kontosidan.
+- Browser subscription sparas i databasen.
+- En skyddad cron-route räknar fram aktuella todos och skickar bara notiser för poster som inte redan har levererats till användaren.
+- Om användaren inte har något aktivt todo den dagen väljs ett dagligt jobbsökartips från `src/data/job-search-tips.json`.
+- Todo-notiser har alltid högre prioritet än tips.
+- Service workern visar notisen och öppnar rätt jobbsida vid klick.
+
+Exempel på manuell körning av cron-routen:
+
+```bash
+curl -X POST http://localhost:3000/api/cron/todo-notifications \
+  -H "Authorization: Bearer $TODO_NOTIFICATIONS_CRON_SECRET"
+```
+
+Om du vill testa utskicket manuellt utanför den schemalagda tiden 09:00 kan du forcera körningen:
+
+```bash
+curl -X POST "http://localhost:3000/api/cron/todo-notifications?force=1" \
+  -H "Authorization: Bearer $TODO_NOTIFICATIONS_CRON_SECRET"
+```
+
+Produktionsschemat är tänkt att köras kl 09:00 svensk tid varje dag. Eftersom hostingplattformar ofta använder UTC triggas routen två gånger, `07:00` och `08:00` UTC, och routen själv avgör vilken körning som motsvarar 09:00 i `Europe/Stockholm`.
+
+För att funktionen ska fungera i drift behöver du koppla den routen till en scheduler, till exempel via hostingplattformens cron-stöd eller en extern schemaläggare.
+
+Om du kör på Vercel kan du använda `vercel.json` i repo:t och sätta `CRON_SECRET` till samma värde som `TODO_NOTIFICATIONS_CRON_SECRET`.
 
 ## Projektstruktur
 

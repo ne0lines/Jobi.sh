@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ClerkProvider } from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
 import Script from "next/script";
@@ -72,11 +73,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <PostHogProvider>
-      <html
-        lang="sv"
-        className={cn("font-sans", geist.variable)}
-        style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
+    <>
+      <SpeedInsights />
+      <PostHogProvider>
+        <html
+          lang="sv"
+          className={cn("font-sans", geist.variable)}
+          style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
         suppressHydrationWarning
       >
         <body
@@ -102,5 +105,6 @@ export default function RootLayout({
         </body>
       </html>
     </PostHogProvider>
+  </>
   );
 }

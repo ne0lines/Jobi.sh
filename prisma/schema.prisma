@@ -32,13 +32,17 @@ model User {
   role            UserRole  @default(user)
   profession      String    @default("")
   complete        Boolean   @default(false)
+  todoNotificationsEnabled Boolean @default(true)
+  tipNotificationsEnabled  Boolean @default(true)
   termsAcceptedAt DateTime?
   termsVersion    String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  jobs  Job[]
-  tasks Task[]
+  jobs              Job[]
+  tasks             Task[]
+  pushSubscriptions PushSubscription[]
+  todoNotifications TodoPushNotification[]
 }
 
 model Job {
@@ -97,4 +101,30 @@ model Task {
 
   job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model TodoPushNotification {
+  id        String   @id @default(cuid())
+  userId    String
+  todoId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, todoId])
+  @@index([userId])
 }

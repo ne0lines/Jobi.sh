@@ -552,7 +552,7 @@ export default function NewJobPage() {
               </label>
 
                 <div className="flex gap-4">
-                  <Btn href="/" variant="secondary" className="w-1/2">
+                  <Btn href="/dashboard" variant="secondary" className="w-1/2">
                     Avbryt
                   </Btn>
                   <Btn disabled={createJob.isPending} type="submit" className="w-full" icon={Plus}>

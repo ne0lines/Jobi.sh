@@ -58,6 +58,26 @@ export type JobFormState = {
   notes: string;
 };
 
+export type PushSubscriptionInput = {
+  endpoint: string;
+  expirationTime: number | null;
+  keys: {
+    auth: string;
+    p256dh: string;
+  };
+};
+
+export type PushNotificationSettings = {
+  subscriptionCount: number;
+  tipNotificationsEnabled: boolean;
+  todoNotificationsEnabled: boolean;
+};
+
+export type UpdatePushNotificationSettingsInput = {
+  tipNotificationsEnabled: boolean;
+  todoNotificationsEnabled: boolean;
+};
+
 export type AutofillPayload = {
   title: string;
   company: string;
