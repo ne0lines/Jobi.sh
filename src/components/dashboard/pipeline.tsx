@@ -1,9 +1,11 @@
+"use client";
+
 import { Job, JobStatus } from "@/app/types";
+import { useTranslations } from "next-intl";
 import { getTodoItems, type TodoItem } from "@/lib/job-insights";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Board from "./board";
-import { QuickImportInput } from "./quick-import-input";
 
 const todoStateLabels: Record<TodoItem["state"], string> = {
   overdue: "Försenad",
@@ -38,6 +40,8 @@ const jobStatusLabels: Record<JobStatus, string> = {
 };
 
 export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
+  const t = useTranslations("dashboard");
+
   if (jobs.length === 0) {
     return (
       <section className="app-page-content w-full py-6">
@@ -45,13 +49,10 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
           <div className="app-page-content-compact">
             <div>
               <h2 className="font-display text-3xl leading-tight md:text-[2rem]">
-                Din nästa möjlighet börjar här.
+                {t("emptyHeadline")}
               </h2>
               <p className="mt-3 text-base text-app-muted sm:text-lg">
-                När du sparar dina jobb här får du en tydlig översikt, statistik
-                och nästa steg samlat på ett ställe. Detta ger dig ett avsevärt
-                mycket enklare workflow i ditt arbetssökande och när det är dags
-                att aktivitetsrapportera till Arbetsförmedlingen.
+                {t("emptyDescription")}
               </p>
             </div>
           </div>
@@ -71,7 +72,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
     <section className="w-full">
       <article>
         <div className="mb-2 flex items-center justify-between gap-3">
-          <h3 className="text-xl font-display">Att göra</h3>
+          <h3 className="text-xl font-display">{t("todo")}</h3>
         </div>
         {todoItems.length > 0 ? (
           <div className="space-y-3">
@@ -115,16 +116,16 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
           </div>
         ) : (
           <p className="text-base text-app-muted">
-            Inget att följa upp just nu.
+            {t("todoEmpty")}
           </p>
         )}
       </article>
-      <h2 className="font-display text-3xl md:text-[1.75rem]">Pipeline</h2>
+      <h2 className="font-display text-3xl md:text-[1.75rem]">{t("pipeline")}</h2>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {applied.length > 0 && (
           <Board
             jobs={applied}
-            label={"Ansökt"}
+            label={t("boardApplied")}
             borderColor="border-transparent"
             bgColor="bg-blue-100 dark:bg-[#123348]"
             titleClassName="text-[#295a99] dark:text-[#9bc2ff]"
@@ -135,7 +136,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
         {inProcess.length > 0 && (
           <Board
             jobs={inProcess}
-            label={"Pågår"}
+            label={t("boardInProcess")}
             borderColor="border-transparent"
             bgColor="bg-[#e8cb72] dark:bg-[#3a2a0f]"
             titleClassName="text-[#7a4b00] dark:text-[#ffd38a]"
@@ -146,7 +147,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
         {interviewed.length > 0 && (
           <Board
             jobs={interviewed}
-            label={"Intervju"}
+            label={t("boardInterview")}
             borderColor="border-transparent"
             bgColor="bg-cyan-100 dark:bg-[#123348]"
             titleClassName="text-app-cyan-strong dark:text-[#8edcff]"
@@ -156,7 +157,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
         {offers.length > 0 && (
           <Board
             jobs={offers}
-            label={"Erbjudande"}
+            label={t("boardOffer")}
             borderColor="border-transparent"
             bgColor="bg-green-100 dark:bg-[#143325]"
             titleClassName="text-app-green-strong dark:text-[#7ee0a7]"
@@ -166,7 +167,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
         {saved.length > 0 && (
           <Board
             jobs={saved}
-            label={"Sparat"}
+            label={t("boardSaved")}
             borderColor="border-transparent"
             bgColor="bg-gray-100 dark:bg-app-card"
             titleClassName="text-app-ink"

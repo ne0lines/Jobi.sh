@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { type AutofillPayload, type CreateJobInput, type JobFormState, JobStatus } from "@/app/types";
 import { Plus, TextCursorInput } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -38,15 +39,18 @@ const initialState: JobFormState = {
   notes: "",
 };
 
+// Employment type and workload options are stored as Swedish strings in the DB
+// (matching values returned by Arbetsförmedlingen) — kept in Swedish intentionally.
 const employmentTypeOptions = ["Tillsvidare", "Visstid", "Provanställning", "Konsult"];
 const workloadOptions = ["Heltid", "Deltid"];
-const statusOptions: Array<{ value: JobStatus; label: string }> = [
-  { value: JobStatus.SAVED, label: "Sparad" },
-  { value: JobStatus.APPLIED, label: "Ansökt" },
-  { value: JobStatus.IN_PROCESS, label: "Pågående" },
-  { value: JobStatus.INTERVIEW, label: "Intervju" },
-  { value: JobStatus.OFFER, label: "Erbjudande" },
-  { value: JobStatus.CLOSED, label: "Avslutad" },
+
+const statusKeys: Array<{ value: JobStatus; key: keyof { saved: string; applied: string; inProcess: string; interview: string; offer: string; closed: string } }> = [
+  { value: JobStatus.SAVED, key: "saved" },
+  { value: JobStatus.APPLIED, key: "applied" },
+  { value: JobStatus.IN_PROCESS, key: "inProcess" },
+  { value: JobStatus.INTERVIEW, key: "interview" },
+  { value: JobStatus.OFFER, key: "offer" },
+  { value: JobStatus.CLOSED, key: "closed" },
 ];
 
 function extractAfJobId(value: string): string | null {
@@ -142,6 +146,8 @@ function buildTimeline(form: JobFormState) {
 export default function NewJobPage() {
   const router = useRouter();
   const createJob = useCreateJob();
+  const t = useTranslations("newJob");
+  const tStatus = useTranslations("status");
   const [form, setForm] = useState<JobFormState>(initialState);
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -149,6 +155,11 @@ export default function NewJobPage() {
   const [isDirectImportFlow, setIsDirectImportFlow] = useState(false);
   const lastFetchedJobId = useRef<string | null>(null);
   const appliedPrefillUrl = useRef<string | null>(null);
+
+  const statusOptions = statusKeys.map(({ value, key }) => ({
+    value,
+    label: tStatus(key),
+  }));
 
   const trimmedJobUrl = form.jobUrl.trim();
   const isAmsUrl = isArbetsformedlingenUrl(trimmedJobUrl);
@@ -169,14 +180,14 @@ export default function NewJobPage() {
     if (isArbetsformedlingenUrl(requestedJobUrl)) {
       setIsDirectImportFlow(true);
       setShowManualFields(false);
-      setFeedback("Hämtar data från Arbetsförmedlingen...");
+      setFeedback(t("fetchingAms"));
       return;
     }
 
     setIsDirectImportFlow(false);
     setShowManualFields(true);
     setFeedback("");
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (showManualFields || !trimmedJobUrl || isAmsUrl || !isAbsoluteUrl(trimmedJobUrl)) {
@@ -197,7 +208,7 @@ export default function NewJobPage() {
 
     const timeout = globalThis.setTimeout(async () => {
       setIsAutofilling(true);
-      setFeedback("Kontrollerar om annonsen redan finns sparad...");
+      setFeedback(t("checkingExisting"));
 
       try {
         const existingJobResponse = await fetch(`/api/jobs/${jobId}`, {
@@ -210,15 +221,15 @@ export default function NewJobPage() {
           setIsDirectImportFlow(false);
           setShowManualFields(false);
           setFeedback("");
-          toast.warning("Den här annonsen finns redan sparad.");
+          toast.warning(t("alreadySaved"));
           return;
         }
 
         if (existingJobResponse.status !== 404) {
-          throw new Error("Kunde inte kontrollera om annonsen redan finns sparad.");
+          throw new Error(t("checkError"));
         }
 
-        setFeedback("Hämtar data från Arbetsförmedlingen...");
+        setFeedback(t("fetchingAms"));
 
         const res = await fetch(
           `/api/arbetsformedlingen?url=${encodeURIComponent(form.jobUrl)}`,
@@ -228,7 +239,7 @@ export default function NewJobPage() {
         );
 
         if (!res.ok) {
-          throw new Error("Kunde inte hämta annonsdata.");
+          throw new Error(t("fetchDataAutoError"));
         }
 
         const data = (await res.json()) as AutofillPayload;
@@ -241,8 +252,8 @@ export default function NewJobPage() {
       } catch {
         setIsDirectImportFlow(false);
         setShowManualFields(false);
-        toast.error("Kunde inte hämta data automatiskt just nu.");
-        setFeedback("Kunde inte hämta data automatiskt just nu.");
+        toast.error(t("fetchDataError"));
+        setFeedback(t("fetchDataError"));
       } finally {
         setIsAutofilling(false);
       }
@@ -252,7 +263,7 @@ export default function NewJobPage() {
       controller.abort();
       globalThis.clearTimeout(timeout);
     };
-  }, [form.jobUrl, isAmsUrl, jobId]);
+  }, [form.jobUrl, isAmsUrl, jobId, t]);
 
   useEffect(() => {
     const rootElement = document.documentElement;
@@ -304,11 +315,11 @@ export default function NewJobPage() {
 
     createJob.mutate(payload, {
       onSuccess: (createdJob) => {
-        toast.success("Jobbet lades till.");
+        toast.success(t("saveSuccess"));
         router.push(`/jobb/${createdJob.id}`);
       },
       onError: (error) => {
-        const message = error instanceof Error ? error.message : "Kunde inte spara jobbet just nu.";
+        const message = error instanceof Error ? error.message : t("saveError");
         toast.error(message);
         setFeedback(message);
       },
@@ -317,31 +328,31 @@ export default function NewJobPage() {
 
   const handleSubmit: React.ComponentProps<"form">["onSubmit"] = (event) => {
     event.preventDefault();
-    submitJob();
+    void submitJob();
   };
 
   return (
-    <main className={cn("flex", showManualFields ? "app-page" : "h-svh overflow-hidden pb-0 pt-4")}>
-      <section className="mx-auto app-page-content-compact w-full flex-1">
-        <div className="app-heading-stack-tight">
-          <h1 className="font-display text-4xl md:text-[2.4rem]">Lägg till jobb</h1>
+    <main className={cn("flex", showManualFields ? "min-h-svh pt-4" : "h-svh overflow-hidden pb-0 pt-4")}>
+      <section className="mx-auto flex w-full flex-1 flex-col gap-4">
+        <div>
+          <h1 className="font-display text-4xl md:text-[2.4rem]">{t("title")}</h1>
           {feedback && !isAmsImportLoading ? (
-            <div className="app-feedback-card flex items-start gap-4 text-sm text-app-muted">
+            <div className="mt-4 flex items-start gap-4 rounded-2xl border border-app-stroke bg-app-card px-4 py-3 text-sm text-app-muted">
               {isAutofilling ? <Loader className="mt-0.5" size={24} /> : null}
-              <p className="min-w-0 leading-6">{feedback}</p>
+              <p className="min-w-0 pt-0.5">{feedback}</p>
             </div>
           ) : null}
         </div>
 
         {isAmsImportLoading ? (
           <div className="flex flex-1 items-center justify-center">
-            <div className="app-heading-stack-tight flex w-full max-w-md flex-col items-center px-6 py-10 text-center">
+            <div className="flex w-full max-w-md flex-col items-center px-6 py-10 text-center">
               <Loader size={40} />
-              <p className="pt-6 text-base font-medium text-app-ink">
-                {feedback || "Hämtar data från Arbetsförmedlingen..."}
+              <p className="mt-10 text-base font-medium text-app-ink">
+                {feedback || t("fetchingAms")}
               </p>
-              <p className="text-sm text-app-muted">
-                Formuläret visas automatiskt så fort annonsdatan är klar.
+              <p className="mt-2 text-sm text-app-muted">
+                {t("loadingText")}
               </p>
             </div>
           </div>
@@ -350,12 +361,12 @@ export default function NewJobPage() {
         {shouldRenderForm ? (
           <form autoComplete="off" className={cn("flex flex-1 flex-col", showManualFields ? "" : "justify-between")} onSubmit={handleSubmit}>
             {showManualFields ? (
-              <div className="app-page-content-compact app-form-stack pt-2">
-                <label className="app-form-field font-semibold text-app-muted">
-                  <span className="block">Annonslänk</span>
+              <div className="mt-4">
+                <label className="mb-3 block font-semibold text-app-muted">
+                  <span className="block">{t("jobUrl")}</span>
                   <Input
                     autoComplete="off"
-                    className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                    className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                     name="jobUrl"
                     placeholder="https://arbetsformedlingen.se/platsbanken/annonser/30763601"
                     type="url"
@@ -364,54 +375,54 @@ export default function NewJobPage() {
                   />
                 </label>
 
-              <label className="app-form-field font-semibold text-app-muted">
-                <span className="block">Jobbtitel</span>
+              <label className="mb-3 block font-semibold text-app-muted">
+                <span className="block">{t("jobTitle")}</span>
                 <Input
                   autoComplete="off"
-                  className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="title"
-                  placeholder="t.ex. UI Developer"
+                  placeholder={t("titlePlaceholder")}
                   type="text"
                   value={form.title}
                   onChange={(event) => updateField("title", event.target.value)}
                 />
               </label>
 
-              <label className="app-form-field font-semibold text-app-muted">
-                <span className="block">Företag</span>
+              <label className="mb-3 block font-semibold text-app-muted">
+                <span className="block">{t("company")}</span>
                 <Input
                   autoComplete="off"
-                  className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="company"
-                  placeholder="t.ex. PixelForge"
+                  placeholder={t("companyPlaceholder")}
                   type="text"
                   value={form.company}
                   onChange={(event) => updateField("company", event.target.value)}
                 />
               </label>
 
-              <label className="app-form-field font-semibold text-app-muted">
-                <span className="block">Plats</span>
+              <label className="mb-3 block font-semibold text-app-muted">
+                <span className="block">{t("location")}</span>
                 <Input
                   autoComplete="off"
-                  className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="location"
-                  placeholder="t.ex. Stockholm / Remote"
+                  placeholder={t("locationPlaceholder")}
                   type="text"
                   value={form.location}
                   onChange={(event) => updateField("location", event.target.value)}
                 />
               </label>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <label className="app-form-field font-semibold text-app-muted">
-                  <span className="block">Anställningstyp</span>
+              <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="block font-semibold text-app-muted">
+                  <span className="block">{t("employmentType")}</span>
                   <Select
                     value={form.employmentType}
                     onValueChange={(value) => updateField("employmentType", value ?? "")}
                   >
-                    <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
-                      <SelectValue placeholder="Välj" />
+                    <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
+                      <SelectValue placeholder={t("selectPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent>
                       {employmentTypeOptions.map((option) => (
@@ -423,14 +434,14 @@ export default function NewJobPage() {
                   </Select>
                 </label>
 
-                <label className="app-form-field font-semibold text-app-muted">
-                  <span className="block">Omfattning</span>
+                <label className="block font-semibold text-app-muted">
+                  <span className="block">{t("workload")}</span>
                   <Select
                     value={form.workload}
                     onValueChange={(value) => updateField("workload", value ?? "")}
                   >
-                    <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
-                      <SelectValue placeholder="Välj" />
+                    <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20 data-placeholder:text-app-muted">
+                      <SelectValue placeholder={t("selectPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent>
                       {workloadOptions.map((option) => (
@@ -443,13 +454,13 @@ export default function NewJobPage() {
                 </label>
               </div>
 
-              <label className="app-form-field font-semibold text-app-muted">
-                <span className="block">Status</span>
+              <label className="mb-3 block font-semibold text-app-muted">
+                <span className="block">{t("statusField")}</span>
                 <Select
                   value={form.status}
                   onValueChange={(value) => updateField("status", value as JobStatus)}
                 >
-                  <SelectTrigger className="h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20">
+                  <SelectTrigger className="mt-2 h-14 w-full rounded-2xl border-app-stroke bg-white px-4 text-base text-app-ink focus-visible:border-app-primary focus-visible:ring-app-primary/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -462,17 +473,17 @@ export default function NewJobPage() {
                 </Select>
               </label>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <label className="app-form-field font-semibold text-app-muted">
-                  <span className="block">Datum för ansökan</span>
+              <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="block font-semibold text-app-muted">
+                  <span className="block">{t("applicationDate")}</span>
                   <DatePicker
                     value={form.applicationDate}
                     onChange={(value) => updateField("applicationDate", value)}
                   />
                 </label>
 
-                <label className="app-form-field font-semibold text-app-muted">
-                  <span className="block">Sista ansökningsdag</span>
+                <label className="block font-semibold text-app-muted">
+                  <span className="block">{t("deadline")}</span>
                   <DatePicker
                     value={form.deadline}
                     onChange={(value) => updateField("deadline", value)}
@@ -480,41 +491,41 @@ export default function NewJobPage() {
                 </label>
               </div>
 
-              <fieldset className="app-card-dense app-form-stack">
-                <legend className="px-2 font-semibold text-app-muted">Kontaktperson (valfritt)</legend>
+              <fieldset className="mb-3 rounded-2xl border border-app-stroke bg-white p-4">
+                <legend className="px-2 font-semibold text-app-muted">{t("contact")}</legend>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <label className="app-form-field text-sm font-semibold text-app-muted">
-                    <span className="block">Namn</span>
+                  <label className="block text-sm font-semibold text-app-muted">
+                    <span className="block">{t("contactName")}</span>
                     <Input
                       autoComplete="off"
-                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactName"
-                      placeholder="t.ex. Anna Berg"
+                      placeholder={t("contactNamePlaceholder")}
                       type="text"
                       value={form.contactName}
                       onChange={(event) => updateField("contactName", event.target.value)}
                     />
                   </label>
 
-                  <label className="app-form-field text-sm font-semibold text-app-muted">
-                    <span className="block">Roll</span>
+                  <label className="block text-sm font-semibold text-app-muted">
+                    <span className="block">{t("contactRole")}</span>
                     <Input
                       autoComplete="off"
-                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactRole"
-                      placeholder="t.ex. Rekryterare"
+                      placeholder={t("contactRolePlaceholder")}
                       type="text"
                       value={form.contactRole}
                       onChange={(event) => updateField("contactRole", event.target.value)}
                     />
                   </label>
 
-                  <label className="app-form-field text-sm font-semibold text-app-muted">
-                    <span className="block">E-post</span>
+                  <label className="block text-sm font-semibold text-app-muted">
+                    <span className="block">{t("contactEmail")}</span>
                     <Input
                       autoComplete="off"
-                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactEmail"
                       placeholder="namn@företag.se"
                       type="email"
@@ -523,11 +534,11 @@ export default function NewJobPage() {
                     />
                   </label>
 
-                  <label className="app-form-field text-sm font-semibold text-app-muted">
-                    <span className="block">Telefon</span>
+                  <label className="block text-sm font-semibold text-app-muted">
+                    <span className="block">{t("contactPhone")}</span>
                     <Input
                       autoComplete="off"
-                      className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                      className="mt-1 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                       name="contactPhone"
                       placeholder="070-123 45 67"
                       type="tel"
@@ -538,25 +549,25 @@ export default function NewJobPage() {
                 </div>
               </fieldset>
 
-              <label className="app-form-field font-semibold text-app-muted">
-                <span className="block">Noteringar (valfritt)</span>
+              <label className="mb-3 block font-semibold text-app-muted">
+                <span className="block">{t("notes")}</span>
                 <Textarea
                   autoComplete="off"
-                  className="w-full resize-y rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                  className="mt-2 w-full resize-y rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                   name="notes"
                   rows={4}
-                  placeholder="Rollfokus, intervjusignaler, referensväg och nästa steg."
+                  placeholder={t("notesPlaceholder")}
                   value={form.notes}
                   onChange={(event) => updateField("notes", event.target.value)}
                 />
               </label>
 
                 <div className="flex gap-4">
-                  <Btn href="/dashboard" variant="secondary" className="w-1/2">
-                    Avbryt
+                  <Btn href="/" variant="secondary" className="w-1/2">
+                    {t("cancelBtn")}
                   </Btn>
                   <Btn disabled={createJob.isPending} type="submit" className="w-full" icon={Plus}>
-                    {createJob.isPending ? "Sparar..." : "Lägg till jobb"}
+                    {createJob.isPending ? t("saving") : t("addBtn")}
                   </Btn>
                 </div>
               </div>
@@ -564,11 +575,11 @@ export default function NewJobPage() {
               <>
                 <div className="flex flex-1 items-center justify-center">
                   <div className="w-full max-w-xl">
-                    <label className="app-form-field font-semibold text-app-muted">
-                      <span className="block">Annonslänk</span>
+                    <label className="block font-semibold text-app-muted">
+                      <span className="block">{t("jobUrl")}</span>
                       <Input
                         autoComplete="off"
-                        className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
+                        className="mt-2 w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                         name="jobUrl"
                         placeholder="https://arbetsformedlingen.se/platsbanken/annonser/xxxxx"
                         type="url"
@@ -587,7 +598,7 @@ export default function NewJobPage() {
                       icon={TextCursorInput}
                       onClick={() => { trackEvent("manual_entry_click"); setShowManualFields(true); }}
                     >
-                      Lägg till manuellt
+                      {t("manualBtn")}
                     </Btn>
                   </div>
                 </div>

@@ -1,12 +1,14 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { ArrowUpRight, Link2 } from "lucide-react";
+import { Link2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function QuickImportInput() {
   const router = useRouter();
+  const t = useTranslations("dashboard");
   const [value, setValue] = useState("");
 
   function navigateToNewJob(rawValue: string) {
@@ -30,7 +32,7 @@ export function QuickImportInput() {
       <label className="block text-sm font-semibold text-app-muted" htmlFor="dashboard-quick-import-url">
         <span className="mb-2 inline-flex items-center gap-2">
           <Link2 className="size-4 text-app-primary" strokeWidth={2.1} />
-          Klistra in annonslänk från Arbetsförmedlingen
+          {t("quickImportLabel")}
         </span>
         <div className="relative">
           <Input

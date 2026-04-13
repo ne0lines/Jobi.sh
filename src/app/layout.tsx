@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ClerkProvider } from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import Script from "next/script";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
@@ -67,44 +69,49 @@ export const viewport: Viewport = {
   themeColor: "#6e33eb",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <>
       <SpeedInsights />
       <PostHogProvider>
         <html
-          lang="sv"
+          lang={locale}
           className={cn("font-sans", geist.variable)}
           style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
-        suppressHydrationWarning
-      >
-        <body
-          className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased p-3 md:p-4`}
+          suppressHydrationWarning
         >
-          <Script id="theme-preference-init" strategy="beforeInteractive">
-            {themeInitializationScript}
-          </Script>
-          <PostHogServerPageView />
-          <Suspense fallback={null}>
-            <PostHogPageView />
-          </Suspense>
-          <ClerkProvider>
-            <ThemeProvider>
-              <QueryProvider>
-                <RegisterServiceWorker />
-                <AppNavigationShell>{children}</AppNavigationShell>
-                <Toaster />
-                <CookieNotice />
-              </QueryProvider>
-            </ThemeProvider>
-          </ClerkProvider>
-        </body>
-      </html>
-    </PostHogProvider>
-  </>
+          <body
+            className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased p-3 md:p-4`}
+          >
+            <Script id="theme-preference-init" strategy="beforeInteractive">
+              {themeInitializationScript}
+            </Script>
+            <PostHogServerPageView />
+            <Suspense fallback={null}>
+              <PostHogPageView />
+            </Suspense>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <ClerkProvider>
+                <ThemeProvider>
+                  <QueryProvider>
+                    <RegisterServiceWorker />
+                    <AppNavigationShell>{children}</AppNavigationShell>
+                    <Toaster />
+                    <CookieNotice />
+                  </QueryProvider>
+                </ThemeProvider>
+              </ClerkProvider>
+            </NextIntlClientProvider>
+          </body>
+        </html>
+      </PostHogProvider>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { Btn } from '@/components/ui/btn';
 import { Input } from '@/components/ui/input';
 import { TERMS_VERSION } from '@/lib/legal';
 import { useUser } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ type ExistingProfile = {
 export default function CreateProfilePage() {
   const { user } = useUser();
   const router = useRouter();
+  const t = useTranslations('createProfile');
 
   const email = user?.emailAddresses[0]?.emailAddress ?? '';
 
@@ -83,14 +85,14 @@ export default function CreateProfilePage() {
 
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        setFeedback(data.error ?? 'Kunde inte spara profilen.');
+        setFeedback(data.error ?? t('saveError'));
         return;
       }
 
       router.push('/dashboard');
       router.refresh();
     } catch {
-      setFeedback('Kunde inte spara profilen.');
+      setFeedback(t('saveError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -100,12 +102,6 @@ export default function CreateProfilePage() {
     e.preventDefault();
     void submitProfile();
   };
-
-  const submitLabel = isSubmitting
-    ? 'Sparar...'
-    : needsTermsUpdate
-      ? 'Godkänn och fortsätt'
-      : 'Skapa profil';
 
   if (isLoadingProfile) {
     return (
@@ -127,17 +123,16 @@ export default function CreateProfilePage() {
           <div className='app-heading-stack-tight w-full text-center'>
             {needsTermsUpdate ? (
               <>
-                <h2 className='text-2xl'>Uppdaterade användarvillkor</h2>
+                <h2 className='text-2xl'>{t('updatedTermsTitle')}</h2>
                 <p className='text-base text-app-muted'>
-                  Vi har uppdaterat våra användarvillkor. Du behöver godkänna
-                  dem för att fortsätta använda Jobi.sh.
+                  {t('updatedTermsSubtitle')}
                 </p>
               </>
             ) : (
               <>
-                <h2 className='text-2xl'>Skapa profil</h2>
+                <h2 className='text-2xl'>{t('title')}</h2>
                 <p className='text-base text-app-muted'>
-                  Fyll i dina uppgifter för att komma igång.
+                  {t('subtitle')}
                 </p>
               </>
             )}
@@ -150,14 +145,13 @@ export default function CreateProfilePage() {
 
           {needsTermsUpdate && (
             <div className='app-feedback-card w-full border-amber-200 bg-amber-50 text-sm leading-6 text-amber-800'>
-              Dina uppgifter är ifyllda nedan. Granska dem och godkänn de
-              uppdaterade villkoren för att fortsätta.
+              {t('termsReviewNote')}
             </div>
           )}
 
           <form className='app-form-stack flex w-full' onSubmit={handleSubmit}>
             <label className='app-form-field font-semibold text-app-muted'>
-              <span className='block'>E-postadress</span>
+              <span className='block'>{t('emailLabel')}</span>
               <Input
                 className='bg-app-card text-app-muted'
                 disabled
@@ -167,10 +161,10 @@ export default function CreateProfilePage() {
             </label>
 
             <label className='app-form-field font-semibold text-app-muted'>
-              <span className='block'>Namn</span>
+              <span className='block'>{t('nameLabel')}</span>
               <Input
                 name='name'
-                placeholder='t.ex. Anna Berg'
+                placeholder={t('namePlaceholder')}
                 required
                 type='text'
                 value={form.name}
@@ -179,10 +173,10 @@ export default function CreateProfilePage() {
             </label>
 
             <label className='app-form-field font-semibold text-app-muted'>
-              <span className='block'>Yrke</span>
+              <span className='block'>{t('professionLabel')}</span>
               <Input
                 name='profession'
-                placeholder='t.ex. Frontend-utvecklare'
+                placeholder={t('professionPlaceholder')}
                 required
                 type='text'
                 value={form.profession}
@@ -200,39 +194,34 @@ export default function CreateProfilePage() {
                 onChange={(e) => setTermsAccepted(e.target.checked)}
               />
               <span>
-                Jag godkänner{' '}
+                {t('termsPrefix')}{' '}
                 <Link
                   className='font-semibold text-app-primary underline underline-offset-2'
                   href='/terms'
                   rel='noreferrer'
                   target='_blank'
                 >
-                  användarvillkoren
+                  {t('termsLink')}
                 </Link>{' '}
-                och bekräftar att jag har läst{' '}
-                <Link
-                  className='font-semibold text-app-primary underline underline-offset-2'
-                  href='/privacy'
-                  rel='noreferrer'
-                  target='_blank'
-                >
-                  integritetspolicyn
-                </Link>{' '}
-                samt{' '}
+                {t('termsAnd')}{' '}
                 <Link
                   className='font-semibold text-app-primary underline underline-offset-2'
                   href='/gdpr'
                   rel='noreferrer'
                   target='_blank'
                 >
-                  GDPR-informationen
+                  {t('gdprLink')}
                 </Link>{' '}
-                för Jobi.sh.
+                {t('termsSuffix')}
               </span>
             </label>
 
             <Btn className='w-full' disabled={isSubmitting} type='submit'>
-              {submitLabel}
+              {isSubmitting
+                ? t('saving')
+                : needsTermsUpdate
+                  ? t('acceptBtn')
+                  : t('submitBtn')}
             </Btn>
           </form>
         </div>

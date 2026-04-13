@@ -1,5 +1,8 @@
+"use client";
+
 import { JobStatus } from '@/app/types'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 import { MonthlyApplicationsChart } from './MonthlyApplicationsChart'
 
 type StatisticsProps = {
@@ -14,6 +17,8 @@ type StatisticsProps = {
 }
 
 export function Statistics({ applications }: Readonly<StatisticsProps>) {
+  const t = useTranslations('dashboard')
+
   const totalApplications = applications.length
   const interviews = applications.filter(
     (job) => job.status === JobStatus.INTERVIEW,
@@ -27,27 +32,27 @@ export function Statistics({ applications }: Readonly<StatisticsProps>) {
 
   const statCards = [
     {
-      label: 'Ansökningar',
+      label: t('statsApplications'),
       value: totalApplications,
       cardClassName: 'bg-app-surface text-app-ink dark:bg-app-card',
       valueClassName: 'text-app-ink',
     },
     {
-      label: 'Intervjuer',
+      label: t('statsInterviews'),
       value: interviews,
       cardClassName:
         'bg-app-cyan text-app-cyan-strong dark:bg-[#123348] dark:text-[#8edcff]',
       valueClassName: 'text-app-cyan-strong dark:text-[#8edcff]',
     },
     {
-      label: 'Jobberbjudanden',
+      label: t('statsOffers'),
       value: offers,
       cardClassName:
         'bg-app-green text-app-green-strong dark:bg-[#143325] dark:text-[#7ee0a7]',
       valueClassName: 'text-app-green-strong dark:text-[#7ee0a7]',
     },
     {
-      label: 'Avslutade',
+      label: t('statsClosed'),
       value: closed,
       cardClassName:
         'bg-app-blush text-app-red-strong dark:bg-[#3d2823] dark:text-[#ff9395]',
@@ -57,7 +62,7 @@ export function Statistics({ applications }: Readonly<StatisticsProps>) {
 
   return (
     <section className='app-page-content-compact w-full'>
-      <h2 className='font-display text-3xl md:text-[1.75rem]'>Statistik</h2>
+      <h2 className='font-display text-3xl md:text-[1.75rem]'>{t('statsTitle')}</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
         <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-3 h-fit'>
           {statCards.map(({ cardClassName, label, value, valueClassName }) => (

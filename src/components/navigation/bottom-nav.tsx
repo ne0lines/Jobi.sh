@@ -2,38 +2,13 @@
 
 import { LogoutBtn } from "@/components/auth/logout-btn";
 import { Btn } from "@/components/ui/btn";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { cn } from "@/lib/utils";
 import { BriefcaseBusiness, House, Plus, Puzzle, UserRound } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const navItems = [
-  {
-    href: "/dashboard",
-    icon: House,
-    label: "Översikt",
-    match: (pathname: string) => pathname === "/dashboard",
-  },
-  {
-    href: "/jobb",
-    icon: BriefcaseBusiness,
-    label: "Sökta jobb",
-    match: (pathname: string) => pathname.startsWith("/jobb"),
-  },
-  {
-    href: "/konto",
-    icon: UserRound,
-    label: "Profil",
-    match: (pathname: string) => pathname.startsWith("/konto"),
-  },
-  {
-    href: "/aktivitetsrapport",
-    iconSrc: "/ams-logo.svg",
-    label: "Aktivitetsrapportera",
-    match: (pathname: string) => pathname.startsWith("/aktivitetsrapport"),
-  },
-] as const;
 
 const navShellClassName =
   "rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))] dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(24,24,27,0.94),rgba(15,15,18,0.9))] dark:shadow-[0_10px_24px_rgba(0,0,0,0.28),0_28px_70px_rgba(0,0,0,0.46)] dark:ring-white/8 dark:supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(24,24,27,0.78),rgba(15,15,18,0.62))]";
@@ -75,6 +50,35 @@ export function AppNavigationShell({
   children,
 }: Readonly<AppNavigationShellProps>) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+
+  const navItems = [
+    {
+      href: "/dashboard",
+      icon: House,
+      label: t("overview"),
+      match: (p: string) => p === "/dashboard",
+    },
+    {
+      href: "/jobb",
+      icon: BriefcaseBusiness,
+      label: t("jobs"),
+      match: (p: string) => p.startsWith("/jobb"),
+    },
+    {
+      href: "/konto",
+      icon: UserRound,
+      label: t("profile"),
+      match: (p: string) => p.startsWith("/konto"),
+    },
+    {
+      href: "/aktivitetsrapport",
+      iconSrc: "/ams-logo.svg",
+      label: t("activityReport"),
+      match: (p: string) => p.startsWith("/aktivitetsrapport"),
+    },
+  ] as const;
+
   const hideNavigation =
     pathname === "/" ||
     pathname.startsWith("/auth") ||
@@ -101,7 +105,7 @@ export function AppNavigationShell({
                   </h1>
                 </Link>
 
-                <nav aria-label="Primär navigation" className="mt-8 flex flex-col gap-2">
+                <nav aria-label={t("primaryNav")} className="mt-8 flex flex-col gap-2">
                   {navItems.map((item) => {
                     const isActive = item.match(pathname);
                     const isActivityReport = item.href === "/aktivitetsrapport";
@@ -158,13 +162,14 @@ export function AppNavigationShell({
                       )}
                       strokeWidth={2.1}
                     />
-                    <span>Extension</span>
+                    <span>{t("extension")}</span>
                   </Link>
                 </div>
 
                 <div className="mt-auto flex flex-col gap-3 pt-6">
+                  <LanguageSwitcher />
                   <Btn className="w-full" href="/jobb/new" icon={Plus} track="add_job_click">
-                    Lägg till jobb
+                    {t("addJob")}
                   </Btn>
                   <LogoutBtn className="w-full" />
                 </div>
@@ -182,7 +187,7 @@ export function AppNavigationShell({
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-4 md:hidden">
           <div className="mx-auto w-full max-w-300">
             <nav
-              aria-label="Primär navigation"
+              aria-label={t("primaryNav")}
               className={cn(
                 navShellClassName,
                 "pointer-events-auto mx-auto flex w-full items-center justify-between p-2",

@@ -2,6 +2,7 @@
 
 import { Dialog } from "@base-ui/react/dialog";
 import { Btn } from "@/components/ui/btn";
+import { useTranslations } from "next-intl";
 
 type ConfirmDialogProps = {
   open: boolean;
@@ -18,10 +19,12 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
-  confirmLabel = "Bekräfta",
+  confirmLabel,
   onConfirm,
   isLoading = false,
 }: Readonly<ConfirmDialogProps>) {
+  const t = useTranslations("confirm");
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -38,7 +41,7 @@ export function ConfirmDialog({
               <Dialog.Close
                 render={
                   <Btn variant="secondary" className="w-full" disabled={isLoading}>
-                    Avbryt
+                    {t("cancel")}
                   </Btn>
                 }
               />
@@ -48,7 +51,7 @@ export function ConfirmDialog({
                 disabled={isLoading}
                 onClick={onConfirm}
               >
-                {isLoading ? "Tar bort..." : confirmLabel}
+                {isLoading ? t("deleting") : (confirmLabel ?? t("defaultConfirm"))}
               </Btn>
             </div>
           </div>

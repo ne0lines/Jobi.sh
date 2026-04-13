@@ -3,6 +3,7 @@
 import { Btn } from "@/components/ui/btn";
 import { useClerk } from "@clerk/nextjs";
 import posthog from "posthog-js";
+import { useTranslations } from "next-intl";
 
 type LogoutBtnProps = {
   className?: string;
@@ -10,6 +11,7 @@ type LogoutBtnProps = {
 
 export function LogoutBtn({ className }: Readonly<LogoutBtnProps>) {
   const { signOut } = useClerk();
+  const t = useTranslations();
 
   return (
     <Btn
@@ -20,7 +22,7 @@ export function LogoutBtn({ className }: Readonly<LogoutBtnProps>) {
       }}
       variant="red"
     >
-      Logga ut
+      {t("logout")}
     </Btn>
   );
 }

@@ -1,21 +1,27 @@
 "use client";
 
 import type { Job } from "@/app/types";
+import { JobStatus } from "@/app/types";
 import { useJobs } from "@/lib/hooks/jobs";
 import { Btn } from "@/components/ui/btn";
 import { ArchiveJobBtn } from "@/components/jobs/archive-job-btn";
 import { DeleteJobBtn } from "@/components/jobs/delete-job-btn";
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
-function JobList({ jobs, showArchivedBadge = false }: Readonly<{ jobs: Job[]; showArchivedBadge?: boolean }>) {
+function JobList({ jobs, showArchivedBadge = false, statusLabel, archivedLabel }: Readonly<{
+  jobs: Job[];
+  showArchivedBadge?: boolean;
+  statusLabel: Record<string, string>;
+  archivedLabel: string;
+}>) {
   return (
     <ul className="space-y-3">
       {jobs.map((job) => (
         <li key={job.id} className="relative app-card-dense transition hover:-translate-y-0.5 hover:shadow-sm">
           <Link href={`/jobb/${job.id}`}>
             <span className="absolute inset-0 rounded-2xl" aria-hidden="true" />
-            <span className="sr-only">Läs mer om {job.title}</span>
           </Link>
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 app-card-stack">
@@ -29,11 +35,11 @@ function JobList({ jobs, showArchivedBadge = false }: Readonly<{ jobs: Job[]; sh
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
               {showArchivedBadge ? (
                 <span className="rounded-full bg-app-muted-surface px-3 py-1 text-sm text-app-muted-ink">
-                  Arkiverat
+                  {archivedLabel}
                 </span>
               ) : null}
               <span className="rounded-full bg-app-surface px-3 py-1 text-sm text-app-muted">
-                {job.status}
+                {statusLabel[job.status] ?? job.status}
               </span>
               <ArchiveJobBtn jobId={job.id} archivedAt={job.archivedAt} />
               <DeleteJobBtn jobId={job.id} />
@@ -47,6 +53,18 @@ function JobList({ jobs, showArchivedBadge = false }: Readonly<{ jobs: Job[]; sh
 
 export function JobsContent() {
   const { data: jobs = [] } = useJobs({ includeArchived: true });
+  const t = useTranslations("jobs");
+  const tStatus = useTranslations("status");
+
+  const statusLabel: Record<string, string> = {
+    [JobStatus.SAVED]: tStatus("saved"),
+    [JobStatus.APPLIED]: tStatus("applied"),
+    [JobStatus.IN_PROCESS]: tStatus("inProcess"),
+    [JobStatus.INTERVIEW]: tStatus("interview"),
+    [JobStatus.OFFER]: tStatus("offer"),
+    [JobStatus.CLOSED]: tStatus("closed"),
+  };
+
   const activeJobs = jobs.filter((job) => !job.archivedAt);
   const archivedJobs = jobs.filter((job) => job.archivedAt);
 
@@ -54,23 +72,23 @@ export function JobsContent() {
     <section className="app-page-content-compact">
       <div className="flex items-start justify-between gap-3">
         <div className="app-heading-stack-tight">
-          <h1 className="font-display text-4xl sm:text-6xl">Jobb</h1>
+          <h1 className="font-display text-4xl sm:text-6xl">{t("title")}</h1>
         </div>
-        <Btn href="/jobb/new" icon={Plus} track="add_job_click">Lägg till</Btn>
+        <Btn href="/jobb/new" icon={Plus} track="add_job_click">{t("addBtn")}</Btn>
       </div>
 
-      {jobs.length === 0 ? <p className="text-base text-app-muted">Inga jobb sparade än.</p> : null}
+      {jobs.length === 0 ? <p className="text-base text-app-muted">{t("empty")}</p> : null}
 
-      {jobs.length > 0 ? (
+      {activeJobs.length > 0 ? (
         <section className="space-y-3">
-          {activeJobs.length > 0 ? <JobList jobs={activeJobs} /> : null}
+          <JobList jobs={activeJobs} statusLabel={statusLabel} archivedLabel="" />
         </section>
       ) : null}
 
       {archivedJobs.length > 0 ? (
         <section className="space-y-3">
           <h2 className="font-display text-2xl sm:text-3xl">Arkiverade jobb</h2>
-          <JobList jobs={archivedJobs} showArchivedBadge />
+          <JobList jobs={archivedJobs} showArchivedBadge statusLabel={statusLabel} archivedLabel="Arkiverat" />
         </section>
       ) : null}
     </section>

@@ -4,29 +4,34 @@ import { useThemePreference } from '@/components/providers/theme-provider';
 import { cn } from '@/lib/utils';
 import type { ThemePreference } from '@/lib/theme';
 import { MoonStar, SunMedium } from 'lucide-react';
-
-const themeOptions: Array<{
-  description: string;
-  icon: typeof SunMedium;
-  label: string;
-  value: ThemePreference;
-}> = [
-  {
-    description: 'Ljust gränssnitt med rena ytor och maximal läsbarhet.',
-    icon: SunMedium,
-    label: 'Ljust',
-    value: 'light',
-  },
-  {
-    description: 'Mörkare ytor som är skonsammare i kvällsljus och låg belysning.',
-    icon: MoonStar,
-    label: 'Mörkt',
-    value: 'dark',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export function ThemePreferenceCard() {
   const { themePreference, setThemePreference } = useThemePreference();
+  const t = useTranslations('theme');
+
+  const themeOptions: Array<{
+    description: string;
+    icon: typeof SunMedium;
+    label: string;
+    value: ThemePreference;
+  }> = [
+    {
+      description: t('lightDesc'),
+      icon: SunMedium,
+      label: t('lightLabel'),
+      value: 'light',
+    },
+    {
+      description: t('darkDesc'),
+      icon: MoonStar,
+      label: t('darkLabel'),
+      value: 'dark',
+    },
+  ];
+
+  const themeStatusLabel =
+    themePreference === 'dark' ? t('darkActive') : t('lightActive');
 
   function handleThemePreferenceChange(nextThemePreference: ThemePreference) {
     if (nextThemePreference === themePreference) {
@@ -40,7 +45,7 @@ export function ThemePreferenceCard() {
     <article className='app-card'>
       <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
         <div>
-          <h2 className='text-lg font-semibold text-app-ink'>Tema</h2>
+          <h2 className='text-lg font-semibold text-app-ink'>{t('title')}</h2>
         </div>
       </div>
 
@@ -74,6 +79,7 @@ export function ThemePreferenceCard() {
           );
         })}
       </div>
+      <p className='sr-only'>{themeStatusLabel}</p>
     </article>
   );
 }
