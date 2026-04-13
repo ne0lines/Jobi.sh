@@ -1,18 +1,11 @@
 "use client";
 
 import { Job, JobStatus } from "@/app/types";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { getTodoItems, type TodoItem } from "@/lib/job-insights";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Board from "./board";
-
-const todoStateLabels: Record<TodoItem["state"], string> = {
-  overdue: "Försenad",
-  today: "Idag",
-  soon: "Snart",
-  upcoming: "Planera",
-};
 
 const todoStateClassNames: Record<TodoItem["state"], string> = {
   overdue:
@@ -22,25 +15,34 @@ const todoStateClassNames: Record<TodoItem["state"], string> = {
   upcoming: "bg-blue-100 text-[#295a99] dark:bg-[#123348] dark:text-[#9bc2ff]",
 };
 
-const todoKindLabels: Record<TodoItem["kind"], string> = {
-  apply: "Ansökan",
-  deadline: "Deadline",
-  followUp: "Uppföljning",
-  checkIn: "Process",
-  decision: "Erbjudande",
-};
-
-const jobStatusLabels: Record<JobStatus, string> = {
-  [JobStatus.SAVED]: "Sparat",
-  [JobStatus.APPLIED]: "Ansökt",
-  [JobStatus.IN_PROCESS]: "Pågår",
-  [JobStatus.INTERVIEW]: "Intervju",
-  [JobStatus.OFFER]: "Erbjudande",
-  [JobStatus.CLOSED]: "Avslutad",
-};
-
 export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
   const t = useTranslations("dashboard");
+  const tStatus = useTranslations("status");
+  const locale = useLocale();
+
+  const todoStateLabels: Record<TodoItem["state"], string> = {
+    overdue: t("todoStateOverdue"),
+    today: t("todoStateToday"),
+    soon: t("todoStateSoon"),
+    upcoming: t("todoStateUpcoming"),
+  };
+
+  const todoKindLabels: Record<TodoItem["kind"], string> = {
+    apply: t("todoKindApply"),
+    deadline: t("todoKindDeadline"),
+    followUp: t("todoKindFollowUp"),
+    checkIn: t("todoKindCheckIn"),
+    decision: t("todoKindDecision"),
+  };
+
+  const jobStatusLabels: Record<JobStatus, string> = {
+    [JobStatus.SAVED]: tStatus("saved"),
+    [JobStatus.APPLIED]: tStatus("applied"),
+    [JobStatus.IN_PROCESS]: tStatus("inProcess"),
+    [JobStatus.INTERVIEW]: tStatus("interview"),
+    [JobStatus.OFFER]: tStatus("offer"),
+    [JobStatus.CLOSED]: tStatus("closed"),
+  };
 
   if (jobs.length === 0) {
     return (
@@ -66,7 +68,7 @@ export default function Pipeline({ jobs }: Readonly<{ jobs: Job[] }>) {
   const interviewed = jobs.filter((j) => j.status === JobStatus.INTERVIEW);
   const inProcess = jobs.filter((j) => j.status === JobStatus.IN_PROCESS);
   const offers = jobs.filter((j) => j.status === JobStatus.OFFER);
-  const todoItems = getTodoItems(jobs);
+  const todoItems = getTodoItems(jobs, { locale, t });
 
   return (
     <section className="w-full">

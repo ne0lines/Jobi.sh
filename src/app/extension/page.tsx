@@ -10,7 +10,6 @@ import { redirect } from "next/navigation";
 
 const installTargets: BrowserInstallTarget[] = [
   EXTENSION_INSTALL_TARGETS.chrome,
-  EXTENSION_INSTALL_TARGETS.safari,
   EXTENSION_INSTALL_TARGETS.firefox,
 ];
 
@@ -36,21 +35,13 @@ export default async function ExtensionPage() {
     },
   ];
 
-  const browserTranslations: Record<"chrome" | "safari" | "firefox", { statusLabel: string; installLabel: string; installDescription: string }> = {
+  const titleParts = t("title").split("Jobi.sh");
+  const installCopyByBrowser: Record<BrowserInstallTarget["browserKey"], { installLabel: string }> = {
     chrome: {
-      statusLabel: t("chromeStatus"),
       installLabel: t("chromeInstall"),
-      installDescription: t("chromeDesc"),
-    },
-    safari: {
-      statusLabel: t("safariStatus"),
-      installLabel: t("safariInstall"),
-      installDescription: t("safariDesc"),
     },
     firefox: {
-      statusLabel: t("firefoxStatus"),
       installLabel: t("firefoxInstall"),
-      installDescription: t("firefoxDesc"),
     },
   };
 
@@ -59,10 +50,7 @@ export default async function ExtensionPage() {
       <section className="mx-auto app-page-content w-full max-w-5xl md:max-w-none">
         <div className="max-w-3xl space-y-4">
           <h1 className="font-display text-4xl md:text-[2.8rem]">
-            {(() => {
-              const parts = t("title").split("Jobi.sh");
-              return <>{parts[0]}Jobi<span className="text-app-primary">.sh</span>{parts[1]}</>;
-            })()}
+            {titleParts[0]}Jobi<span className="text-app-primary">.sh</span>{titleParts[1] ?? ""}
           </h1>
           <p className="text-lg leading-8 text-app-muted">
             {t("subtitle")}
@@ -81,58 +69,41 @@ export default async function ExtensionPage() {
           ))}
         </div>
 
-        <section className="grid gap-4 lg:grid-cols-1">
-          {installTargets.map((target) => {
-            const tr = browserTranslations[target.browserKey];
-            return (
-              <article
-                id={`${target.browserKey}-store`}
+        <section className="app-card-elevated">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-app-primary">
+              {t("installEyebrow")}
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold text-app-ink">{t("installTitle")}</h2>
+            <p className="mt-3 text-base leading-7 text-app-muted">{t("installBody")}</p>
+          </div>
+
+          <ul className="mt-5 space-y-3 text-sm text-app-ink">
+            <li className="flex items-start gap-2">
+              <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-app-primary" size={16} strokeWidth={2.2} />
+              <span>{t("bulletReport")}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-app-primary" size={16} strokeWidth={2.2} />
+              <span>{t("bulletImport")}</span>
+            </li>
+          </ul>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            {installTargets.map((target) => (
+              <Btn
                 key={target.browserKey}
-                className="app-card-elevated scroll-mt-8"
+                href={target.installUrl}
+                target="_blank"
+                rel="noreferrer"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-2xl font-semibold text-app-ink">{target.browserLabel}</h2>
-                  <span className="rounded-full bg-app-surface px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-app-primary">
-                    {target.storeLabel}
-                  </span>
-                </div>
-
-                <p className="mt-4 text-sm font-semibold uppercase tracking-[0.12em] text-app-primary">
-                  {tr.statusLabel}
-                </p>
-
-                <p className="mt-3 text-base leading-7 text-app-muted">{tr.installDescription}</p>
-
-                <ul className="mt-5 space-y-3 text-sm text-app-ink">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-app-primary" size={16} strokeWidth={2.2} />
-                    <span>{t("bulletReport")}</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0 text-app-primary" size={16} strokeWidth={2.2} />
-                    <span>{t("bulletImport")}</span>
-                  </li>
-                </ul>
-
-                {target.storeUrl ? (
-                  <div className="mt-6">
-                    <Btn
-                      href={target.storeUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      icon={{ component: ExternalLink, position: "right", size: 18 }}
-                    >
-                      {tr.installLabel}
-                    </Btn>
-                  </div>
-                ) : (
-                  <div className="mt-6 rounded-2xl bg-app-surface px-4 py-3 text-sm leading-6 text-app-muted">
-                    {t("comingSoon", { browser: target.browserLabel })}
-                  </div>
-                )}
-              </article>
-            );
-          })}
+                <span className="inline-flex items-center gap-2">
+                  <span>{installCopyByBrowser[target.browserKey].installLabel}</span>
+                  <ExternalLink aria-hidden="true" size={18} strokeWidth={2.2} />
+                </span>
+              </Btn>
+            ))}
+          </div>
         </section>
       </section>
     </main>

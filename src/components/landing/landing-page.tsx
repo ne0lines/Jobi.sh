@@ -16,6 +16,7 @@ import {
   Search,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const featureCards = [
   {
@@ -166,6 +167,8 @@ type LandingPageProps = {
 };
 
 export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPageProps>) {
+  const tNav = useTranslations("nav");
+  const tLanding = useTranslations("landing");
   const primaryCtaHref = signedIn ? "/dashboard" : "/auth";
   const primaryCtaLabel = signedIn ? "Till appen" : "Skapa konto gratis";
   const logoHref = "/";
@@ -226,7 +229,7 @@ export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPagePr
               Jobi<span className="text-app-primary">.sh</span>
             </Link>
 
-            <nav aria-label="Landing navigation" className="hidden items-center gap-6 md:flex">
+            <nav aria-label={tNav("primaryNav")} className="hidden items-center gap-6 md:flex">
               <Link href="/#funktioner" className="text-sm font-medium text-app-muted transition hover:text-app-primary">
                 Funktioner
               </Link>
@@ -404,7 +407,7 @@ export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPagePr
                   <button
                     type="button"
                     onClick={goToPreviousTestimonial}
-                    aria-label="Visa föregående testimonial"
+                    aria-label={tLanding("previousTestimonialAria")}
                     className="inline-flex size-11 items-center justify-center rounded-full border border-app-stroke bg-white/78 text-app-ink transition hover:border-app-primary/30 hover:text-app-primary dark:bg-white/8"
                   >
                     <ChevronLeft className="size-5" strokeWidth={2.2} />
@@ -412,7 +415,7 @@ export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPagePr
                   <button
                     type="button"
                     onClick={goToNextTestimonial}
-                    aria-label="Visa nästa testimonial"
+                    aria-label={tLanding("nextTestimonialAria")}
                     className="inline-flex size-11 items-center justify-center rounded-full border border-app-stroke bg-white/78 text-app-ink transition hover:border-app-primary/30 hover:text-app-primary dark:bg-white/8"
                   >
                     <ChevronRight className="size-5" strokeWidth={2.2} />
@@ -457,7 +460,7 @@ export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPagePr
                       key={testimonial.name}
                       type="button"
                       onClick={() => setActiveTestimonialIndex(index)}
-                      aria-label={`Visa testimonial ${index + 1}`}
+                      aria-label={tLanding("testimonialAria", { number: index + 1 })}
                       className={`h-2.5 rounded-full transition-all ${
                         isActive ? "w-8 bg-app-primary" : "w-2.5 bg-app-stroke"
                       }`}
@@ -513,7 +516,7 @@ export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPagePr
               </p>
             </div>
 
-            <nav aria-label="Footer navigation" className="flex flex-wrap gap-4 text-sm text-app-muted">
+            <nav aria-label={tNav("footerNav")} className="flex flex-wrap gap-4 text-sm text-app-muted">
               {footerLinks.map((item) => (
                 <Link key={item.href} href={item.href} className="transition hover:text-app-primary">
                   {item.label}

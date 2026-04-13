@@ -1,6 +1,12 @@
 import type { PushSubscriptionInput } from "@/app/types";
 import { toast } from "sonner";
 
+type TranslationValues = Record<string, number | string>;
+type PushNotificationsTranslator = (
+  key: string,
+  values?: TranslationValues,
+) => string;
+
 function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const normalizedValue = `${base64String}${padding}`
@@ -23,11 +29,14 @@ async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
   return registration.pushManager.getSubscription();
 }
 
-function toPushSubscriptionInput(subscription: PushSubscription): PushSubscriptionInput {
+function toPushSubscriptionInput(
+  subscription: PushSubscription,
+  t: PushNotificationsTranslator,
+): PushSubscriptionInput {
   const json = subscription.toJSON();
 
   if (!json.endpoint || !json.keys?.auth || !json.keys.p256dh) {
-    throw new Error("Webbläsaren returnerade en ofullständig push subscription.");
+    throw new Error(t("invalidSubscriptionError"));
   }
 
   return {
@@ -52,16 +61,17 @@ export function supportsPushNotifications(): boolean {
 export function getStatusLabel(
   hasLocalSubscription: boolean,
   permission: NotificationPermission,
+  t: PushNotificationsTranslator,
 ): string {
   if (hasLocalSubscription) {
-    return "Aktivt på den här enheten";
+    return t("statusActiveLocal");
   }
 
   if (permission === "denied") {
-    return "Blockerade i webbläsaren";
+    return t("statusBlocked");
   }
 
-  return "Inte aktiva ännu";
+  return t("statusInactive");
 }
 
 export function getSupportText({
@@ -72,33 +82,43 @@ export function getSupportText({
   hasLocalSubscription: boolean;
   isSupported: boolean;
   permission: NotificationPermission;
-}): string {
+}, t: PushNotificationsTranslator): string {
   if (!isSupported) {
-    return "Pushnotiser kräver en modern webbläsare med service worker-stöd och HTTPS eller localhost.";
+    return t("supportUnsupported");
   }
 
   if (permission === "denied") {
-    return "Webbläsaren blockerar notiser just nu. Tillåt notiser i browser-inställningarna om du vill aktivera funktionen igen.";
+    return t("supportBlocked");
   }
 
   if (hasLocalSubscription) {
-    return "Den här enheten är registrerad för pushnotiser från Jobi.sh. Du väljer själv om vi ska skicka Att göra, Tips eller båda.";
+    return t("supportActive");
   }
 
-  return "Aktivera pushnotiser på den här enheten för att fånga upp nya att göra direkt och få ett jobbsökartips de dagar listan är tom.";
+  return t("supportInactive");
 }
 
-export function getSubscriptionSummary(subscriptionCount: number, otherDevicesCount: number): string {
+export function getSubscriptionSummary(
+  subscriptionCount: number,
+  otherDevicesCount: number,
+  t: PushNotificationsTranslator,
+): string {
   if (subscriptionCount === 0) {
-    return "Inga push-enheter registrerade ännu.";
+    return t("subscriptionNone");
   }
 
   if (otherDevicesCount === 0) {
-    return `Aktiva push-enheter på kontot: ${subscriptionCount}.`;
+    return t("subscriptionCount", { count: subscriptionCount });
   }
 
-  const deviceLabel = otherDevicesCount > 1 ? "andra enheter" : "annan enhet";
-  return `Aktiva push-enheter på kontot: ${subscriptionCount}, varav ${otherDevicesCount} ${deviceLabel}.`;
+  if (otherDevicesCount === 1) {
+    return t("subscriptionCountWithOneOther", { count: subscriptionCount });
+  }
+
+  return t("subscriptionCountWithManyOthers", {
+    count: subscriptionCount,
+    otherCount: otherDevicesCount,
+  });
 }
 
 export async function syncLocalSubscriptionState({
@@ -129,20 +149,22 @@ export async function enablePushNotifications({
   onPermissionChange,
   publicKey,
   saveSubscription,
+  t,
 }: {
   isSupported: boolean;
   onEndpointChange: (value: string | null) => void;
   onPermissionChange: (value: NotificationPermission) => void;
   publicKey: string;
   saveSubscription: (subscription: PushSubscriptionInput) => Promise<unknown>;
+  t: PushNotificationsTranslator;
 }): Promise<void> {
   if (!isSupported) {
-    toast.error("Pushnotiser stöds inte i den här webbläsaren.");
+    toast.error(t("toastUnsupported"));
     return;
   }
 
   if (!publicKey) {
-    toast.error("Pushnotiser är inte konfigurerade ännu. Lägg till VAPID-nyckeln i miljövariablerna.");
+    toast.error(t("toastMissingConfig"));
     return;
   }
 
@@ -155,7 +177,7 @@ export async function enablePushNotifications({
   onPermissionChange(nextPermission);
 
   if (nextPermission !== "granted") {
-    toast.error("Tillåt notiser i webbläsaren för att kunna aktivera pushnotiser.");
+    toast.error(t("toastPermissionDenied"));
     return;
   }
 
@@ -169,25 +191,27 @@ export async function enablePushNotifications({
     });
   }
 
-  await saveSubscription(toPushSubscriptionInput(subscription));
+  await saveSubscription(toPushSubscriptionInput(subscription, t));
   onEndpointChange(subscription.endpoint);
-  toast.success("Pushnotiser aktiverade. Du får att göra-notiser i första hand och annars ett dagligt jobbsökartips.");
+  toast.success(t("toastEnabled"));
 }
 
 export async function disablePushNotifications({
   onEndpointChange,
   onPermissionChange,
   removeSubscription,
+  t,
 }: {
   onEndpointChange: (value: string | null) => void;
   onPermissionChange: (value: NotificationPermission) => void;
   removeSubscription: (endpoint: string) => Promise<unknown>;
+  t: PushNotificationsTranslator;
 }): Promise<void> {
   const subscription = await getCurrentPushSubscription();
 
   if (!subscription?.endpoint) {
     onEndpointChange(null);
-    toast("Pushnotiser var redan avstängda på den här enheten.");
+    toast(t("toastAlreadyDisabled"));
     return;
   }
 
@@ -195,5 +219,5 @@ export async function disablePushNotifications({
   await subscription.unsubscribe();
   onEndpointChange(null);
   onPermissionChange(Notification.permission);
-  toast.success("Pushnotiser avstängda på den här enheten.");
+  toast.success(t("toastDisabled"));
 }
