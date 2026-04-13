@@ -18,6 +18,7 @@ import {
 } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -99,6 +100,7 @@ export default function RootLayout({
               </QueryProvider>
             </ThemeProvider>
           </ClerkProvider>
+          <Analytics />
         </body>
       </html>
     </PostHogProvider>
