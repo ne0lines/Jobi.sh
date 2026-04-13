@@ -87,8 +87,8 @@ export function JobsContent() {
 
       {archivedJobs.length > 0 ? (
         <section className="space-y-3">
-          <h2 className="font-display text-2xl sm:text-3xl">Arkiverade jobb</h2>
-          <JobList jobs={archivedJobs} showArchivedBadge statusLabel={statusLabel} archivedLabel="Arkiverat" />
+          <h2 className="font-display text-2xl sm:text-3xl">{t("archivedTitle")}</h2>
+          <JobList jobs={archivedJobs} showArchivedBadge statusLabel={statusLabel} archivedLabel={t("archivedBadge")} />
         </section>
       ) : null}
     </section>

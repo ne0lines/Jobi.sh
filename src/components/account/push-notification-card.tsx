@@ -8,6 +8,7 @@ import {
 } from "@/lib/hooks/notifications";
 import { cn } from "@/lib/utils";
 import { Bell, BellOff, LoaderCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import {
   disablePushNotifications,
@@ -67,6 +68,7 @@ function NotificationToggleCard({
 }
 
 export function PushNotificationCard() {
+  const t = useTranslations("pushNotifications");
   const settingsQuery = usePushNotificationSettings();
   const savePushSubscription = useSavePushSubscription();
   const removePushSubscription = useRemovePushSubscription();
@@ -141,7 +143,7 @@ export function PushNotificationCard() {
             : settingsQuery.data.todoNotificationsEnabled,
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Kunde inte spara notisinställningarna.");
+      toast.error(error instanceof Error ? error.message : t("saveSettingsError"));
     }
   }
 
@@ -153,9 +155,10 @@ export function PushNotificationCard() {
         onPermissionChange: setPermission,
         publicKey: WEB_PUSH_PUBLIC_KEY,
         saveSubscription: savePushSubscription.mutateAsync,
+        t,
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Kunde inte aktivera pushnotiser.");
+      toast.error(error instanceof Error ? error.message : t("enableError"));
     }
   }
 
@@ -165,27 +168,32 @@ export function PushNotificationCard() {
         onEndpointChange: setLocalEndpoint,
         onPermissionChange: setPermission,
         removeSubscription: removePushSubscription.mutateAsync,
+        t,
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Kunde inte stänga av pushnotiser.");
+      toast.error(error instanceof Error ? error.message : t("disableError"));
     }
   }
 
-  const statusLabel = getStatusLabel(hasLocalSubscription, permission);
+  const statusLabel = getStatusLabel(hasLocalSubscription, permission, t);
   const supportText = getSupportText({
     hasLocalSubscription,
     isSupported,
     permission,
-  });
-  const subscriptionSummary = getSubscriptionSummary(subscriptionCount, otherDevicesCount);
+  }, t);
+  const subscriptionSummary = getSubscriptionSummary(
+    subscriptionCount,
+    otherDevicesCount,
+    t,
+  );
 
   return (
     <article className="rounded-3xl border border-app-stroke bg-app-card p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-app-ink">Pushnotiser</h2>
+          <h2 className="text-lg font-semibold text-app-ink">{t("title")}</h2>
           <p className="mt-2 text-sm leading-6 text-app-muted">
-            Välj om vi ska skicka notiser för nya att göra, dagliga tips eller båda till dina aktiverade enheter.
+            {t("description")}
           </p>
         </div>
         <span
@@ -208,7 +216,7 @@ export function PushNotificationCard() {
 
         {settingsQuery.isError ? (
           <p className="mt-3 text-sm text-app-red-strong">
-            Kunde inte läsa notisinställningarna från servern.
+            {t("loadError")}
           </p>
         ) : (
           <p className="mt-3 text-sm text-app-muted">
@@ -220,18 +228,18 @@ export function PushNotificationCard() {
       <div className="mt-4 space-y-3">
         <NotificationToggleCard
           checked={todoNotificationsEnabled}
-          description="Skicka pushnotiser när ett nytt att göra blir aktivt för något av dina jobb."
+          description={t("todoDescription")}
           disabled={isPending || settingsQuery.isError}
-          label="Att göra"
+          label={t("todoLabel")}
           onClick={() => {
             void handleToggleSettings("todoNotificationsEnabled");
           }}
         />
         <NotificationToggleCard
           checked={tipNotificationsEnabled}
-          description="Skicka jobbsökartips de dagar du inte har något aktivt att göra att följa upp."
+          description={t("tipsDescription")}
           disabled={isPending || settingsQuery.isError}
-          label="Tips"
+          label={t("tipsLabel")}
           onClick={() => {
             void handleToggleSettings("tipNotificationsEnabled");
           }}
@@ -249,7 +257,7 @@ export function PushNotificationCard() {
           )}
         >
           {savePushSubscription.isPending ? <LoaderCircle className="animate-spin" size={16} /> : <Bell size={16} />}
-          Aktivera pushnotiser
+          {t("enableButton")}
         </button>
         <button
           type="button"
@@ -258,7 +266,7 @@ export function PushNotificationCard() {
           className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-app-stroke bg-app-card px-4 py-3 text-sm font-semibold text-app-ink transition hover:border-app-primary/25 hover:bg-app-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {removePushSubscription.isPending ? <LoaderCircle className="animate-spin" size={16} /> : <BellOff size={16} />}
-          Stäng av på den här enheten
+          {t("disableButton")}
         </button>
       </div>
     </article>

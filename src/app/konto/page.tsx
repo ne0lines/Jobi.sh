@@ -46,11 +46,6 @@ export default async function AccountPage() {
       <section className='mx-auto app-page-content-compact w-full max-w-2xl md:max-w-none'>
         <div>
           <h1 className='font-display text-4xl sm:text-6xl'>{t('title')}</h1>
-          {profile?.name && (
-            <p className='mt-3 text-base text-app-muted sm:text-lg'>
-              {profile.name}
-            </p>
-          )}
         </div>
 
         <article className='app-card'>
@@ -89,7 +84,7 @@ export default async function AccountPage() {
             </dd>
             <dd>
               <Link href='/terms' className='text-app-muted underline underline-offset-4'>
-                Användarvillkor
+                {t('termsLink')}
               </Link>
             </dd>
             <dd>
@@ -97,7 +92,7 @@ export default async function AccountPage() {
                 href='/privacy'
                 className='text-app-muted underline underline-offset-4'
               >
-                Integritetspolicy
+                {t('privacyPolicyLink')}
               </Link>
             </dd>
             <dd>{t('deleteNote')}</dd>
