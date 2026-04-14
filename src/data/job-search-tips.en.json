@@ -1,0 +1,746 @@
+[
+  {
+    "id": "anpassa-cv",
+    "title": "Today's tip: Customize your CV",
+    "body": "Read the advert again and adjust the first few lines of your CV to reflect the role you are applying for.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-upp-smart",
+    "title": "Today's tip: Follow up smartly",
+    "body": "Select an application you sent earlier and write a short, clear follow-up email asking about the next step.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbered-intervju",
+    "title": "Today's tip: Prepare interview answers",
+    "body": "Write down three concrete examples of results you created. It is often the fastest way to lift an interview.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "se-over-profilen",
+    "title": "Today's tip: Review your profile",
+    "body": "Check that your LinkedIn title, location, and recent experience match the jobs you're currently applying for.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spara-lardomar",
+    "title": "Today's tip: Document what works",
+    "body": "Note a wording or CV section that has been answered before, so you can reuse it in new applications.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prioritera-ratt",
+    "title": "Today's tip: Prioritize the right roles",
+    "body": "Choose a role you actually want to put energy into today and focus on quality rather than sending many quick applications.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "natverka-latt",
+    "title": "Today's tip: Network without hassle",
+    "body": "Find a person at the company you are curious about and write a short message with a concrete question about the team or the role.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bryt-ner-kravprofilen",
+    "title": "Today's tip: Break down the requirements profile",
+    "body": "Mark the three most important requirements in the advertisement and make sure they are clearly visible in your CV or covering letter.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "utforska-utbildning",
+    "title": "Today's tip: Explore education",
+    "body": "Consider whether a short course, YH training or certification can open more doors in an area you are curious about.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kartlagg-bristyrken",
+    "title": "Today's tip: Look at the deficiency strength",
+    "body": "Look for professions where demand is high and think about whether your experience can be translated there with small adjustments.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "overvaeg-flytt",
+    "title": "Today's tip: Consider moving",
+    "body": "If the dream job is almost always in another city, it may be worth investigating how realistic a move actually is.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "testa-pendlingsradie",
+    "title": "Today's tip: Try a larger commuting radius",
+    "body": "Widen the search by a few miles or minutes and see if you suddenly find significantly more relevant roles.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "inventera-karriarbyte",
+    "title": "Today's tip: Take stock of career changes",
+    "body": "Write down what parts of your current job you actually like. It is often where the next professional step is hidden.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "oversatt-erfarenhet",
+    "title": "Today's tip: Translate your experience",
+    "body": "Replace internal words and old titles with language that a new industry or employer quickly understands.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-upp-andra-gangen",
+    "title": "Today's tip: Follow up a second time",
+    "body": "If you've already followed up once, a short and friendly second message can sometimes be what gets you back on the radar.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ring-istallet-for-att-vanta",
+    "title": "Today's tip: Call instead of waiting",
+    "body": "If contact details are available, a short conversation can provide more than another email that easily disappears in the inbox.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "be-om-feedback",
+    "title": "Tip of the day: Ask for feedback",
+    "body": "When you get a no, ask for a concrete thing you can improve for next time. Small insights make a big difference over time.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "samla-referenser",
+    "title": "Today's tip: Collect references in time",
+    "body": "Contact people who can be references already now so that you don't have to hunt them down once the process moves quickly.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-enkel-portfolio",
+    "title": "Today's tip: Build a simple portfolio",
+    "body": "You don't have to wait for a perfect website. Collect two or three work samples in one document or folder and link to it.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "visa-initiativ",
+    "title": "Today's tip: Show initiative",
+    "body": "Give an example where you yourself saw a problem and drove the improvement. Employers are often looking for just that.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-bredare",
+    "title": "Today's tip: Search more broadly",
+    "body": "If you're only searching for one title, try three adjacent titles as well. The same job may have different names at different companies.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "hitta-din-nisch",
+    "title": "Today's tip: Find your niche",
+    "body": "If you search too broadly, try choosing an area where your profile stands out more clearly than in the crowd.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "satt-vecko-mal",
+    "title": "Today's tip: Set weekly goals",
+    "body": "Decide in advance how many applications, follow-ups or networking contacts you want to complete each week.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "boka-jobbpass",
+    "title": "Today's tip: Book a job search as a passport",
+    "body": "Put the job search in the calendar as if it were an important meeting. That makes it harder to procrastinate.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "rensa-bort-brus",
+    "title": "Today's tip: Clean out noise in the CV",
+    "body": "Remove things that don't help you towards the role. A clearer resume is almost always a stronger resume.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lyft-resultat-tidigt",
+    "title": "Today's tip: Lift results early",
+    "body": "Put your strongest achievements high up so they are visible before the reader loses focus.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-ny-inledning",
+    "title": "Today's tip: Write a new introduction",
+    "body": "Try rewriting the first paragraph of your cover letter so that it feels more concrete, less generic and more driven.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spara-annonsfraser",
+    "title": "Today's tip: Save strong ad phrases",
+    "body": "When an ad describes the role well, save the wording. They can help you understand how to reflect your profile.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "aktivera-ditt-natverk",
+    "title": "Today's tip: Activate your network",
+    "body": "Tell a few people clearly what you are looking for now. Many people want to help but don't know how until you make it concrete.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ateruppta-gammal-kontakt",
+    "title": "Tip of the day: Rekindle an old contact",
+    "body": "Write to someone you haven't spoken to in a while and ask what their workplace or industry looks like right now.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ga-pa-traff",
+    "title": "Today's tip: Go on a date",
+    "body": "An event, meetup or industry breakfast can provide both energy and new perspectives when the search feels tough.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-om-praktik",
+    "title": "Today's tip: Ask about an internship or shadowing",
+    "body": "If you want to change tracks, a short internship, internship or shadowing day can provide real insights and new contacts.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-om-timjobb",
+    "title": "Today's tip: Ask about hourly jobs",
+    "body": "A small job can be a way into something bigger. Don't just think full time or nothing.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-konsultspar",
+    "title": "Today's tip: Try the consulting track",
+    "body": "If direct employment is slow, consulting assignments can be a way to come in and show what you're all about.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-vikariat",
+    "title": "Today's tip: Look for temporary work",
+    "body": "Temporary roles can give you new experience, references and a much faster path forward than you think.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-sasongsjobb",
+    "title": "Today's tip: Look at seasonal jobs",
+    "body": "Seasonal jobs can be a way to break a stagnant period and at the same time build experience and self-confidence.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "testa-deltid",
+    "title": "Today's tip: Try part-time as an entry",
+    "body": "Sometimes a part-time role is better than waiting for the perfect full-time position. Inputs can grow.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kombinera-flera-vagar",
+    "title": "Today's tip: Combine several paths",
+    "body": "Search for jobs, follow up and network in parallel. When everything is put on the same track, the process often becomes more fragile.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lar-dig-ett-verktyg",
+    "title": "Today's tip: Learn a new tool",
+    "body": "Pick a tool that often appears in the ads you like and spend 30 minutes understanding the basics.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ga-en-mikrokurs",
+    "title": "Today's tip: Take a micro course",
+    "body": "A short course can give you new language to describe your skills, even before you have time to become an expert.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-en-certifiering",
+    "title": "Today's tip: Check a certification",
+    "body": "If many ads mention the same certification, it may be worth investigating how much it actually means.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "uppdatera-github",
+    "title": "Today's tip: Update your work sample",
+    "body": "Spend a few minutes cleaning up a repo, a PDF, or a portfolio so it feels alive and current.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "publicera-ett-case",
+    "title": "Today's tip: Publish a case",
+    "body": "Describe a project you did with a focus on problem, solution and results. It makes your skills much easier to understand.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbattra-rubriken",
+    "title": "Tip of the day: Improve your headline",
+    "body": "The headline in your CV or LinkedIn doesn't just have to be your title. Try writing what you are helping to solve.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "uppdatera-profilbild",
+    "title": "Today's tip: Review your profile picture",
+    "body": "A clear and professional image can give a more elaborate first impression in digital processes.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spela-in-hisspitch",
+    "title": "Tip of the day: Record your elevator pitch",
+    "body": "Practice briefly describing who you are, what you can do and what you are looking for. It becomes easier to sound confident when the time comes.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forklara-cv-luckor",
+    "title": "Today's tip: Prepare answers to gaps",
+    "body": "If you have gaps in your resume, write down how you want to explain them in a calm and matter-of-fact way.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "formulera-karriarbyte",
+    "title": "Today's tip: Formulate your career change",
+    "body": "Don't just explain that you want to switch. Describe why your previous experience is relevant in the new track.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "valj-dromstad",
+    "title": "Today's tip: Choose a dream city",
+    "body": "If you can choose freely, in which city are there the most roles that attract you? That question can change the entire strategy.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kartlagg-foretag-i-staden",
+    "title": "Today's tip: Map businesses in the right city",
+    "body": "When you find a place with interesting jobs, make your own list of companies there instead of waiting for ads.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-foretag",
+    "title": "Today's tip: Follow companies you like",
+    "body": "Follow employers on LinkedIn or their career pages so you catch opportunities before others.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skicka-spontanansokan",
+    "title": "Today's tip: Send a spontaneous application",
+    "body": "If the right role is not available right now, a well-thought-out spontaneous application can still open a door.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lista-tio-arbetsgivare",
+    "title": "Today's tip: List ten employers",
+    "body": "Write down ten employers you would like to work for and start researching three of them today.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "visa-motivation",
+    "title": "Today's tip: Show real motivation",
+    "body": "Replace general words like committed and driven with concrete examples of why this particular role attracts you.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "analysera-avslag",
+    "title": "Today's tip: Analyze your rejections",
+    "body": "Look for patterns in the jobs where you get no or no response. It can show where you need to adjust the strategy.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ateruppliva-ett-sparat-jobb",
+    "title": "Today's tip: Revive a saved job",
+    "body": "Select a job you have saved but not acted on and decide today whether to apply, follow up or let it go.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-det-latt-att-borja",
+    "title": "Today's tip: Make it easy to get started",
+    "body": "If resistance is high, start with five minutes. It is often enough to get into work.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-innan-det-kanns-perfekt",
+    "title": "Today's tip: Search before everything feels perfect",
+    "body": "You don't have to feel 100 percent ready to be relevant. Don't wait for opportunities.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "tacka-efter-intervju",
+    "title": "Tip of the day: Thank you after the interview",
+    "body": "A short thank you email can reinforce a good impression and remind you why you are right for the role.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbered-loneansprak",
+    "title": "Today's tip: Prepare salary claims",
+    "body": "Find out your range ahead of time so you won't be caught off guard when the question comes.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "tank-angransande-branscher",
+    "title": "Today's tip: Consider neighboring industries",
+    "body": "The same competence can be valuable in several industries. Try to widen there without losing direction.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "anvand-hobbyer",
+    "title": "Tip of the day: Use your side projects",
+    "body": "Hobbies, projects and leisure activities can show drive, learning and responsibility even when they are not a formal job.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lyft-ideellt-arbete",
+    "title": "Today's tip: Promote non-profit work",
+    "body": "Nonprofit work can be strong evidence of collaboration, leadership, and initiative. Don't hide it at the bottom.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "mark-ut-sprak",
+    "title": "Today's tip: Make languages ​​and tools visible",
+    "body": "If you know a language or system that the employer mentions, make sure it's easy to find in your profile.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-en-ingangsroll",
+    "title": "Today's tip: Think entry role",
+    "body": "Sometimes the best way to the dream role is to first step into a similar role in the same environment.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "vaga-soka-juniorare",
+    "title": "Today's tip: Dare to look for some juniors",
+    "body": "If you want to change tracks, a less senior role can be a faster way in than waiting for exactly the right level.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "vaga-soka-stretchroll",
+    "title": "Today's tip: Dare to apply for a stretch role",
+    "body": "All requirements do not have to be fulfilled to one hundred percent. If you match the core, it might still be worth a try.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-distansjobb",
+    "title": "Today's tip: Look at remote jobs",
+    "body": "A geographically freer search can open completely different markets than the local one.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-hybridjobb",
+    "title": "Tip of the day: Try hybrid roles",
+    "body": "Hybrid jobs can be a good compromise if you want to expand the search radius without moving directly.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "strukturera-din-pipeline",
+    "title": "Today's tip: Structure your pipeline",
+    "body": "Make sure you know which jobs are awaiting application, follow-up or decision. Structure saves mental energy.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "mata-svarsfrekvens",
+    "title": "Today's tip: Measure the response rate",
+    "body": "If you measure how often you get a response, you will see more quickly if the strategy is actually improving.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "stark-forsta-halvsidan",
+    "title": "Today's tip: Make the first half page strong",
+    "body": "The most important thing in the CV should be visible immediately. Think about what someone perceives in the first few seconds.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skicka-ansokan-pa-formiddagen",
+    "title": "Today's tip: Send in the morning",
+    "body": "If you can choose the time, an application that comes in early in the day can sometimes have a better chance of being seen.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-mallbibliotek",
+    "title": "Today's tip: Build a template library",
+    "body": "Save good wording for different types of roles so you can be quick without being sloppy.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spegla-nyckelord",
+    "title": "Today's tip: Mirror keywords",
+    "body": "If an ad repeats certain words, it is often a signal about what should appear clearly in your application.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lasa-pa-om-bolaget",
+    "title": "Today's tip: Read up on the company",
+    "body": "Five minutes on the company's website can get you better questions, better wording and better timing.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "forbered-egna-fragor",
+    "title": "Today's tip: Prepare your own questions",
+    "body": "Good questions at the end of the interview show both interest and judgment. Write some down in advance.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "trana-med-fejkintervju",
+    "title": "Today's tip: Practice with a mock interview",
+    "body": "Ask someone to ask common interview questions or record yourself. It makes the answers safer when it comes to it.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "spela-in-ditt-svar",
+    "title": "Tip of the day: Record an answer",
+    "body": "Listen to how you talk about yourself. It's a quick way to discover if you sound clear or diffuse.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ett-litet-steg-idag",
+    "title": "Today's tip: Take a small step today",
+    "body": "If motivation is low, choose a single concrete task that can be completed in ten minutes.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "belona-framsteg",
+    "title": "Tip of the day: Reward progress",
+    "body": "Celebrate when you send something, follow up or dare to try something new. Job hunting becomes easier if the progress is noticeable.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "byt-sokstrategi",
+    "title": "Today's tip: Change strategy when necessary",
+    "body": "If you have done the same thing for a long time without effect, it is not a failure to change the method. It is a sign that you are learning.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "kontakta-rekryterare-direkt",
+    "title": "Today's tip: Contact the recruiter directly",
+    "body": "If the ad has a contact person, use it. A short question can give you both clarity and a name in the process.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "registrera-dig-hos-bemanningsbolag",
+    "title": "Today's tip: Register with staffing companies",
+    "body": "Staffing and recruitment can provide access to jobs that are not always marketed in the same way as regular advertisements.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prata-med-vagledare",
+    "title": "Today's tip: Talk to a guidance counselor",
+    "body": "A study and vocational guidance counselor or coach can help you see more options than the ones you yourself are stuck with.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "undersok-yh-och-kurser",
+    "title": "Today's tip: Investigate YH and short courses",
+    "body": "There are often faster educational paths than you think, especially if you want to change direction without starting all over.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "prova-en-kvallskurs",
+    "title": "Today's tip: Try an evening course",
+    "body": "A smaller course can be enough to test whether a new area actually feels right before you make a bigger investment.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-erfarenhet-genom-frilans",
+    "title": "Today's tip: Build experience through freelancing",
+    "body": "Small assignments can be both a work test, a reference and confidence when you want to move on.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "be-om-cv-granskning",
+    "title": "Tip of the day: Ask for CV review",
+    "body": "Ask someone else to read your resume with fresh eyes. What feels obvious to you may be unclear to others.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "be-om-linkedin-granskning",
+    "title": "Tip of the day: Ask for a profile review",
+    "body": "Let someone you trust tell you what they understand about you after 30 seconds on your profile. It reveals a lot.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "stamma-av-med-referenser",
+    "title": "Today's tip: Vote with references",
+    "body": "Tell your references what types of roles you are looking for so they can describe you more accurately.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-ner-prestationer",
+    "title": "Today's tip: Write down achievements",
+    "body": "Make a list of what you actually accomplished. It will be worth its weight in both applications and interviews.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-pa-andra-titlar",
+    "title": "Tip of the day: Search for more titles",
+    "body": "Try alternative titles, English designations and older professional names. You may miss ads unnecessarily.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "tank-internationellt",
+    "title": "Today's tip: Think internationally",
+    "body": "If the language is sufficient, international employers and English speaking roles can widen the possibilities greatly.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "overvaeg-egna-projekt",
+    "title": "Today's tip: Start your own small project",
+    "body": "Taking your own initiative can give you fresh experience and concrete things to talk about when the job process is slow.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-kompetenskarta",
+    "title": "Today's tip: Make a skills map",
+    "body": "Divide what you can into tools, responsibilities, results and personal strengths. Then you see more clearly what you can sell.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "folj-upp-efter-tystnad",
+    "title": "Today's tip: Follow up after silence",
+    "body": "If you haven't heard from us in a while, send us a friendly message. Silence does not always mean the process is over.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "oppna-for-omlokalisering",
+    "title": "Tip of the day: Open to relocation",
+    "body": "Think about whether a temporary move or trial period in another city might be possible if the right job presents itself.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "satsa-pa-kvalitet",
+    "title": "Today's tip: Invest in quality",
+    "body": "Three well-thought-out applications can yield more than ten big ones. Remind yourself that quality often wins.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "planera-nasta-manad",
+    "title": "Today's tip: Plan next month",
+    "body": "Think beyond just today's application. What do you want to have tested, learned or followed up on before the end of the month?",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-om-din-berattelse",
+    "title": "Today's tip: Rewrite your story",
+    "body": "How would you describe your journey so far? A clear narrative makes it easier for employers to understand the direction ahead.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-lista-over-dromjobb",
+    "title": "Today's tip: List your dream jobs",
+    "body": "Write down five jobs you really want and see what they have in common. It helps you focus smarter.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "jamfor-annonser",
+    "title": "Today's tip: Compare several ads",
+    "body": "Read three similar ads side by side. Then it becomes clearer which requirements are recurring and what you should highlight.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skapa-energirutin",
+    "title": "Today's tip: Create an energy routine",
+    "body": "Find what time of day you think best and put more difficult applications there. It makes a bigger difference than you think.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-paus-med-ansvar",
+    "title": "Today's tip: Take a break with responsibility",
+    "body": "If you're completely drained, a planned break may be better than trying to force half-baked work.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-uppfoljningslista",
+    "title": "Today's tip: Make a follow-up list",
+    "body": "Separate jobs you should follow up from jobs you should apply for. It makes it easier to actually close loops.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "formulera-ditt-varfor",
+    "title": "Today's tip: Formulate your why",
+    "body": "When you know why you are applying for a certain type of role, it will be easier to stay motivated when the process drags on.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-pa-sjalvfortroendet",
+    "title": "Today's tip: Build self-confidence",
+    "body": "Read through old positive comments, references or results. Remind yourself that you actually have something to contribute.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gora-om-nej-till-data",
+    "title": "Today's tip: Say no to data",
+    "body": "Each no contains information. Use it to adjust, not to judge yourself.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-vad-de-soker",
+    "title": "Today's tip: Ask what they are really looking for",
+    "body": "If there is a connection, ask what problem this role will primarily solve. Then you can customize the application much better.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-kortare",
+    "title": "Today's tip: Write shorter and sharper",
+    "body": "If in doubt, shorten it. Clarity almost always beats length in both CVs and letters.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "lyft-siffror",
+    "title": "Tip of the day: Lift numbers where you can",
+    "body": "Figures on results, responsibilities or improvements make your experience more credible and concrete.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "titta-pa-smabolag",
+    "title": "Today's tip: Look at smaller companies",
+    "body": "Smaller companies can be faster in the process and more open to profiles that don't fit perfectly into a template.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "titta-pa-storbolag",
+    "title": "Today's tip: Look at larger companies",
+    "body": "Larger employers often have more entrances, internal paths and roles that may fit in the long term, even if the first step is narrower.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "vanta-inte-pa-inspiration",
+    "title": "Today's tip: Don't wait for inspiration",
+    "body": "Job hunting is often easier when you start working, not when you wait for the right feeling to appear.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "skriv-ett-utkast-direkt",
+    "title": "Today's tip: Write a draft immediately",
+    "body": "Open the document and write the first draft without editing too much. Speed ​​is often better than perfection in the beginning.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "avgransa-ditt-mal",
+    "title": "Today's tip: Define today's goals",
+    "body": "Decide already now what is enough to make the day feel good. Then it will be easier to stay the course.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gora-plats-for-ny-riktning",
+    "title": "Today's tip: Give way to a new direction",
+    "body": "If your old goal no longer feels right, it may be braver to rethink than to stick with habit.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "fraga-vad-vanner-ser",
+    "title": "Today's tip: Ask what others see in you",
+    "body": "Ask someone to describe your strengths in their own words. Others often see values ​​you yourself downplay.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ta-hjalp-av-ai-med-urskiljning",
+    "title": "Today's tip: Get help with discernment",
+    "body": "Use tools to summarize ads or find keywords, but always make the final version feel like you.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "bygg-en-breddlista",
+    "title": "Today's tip: Build a width list",
+    "body": "Make a list of roles you can apply for straight away, roles you can grow into and roles you can reach after training.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "gor-en-tremansplan",
+    "title": "Today's tip: Make a three-month plan",
+    "body": "Think about what you want to have tested, learned and applied within three months. It provides direction even when the answers are delayed.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "sok-roligare-an-du-tror",
+    "title": "Today's tip: Look for something that feels more fun",
+    "body": "Sometimes the energy is reawakened when you look for a role that feels a little more exciting than the ones you are stuck in out of habit.",
+    "url": "/dashboard"
+  },
+  {
+    "id": "ge-dig-sjalv-fler-chanser",
+    "title": "Today's tip: Give yourself more chances",
+    "body": "The more thoughtful attempts you make, the greater the chance that the right person will see you at the right time.",
+    "url": "/dashboard"
+  }
+]

@@ -7,6 +7,8 @@ export function LanguageSwitcher() {
   const locale = useLocale();
   const t = useTranslations("language");
   const router = useRouter();
+  const buttonClassName =
+    "rounded-xl flex-1 py-1.5 text-center text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950";
 
   function switchLocale(nextLocale: string) {
     document.cookie = `locale=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
@@ -14,11 +16,13 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <div className="flex w-full items-center gap-1 rounded-2xl border border-app-stroke bg-app-surface p-1">
+    <fieldset className="flex w-full items-center gap-1 rounded-2xl border border-app-stroke bg-app-surface p-1">
+      <legend className="sr-only">{t("label")}</legend>
       <button
         type="button"
         onClick={() => switchLocale("sv")}
-        className={`rounded-xl flex-1 py-1.5 text-xs font-medium text-center transition ${
+        aria-pressed={locale === "sv"}
+        className={`${buttonClassName} ${
           locale === "sv"
             ? "bg-white text-app-ink shadow-sm dark:bg-white/10 dark:text-white"
             : "text-app-muted hover:text-app-ink dark:hover:text-white"
@@ -29,7 +33,8 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => switchLocale("en")}
-        className={`rounded-xl flex-1 py-1.5 text-xs font-medium text-center transition ${
+        aria-pressed={locale === "en"}
+        className={`${buttonClassName} ${
           locale === "en"
             ? "bg-white text-app-ink shadow-sm dark:bg-white/10 dark:text-white"
             : "text-app-muted hover:text-app-ink dark:hover:text-white"
@@ -40,7 +45,8 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => switchLocale("uk")}
-        className={`rounded-xl flex-1 py-1.5 text-xs font-medium text-center transition ${
+        aria-pressed={locale === "uk"}
+        className={`${buttonClassName} ${
           locale === "uk"
             ? "bg-white text-app-ink shadow-sm dark:bg-white/10 dark:text-white"
             : "text-app-muted hover:text-app-ink dark:hover:text-white"
@@ -48,6 +54,6 @@ export function LanguageSwitcher() {
       >
         {t("uk")}
       </button>
-    </div>
+    </fieldset>
   );
 }
