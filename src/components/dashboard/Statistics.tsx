@@ -62,7 +62,7 @@ export function Statistics({ applications }: Readonly<StatisticsProps>) {
 
   return (
     <section className='app-page-content-compact w-full'>
-      <h2 className='font-display text-3xl md:text-[1.75rem]'>{t('statsTitle')}</h2>
+      <h2 className='font-display mt-8 -mb-4 text-3xl md:text-[1.75rem]'>{t('statsTitle')}</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
         <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-3 h-fit'>
           {statCards.map(({ cardClassName, label, value, valueClassName }) => (
