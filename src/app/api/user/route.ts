@@ -38,7 +38,7 @@ const userSelect = {
 
 export async function GET(
   req: NextRequest,
-): Promise<NextResponse<User | { error: string } | unknown>> {
+): Promise<NextResponse> {
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
