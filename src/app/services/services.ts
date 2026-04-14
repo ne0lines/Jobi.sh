@@ -1,4 +1,11 @@
-import type { CreateJobInput, Job, UpdateJobInput, UserOnboardingFlags } from "../types";
+import type {
+  CreateJobInput,
+  Job,
+  UpdateJobInput,
+  User,
+  UserOnboardingFlags,
+} from "../types";
+import type { ThemePreference } from "@/lib/theme";
 
 const API_BASE = "/api/jobs";
 
@@ -6,7 +13,10 @@ type GetJobsOptions = {
   includeArchived?: boolean;
 };
 
-async function getErrorMessage(response: Response, fallbackMessage: string): Promise<string> {
+async function getErrorMessage(
+  response: Response,
+  fallbackMessage: string,
+): Promise<string> {
   try {
     const data = (await response.json()) as { error?: string };
     return data.error || fallbackMessage;
@@ -25,6 +35,15 @@ function buildJobsUrl(options: GetJobsOptions = {}): string {
   const query = searchParams.toString();
 
   return query ? `${API_BASE}?${query}` : API_BASE;
+}
+
+/** GET current user profile */
+export async function getUser(): Promise<User> {
+  const res = await fetch("/api/user", {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch user profile");
+  return res.json() as Promise<User>;
 }
 
 /** GET all jobs */
@@ -82,7 +101,7 @@ export async function deleteJob(id: string): Promise<void> {
   }
 }
 
-type PatchUserInput = Partial<UserOnboardingFlags>;
+type PatchUserInput = Partial<UserOnboardingFlags> & { colorScheme?: ThemePreference };
 
 /** PATCH onboarding flags on the current user */
 export async function patchUser(input: PatchUserInput): Promise<void> {

@@ -99,14 +99,14 @@ export default async function RootLayout({
             </Suspense>
             <NextIntlClientProvider locale={locale} messages={messages}>
               <ClerkProvider>
-                <ThemeProvider>
-                  <QueryProvider>
+                <QueryProvider>
+                  <ThemeProvider>
                     <RegisterServiceWorker />
                     <AppNavigationShell>{children}</AppNavigationShell>
                     <Toaster />
                     <CookieNotice />
-                  </QueryProvider>
-                </ThemeProvider>
+                  </ThemeProvider>
+                </QueryProvider>
               </ClerkProvider>
             </NextIntlClientProvider>
           </body>

@@ -104,3 +104,25 @@ export type UserOnboardingFlags = {
   onboardingReportViewed: boolean;
 };
 
+export enum UserRole {
+  USER = "user",
+  ADMIN = "admin",
+}
+
+export enum ColorScheme {
+  DARK = "dark",
+  LIGHT = "light",
+}
+
+export type User = UserOnboardingFlags & {
+  id: string;
+  email: string;
+  name: string;
+  profession: string;
+  role: UserRole;
+  complete: boolean;
+  termsAcceptedAt: string | null;
+  termsVersion: string | null;
+  colorScheme: ColorScheme;
+};
+

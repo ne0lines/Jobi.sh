@@ -1,4 +1,4 @@
-import { UserRole } from "@/app/generated/prisma/enums";
+import { ColorScheme, UserRole } from "@/app/generated/prisma/enums";
 import { TERMS_VERSION } from "@/lib/legal";
 import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
@@ -18,6 +18,7 @@ type User = {
   onboardingDismissed: boolean;
   onboardingPipelineExplored: boolean;
   onboardingReportViewed: boolean;
+  colorScheme: ColorScheme;
 };
 
 const userSelect = {
@@ -32,6 +33,7 @@ const userSelect = {
   onboardingDismissed: true,
   onboardingPipelineExplored: true,
   onboardingReportViewed: true,
+  colorScheme: true,
 } as const;
 
 export async function GET(
@@ -158,6 +160,7 @@ type PatchUserInput = {
   onboardingDismissed?: boolean;
   onboardingPipelineExplored?: boolean;
   onboardingReportViewed?: boolean;
+  colorScheme?: ColorScheme;
 };
 
 export async function PATCH(
@@ -182,6 +185,9 @@ export async function PATCH(
   if (typeof body.onboardingReportViewed === "boolean") {
     update.onboardingReportViewed = body.onboardingReportViewed;
   }
+  if (body.colorScheme === ColorScheme.dark || body.colorScheme === ColorScheme.light) {
+    update.colorScheme = body.colorScheme;
+  }
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json(
@@ -193,7 +199,7 @@ export async function PATCH(
   try {
     await prisma.user.update({ where: { id: clerkUser.id }, data: update });
   } catch (err) {
-    logger.error("Failed to update onboarding flags", { userId: clerkUser.id });
+    logger.error("Failed to update user preferences", { userId: clerkUser.id });
     Sentry.captureException(err, { tags: { route: "PATCH /api/user" } });
     return NextResponse.json(
       { error: "Det gick inte att uppdatera profilen." },

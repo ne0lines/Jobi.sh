@@ -9,12 +9,15 @@ import {
   readStoredThemePreference,
   type ThemePreference,
 } from '@/lib/theme';
+import { useUser } from '@/lib/hooks/user';
+import { patchUser } from '@/app/services/services';
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
@@ -65,6 +68,9 @@ export function ThemeProvider({
   children: ReactNode;
   initialThemePreference?: ThemePreference;
 }>) {
+  const { data: user } = useUser();
+  const hasSyncedRef = useRef(false);
+
   const themePreference = useSyncExternalStore(
     subscribeToThemePreference,
     readStoredThemePreference,
@@ -75,6 +81,9 @@ export function ThemeProvider({
     (nextThemePreference: ThemePreference) => {
       persistThemePreference(nextThemePreference);
       applyThemePreference(nextThemePreference);
+      patchUser({ colorScheme: nextThemePreference }).catch((e) =>
+        console.error('[ThemeProvider] Failed to sync colorScheme', e),
+      );
 
       if (globalThis.window !== undefined) {
         globalThis.window.dispatchEvent(
@@ -88,6 +97,18 @@ export function ThemeProvider({
   useEffect(() => {
     applyThemePreference(themePreference);
   }, [themePreference]);
+
+  // Initial sync to ensure DB matches local preference for existing users
+  useEffect(() => {
+    if (user && !hasSyncedRef.current) {
+      hasSyncedRef.current = true;
+      if (user.colorScheme !== themePreference) {
+        patchUser({ colorScheme: themePreference }).catch((e) =>
+          console.error('[ThemeProvider] Failed initial colorScheme sync', e),
+        );
+      }
+    }
+  }, [user, themePreference]);
 
   const value = useMemo(
     () => ({ setThemePreference, themePreference }),

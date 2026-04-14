@@ -9,6 +9,23 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@/lib/hooks/user";
+import { UserRole } from "@/app/types";
+import { ShieldCheck, LucideIcon } from "lucide-react";
+
+type NavItem =
+  | {
+      href: string;
+      icon: LucideIcon;
+      label: string;
+      match: (p: string) => boolean;
+    }
+  | {
+      href: string;
+      iconSrc: string;
+      label: string;
+      match: (p: string) => boolean;
+    };
 
 const navShellClassName =
   "rounded-2xl border border-white/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(242,245,251,0.68))] shadow-[0_10px_24px_rgba(17,23,40,0.10),0_28px_70px_rgba(17,23,40,0.18)] ring-1 ring-black/6 backdrop-blur-xl supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(255,255,255,0.58),rgba(242,245,251,0.42))] dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(24,24,27,0.94),rgba(15,15,18,0.9))] dark:shadow-[0_10px_24px_rgba(0,0,0,0.28),0_28px_70px_rgba(0,0,0,0.46)] dark:ring-white/8 dark:supports-backdrop-filter:bg-[linear-gradient(180deg,rgba(24,24,27,0.78),rgba(15,15,18,0.62))]";
@@ -51,8 +68,9 @@ export function AppNavigationShell({
 }: Readonly<AppNavigationShellProps>) {
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const { data: user } = useUser();
 
-  const navItems = [
+  const navItems: NavItem[] = [
     {
       href: "/dashboard",
       icon: House,
@@ -77,7 +95,17 @@ export function AppNavigationShell({
       label: t("activityReport"),
       match: (p: string) => p.startsWith("/aktivitetsrapport"),
     },
-  ] as const;
+    ...(user?.role === UserRole.ADMIN
+      ? [
+          {
+            href: "/admin",
+            icon: ShieldCheck,
+            label: t("admin"),
+            match: (p: string) => p.startsWith("/admin"),
+          },
+        ]
+      : []),
+  ];
 
   const hideNavigation =
     pathname === "/" ||

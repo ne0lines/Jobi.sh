@@ -7,7 +7,8 @@
     "extension": "Extension",
     "addJob": "Lägg till jobb",
     "primaryNav": "Primär navigation",
-    "footerNav": "Sidfotsnavigation"
+    "footerNav": "Sidfotsnavigation",
+    "admin": "Admin"
   },
   "cookieNotice": {
     "body": "Den här appen använder cookies för inloggning. Inga spårningscookies används.",
