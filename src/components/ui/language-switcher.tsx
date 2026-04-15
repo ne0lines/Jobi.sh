@@ -54,6 +54,18 @@ export function LanguageSwitcher() {
       >
         {t("uk")}
       </button>
+      <button
+        type="button"
+        onClick={() => switchLocale("ar")}
+        aria-pressed={locale === "ar"}
+        className={`${buttonClassName} ${
+          locale === "ar"
+            ? "bg-white text-app-ink shadow-sm dark:bg-white/10 dark:text-white"
+            : "text-app-muted hover:text-app-ink dark:hover:text-white"
+        }`}
+      >
+        {t("ar")}
+      </button>
     </fieldset>
   );
 }

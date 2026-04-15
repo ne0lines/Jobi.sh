@@ -22,6 +22,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 
+import { Noto_Sans_Arabic } from "next/font/google";
+
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -32,6 +34,12 @@ const bricolageGrotesque = Bricolage_Grotesque({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const notoSansArabic = Noto_Sans_Arabic({
+  variable: "--font-arabic",
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -83,12 +91,13 @@ export default async function RootLayout({
       <PostHogProvider>
         <html
           lang={locale}
-          className={cn("font-sans", geist.variable)}
+          dir={locale === "ar" ? "rtl" : "ltr"}
+          className={cn("font-sans", geist.variable, notoSansArabic.variable)}
           style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
           suppressHydrationWarning
         >
           <body
-            className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased p-3 md:p-4`}
+            className={`${bricolageGrotesque.variable} ${inter.variable} ${notoSansArabic.variable} min-h-svh antialiased p-3 md:p-4`}
           >
             <Script id="theme-preference-init" strategy="beforeInteractive">
               {themeInitializationScript}
