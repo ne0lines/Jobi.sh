@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { LanguageSwitcherCard } from '@/components/account/language-switcher-card';
 import { PushNotificationCard } from '@/components/account/push-notification-card';
 import { ThemePreferenceCard } from '@/components/account/theme-preference-card';
 import { LogoutBtn } from '@/components/auth/logout-btn';
@@ -71,6 +72,9 @@ export default async function AccountPage() {
           </dl>
         </article>
         <ThemePreferenceCard />
+        <div className="md:hidden">
+          <LanguageSwitcherCard />
+        </div>
         <PushNotificationCard />
         <article className='rounded-3xl border border-app-stroke bg-app-card p-5'>
           <dl className='space-y-3 text-base text-app-ink'>

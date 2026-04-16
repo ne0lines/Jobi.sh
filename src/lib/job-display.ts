@@ -20,7 +20,7 @@ function parseSwedishDate(value: string): Date | null {
   return new Date(Number(match[3]), month, Number(match[1]));
 }
 
-const localeTagMap: Record<string, string> = { en: "en-US", uk: "uk-UA", sv: "sv-SE" };
+const localeTagMap: Record<string, string> = { en: "en-US", uk: "uk-UA", sv: "sv-SE", ar: "ar-SA" };
 
 export function formatStoredDate(value: string, locale: string): string {
   const parsed = parseSwedishDate(value);
@@ -45,6 +45,12 @@ const timelineEventTranslations: Record<string, Record<string, string>> = {
     "ansökan skickad": "Заявку надіслано",
     "sista ansökningsdag": "Кінцевий термін подачі",
   },
+  ar: {
+    "jobbet sparat": "تم حفظ الوظيفة",
+    "jobbet skapat": "تم إنشاء الوظيفة",
+    "ansökan skickad": "تم إرسال الطلب",
+    "sista ansökningsdag": "الموعد النهائي للتقديم",
+  },
 };
 
 export function displayTimelineEvent(event: string, locale: string): string {
@@ -56,11 +62,13 @@ export function displayTimelineEvent(event: string, locale: string): string {
 const workloadTranslations: Record<string, Record<string, string>> = {
   en: { Heltid: "Full-time", Deltid: "Part-time" },
   uk: { Heltid: "Повна зайнятість", Deltid: "Часткова зайнятість" },
+  ar: { Heltid: "دوام كامل", Deltid: "دوام جزئي" },
 };
 
 const employmentTypeTranslations: Record<string, Record<string, string>> = {
   en: { Tillsvidare: "Permanent", Visstid: "Temporary", Provanställning: "Probationary", Konsult: "Consultant" },
   uk: { Tillsvidare: "Безстрокова", Visstid: "Строкова", Provanställning: "Випробувальна", Konsult: "Консультант" },
+  ar: { Tillsvidare: "دائم", Visstid: "مؤقت", Provanställning: "تجريبي", Konsult: "استشاري" },
 };
 
 export function displayWorkload(value: string, locale: string): string {

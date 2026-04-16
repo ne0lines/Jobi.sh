@@ -172,7 +172,7 @@ export default function JobDetailPage({
             <div className="relative mt-2">
               <div
                 aria-hidden="true"
-                className="absolute top-1 bottom-2 left-1.25 w-px bg-app-stroke"
+                className="absolute top-1 bottom-2 start-1.25 w-px bg-app-stroke"
               />
               <ul className="space-y-4">
                 {job.timeline.map((item, index) => (
