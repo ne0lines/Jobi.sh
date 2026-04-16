@@ -39,7 +39,7 @@ export const EXTENSION_INSTALL_TARGETS: Record<BrowserInstallTargetKey, BrowserI
     browserKey: "firefox",
     browserLabel: "Firefox",
     storeLabel: "Firefox Add-ons",
-    installUrl: "https://addons.mozilla.org/firefox/addon/jobish/",
+    installUrl: "https://addons.mozilla.org/firefox/addon/jobi-sh/",
   }),
 };
 
