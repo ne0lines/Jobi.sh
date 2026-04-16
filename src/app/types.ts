@@ -126,3 +126,9 @@ export type User = UserOnboardingFlags & {
   colorScheme: ColorScheme;
 };
 
+export type UserProfile = {
+  id: string;
+  email: string;
+  name: string;
+  profession: string;
+};

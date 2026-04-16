@@ -36,9 +36,7 @@ const userSelect = {
   colorScheme: true,
 } as const;
 
-export async function GET(
-  req: NextRequest,
-): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
@@ -63,7 +61,10 @@ export async function GET(
   } catch (err) {
     logger.error("Failed to fetch user profile", { userId: clerkUser.id });
     Sentry.captureException(err, { tags: { route: "GET /api/user" } });
-    return NextResponse.json({ error: "Det gick inte att hämta profilen." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Det gick inte att hämta profilen." },
+      { status: 500 },
+    );
   }
 
   if (!dbData) {
@@ -150,13 +151,19 @@ export async function POST(
   } catch (err) {
     logger.error("Failed to upsert user profile", { userId: clerkUser.id });
     Sentry.captureException(err, { tags: { route: "POST /api/user" } });
-    return NextResponse.json({ error: "Det gick inte att spara profilen." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Det gick inte att spara profilen." },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json(userData as User, { status: 201 });
 }
 
 type PatchUserInput = {
+  name?: string;
+  email?: string;
+  profession?: string;
   onboardingDismissed?: boolean;
   onboardingPipelineExplored?: boolean;
   onboardingReportViewed?: boolean;
@@ -165,7 +172,7 @@ type PatchUserInput = {
 
 export async function PATCH(
   req: NextRequest,
-): Promise<NextResponse<{ ok: boolean } | { error: string }>> {
+): Promise<NextResponse<User | { error: string }>> {
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
@@ -176,6 +183,9 @@ export async function PATCH(
   const body = (await req.json()) as PatchUserInput;
   const update: Partial<PatchUserInput> = {};
 
+  if (typeof body.name !== undefined) update.name = body.name;
+  if (typeof body.profession !== undefined) update.profession = body.profession;
+  if (typeof body.email !== undefined) update.email = body.email;
   if (typeof body.onboardingDismissed === "boolean") {
     update.onboardingDismissed = body.onboardingDismissed;
   }
@@ -185,7 +195,10 @@ export async function PATCH(
   if (typeof body.onboardingReportViewed === "boolean") {
     update.onboardingReportViewed = body.onboardingReportViewed;
   }
-  if (body.colorScheme === ColorScheme.dark || body.colorScheme === ColorScheme.light) {
+  if (
+    body.colorScheme === ColorScheme.dark ||
+    body.colorScheme === ColorScheme.light
+  ) {
     update.colorScheme = body.colorScheme;
   }
 
@@ -196,8 +209,19 @@ export async function PATCH(
     );
   }
 
+  const select = {
+    email: true,
+    name: true,
+    profession: true,
+  } as const;
+
+  let data;
   try {
-    await prisma.user.update({ where: { id: clerkUser.id }, data: update });
+    data = await prisma.user.update({
+      where: { id: clerkUser.id },
+      data: update,
+      select: select,
+    });
   } catch (err) {
     logger.error("Failed to update user preferences", { userId: clerkUser.id });
     Sentry.captureException(err, { tags: { route: "PATCH /api/user" } });
@@ -207,5 +231,5 @@ export async function PATCH(
     );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json(data as User, { status: 200 });
 }
