@@ -538,7 +538,7 @@
 	}
 
 	.app-card-elevated {
-		@apply rounded-3xl border border-app-stroke bg-white;
+		@apply rounded-3xl border border-app-stroke bg-app-card;
 		padding: var(--app-card-padding);
 		box-shadow: 0 10px 24px rgba(17, 23, 40, 0.08);
 	}
