@@ -169,7 +169,10 @@ export function Btn({
   if (typeof props.href === "string") {
     const { href, rel, target, ...linkProps } = props;
     const isExternal =
-      href.startsWith("http://") || href.startsWith("https://");
+      href.startsWith("http://") ||
+      href.startsWith("https://") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:");
 
     if (isExternal) {
       return (

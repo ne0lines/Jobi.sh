@@ -2,16 +2,19 @@
 
 import { Btn } from "@/components/ui/btn";
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function AddJobBtn() {
+  const t = useTranslations("jobs");
+
   return (
     <Btn
       className="md:hidden"
-      href="/jobb/new"
+      href="/jobs/new"
       icon={Plus}
       track="add_job_click"
     >
-      Lägg till jobb
+      {t("addJobBtn")}
     </Btn>
   );
 }

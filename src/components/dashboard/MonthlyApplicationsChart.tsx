@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 import { JobStatus } from "@/app/types";
 
@@ -22,6 +23,9 @@ type MonthlyApplicationsChartProps = {
 export function MonthlyApplicationsChart({
   applications,
 }: Readonly<MonthlyApplicationsChartProps>) {
+  const t = useTranslations('dashboard')
+  const monthNames: string[] = t.raw('chartMonths') as string[]
+
   // Find the earliest application date
   const earliestDate =
     applications.length > 0
@@ -36,20 +40,6 @@ export function MonthlyApplicationsChart({
 
   const now = new Date()
   const months = []
-  const monthNames = [
-    'jan',
-    'feb',
-    'mar',
-    'apr',
-    'maj',
-    'jun',
-    'jul',
-    'aug',
-    'sep',
-    'okt',
-    'nov',
-    'dec',
-  ]
 
   // Generate months from earliest application to current month (max 7 months)
   const startMonth = new Date(
@@ -206,11 +196,11 @@ export function MonthlyApplicationsChart({
 
   const series = [
     {
-      name: 'Ansökningar',
+      name: t('chartApplications'),
       data: applicationsData,
     },
     {
-      name: 'Intervjuer',
+      name: t('chartInterviews'),
       data: interviewsData,
     },
   ]

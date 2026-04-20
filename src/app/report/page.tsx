@@ -17,7 +17,7 @@ export default async function ReportPage() {
   const applications = getApplicationsForUser(db.applications, userId);
 
   if (applications.length === 0) {
-    redirect("/jobb/new");
+    redirect("/jobs/new");
   }
 
   const { jobs } = getReportPageData(applications);

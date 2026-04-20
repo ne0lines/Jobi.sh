@@ -1,8 +1,31 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+function getLegacyRoutePath(pathname: string): string | null {
+  if (/^\/foretag(?=\/|$)/.test(pathname)) {
+    return pathname.replace(/^\/foretag(?=\/|$)/, "/company");
+  }
+
+  if (/^\/konto(?=\/|$)/.test(pathname)) {
+    return pathname.replace(/^\/konto(?=\/|$)/, "/account");
+  }
+
+  if (/^\/jobb(?=\/|$)/.test(pathname)) {
+    return pathname.replace(/^\/jobb(?=\/|$)/, "/jobs");
+  }
+
+  if (/^\/aktivitetsrapport(?=\/|$)/.test(pathname)) {
+    return pathname.replace(/^\/aktivitetsrapport(?=\/|$)/, "/activity-report");
+  }
+
+  return null;
+}
+
 const isPublicRoute = createRouteMatcher([
+  "/",
   "/auth(.*)",
+  "/landing(.*)",
+  "/company(.*)",
   "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
@@ -10,15 +33,26 @@ const isPublicRoute = createRouteMatcher([
 
 // Routes that don't require a DB profile (auth + the profile creation flow itself)
 const isProfileExempt = createRouteMatcher([
+  "/",
   "/auth(.*)",
+  "/landing(.*)",
+  "/company(.*)",
   "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
-  "/konto/create-profile(.*)",
+  "/account/create-profile(.*)",
   "/api/user",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  const legacyRoutePath = getLegacyRoutePath(req.nextUrl.pathname);
+
+  if (legacyRoutePath) {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = legacyRoutePath;
+    return NextResponse.redirect(redirectUrl, 308);
+  }
+
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
@@ -33,7 +67,7 @@ export default clerkMiddleware(async (auth, req) => {
       });
 
       if (!res.ok) {
-        return NextResponse.redirect(new URL("/konto/create-profile", req.url));
+        return NextResponse.redirect(new URL("/account/create-profile", req.url));
       }
     }
   }

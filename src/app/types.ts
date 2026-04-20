@@ -58,6 +58,26 @@ export type JobFormState = {
   notes: string;
 };
 
+export type PushSubscriptionInput = {
+  endpoint: string;
+  expirationTime: number | null;
+  keys: {
+    auth: string;
+    p256dh: string;
+  };
+};
+
+export type PushNotificationSettings = {
+  subscriptionCount: number;
+  tipNotificationsEnabled: boolean;
+  todoNotificationsEnabled: boolean;
+};
+
+export type UpdatePushNotificationSettingsInput = {
+  tipNotificationsEnabled: boolean;
+  todoNotificationsEnabled: boolean;
+};
+
 export type AutofillPayload = {
   title: string;
   company: string;
@@ -78,3 +98,37 @@ export type Db = {
   applications: Job[];
 };
 
+export type UserOnboardingFlags = {
+  onboardingDismissed: boolean;
+  onboardingPipelineExplored: boolean;
+  onboardingReportViewed: boolean;
+};
+
+export enum UserRole {
+  USER = "user",
+  ADMIN = "admin",
+}
+
+export enum ColorScheme {
+  DARK = "dark",
+  LIGHT = "light",
+}
+
+export type User = UserOnboardingFlags & {
+  id: string;
+  email: string;
+  name: string;
+  profession: string;
+  role: UserRole;
+  complete: boolean;
+  termsAcceptedAt: string | null;
+  termsVersion: string | null;
+  colorScheme: ColorScheme;
+};
+
+export type UserProfile = {
+  id: string;
+  email: string;
+  name: string;
+  profession: string;
+};

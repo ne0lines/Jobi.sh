@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ClerkProvider } from "@clerk/nextjs";
 import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import Script from "next/script";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
@@ -19,6 +22,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 
+import { Noto_Sans_Arabic } from "next/font/google";
+
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -29,6 +34,12 @@ const bricolageGrotesque = Bricolage_Grotesque({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const notoSansArabic = Noto_Sans_Arabic({
+  variable: "--font-arabic",
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -66,41 +77,50 @@ export const viewport: Viewport = {
   themeColor: "#6e33eb",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <PostHogProvider>
-      <html
-        lang="sv"
-        className={cn("font-sans", geist.variable)}
-        style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
-        suppressHydrationWarning
-      >
-        <body
-          className={`${bricolageGrotesque.variable} ${inter.variable} min-h-svh antialiased p-3`}
+    <>
+      <SpeedInsights />
+      <PostHogProvider>
+        <html
+          lang={locale}
+          dir={locale === "ar" ? "rtl" : "ltr"}
+          className={cn("font-sans", geist.variable, notoSansArabic.variable)}
+          style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
+          suppressHydrationWarning
         >
-          <Script id="theme-preference-init" strategy="beforeInteractive">
-            {themeInitializationScript}
-          </Script>
-          <PostHogServerPageView />
-          <Suspense fallback={null}>
-            <PostHogPageView />
-          </Suspense>
-          <ClerkProvider>
-            <ThemeProvider>
-              <QueryProvider>
-                <RegisterServiceWorker />
-                <AppNavigationShell>{children}</AppNavigationShell>
-                <Toaster />
-                <CookieNotice />
-              </QueryProvider>
-            </ThemeProvider>
-          </ClerkProvider>
-        </body>
-      </html>
-    </PostHogProvider>
+          <body
+            className={`${bricolageGrotesque.variable} ${inter.variable} ${notoSansArabic.variable} min-h-svh antialiased p-3 md:p-4`}
+          >
+            <Script id="theme-preference-init" strategy="beforeInteractive">
+              {themeInitializationScript}
+            </Script>
+            <PostHogServerPageView />
+            <Suspense fallback={null}>
+              <PostHogPageView />
+            </Suspense>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <ClerkProvider>
+                <QueryProvider>
+                  <ThemeProvider>
+                    <RegisterServiceWorker />
+                    <AppNavigationShell>{children}</AppNavigationShell>
+                    <Toaster />
+                    <CookieNotice />
+                  </ThemeProvider>
+                </QueryProvider>
+              </ClerkProvider>
+            </NextIntlClientProvider>
+          </body>
+        </html>
+      </PostHogProvider>
+    </>
   );
 }

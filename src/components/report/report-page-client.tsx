@@ -19,8 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getBrowserInstallTarget } from "@/lib/extension-install";
+import {
+  getBrowserInstallTarget,
+  type BrowserInstallTarget,
+} from "@/lib/extension-install";
+import { displayWorkload, formatStoredDate } from "@/lib/job-display";
 import { ExternalLink, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -43,41 +48,75 @@ const JOBISH_REPORT_MESSAGE_TYPE = "JOBISH_REPORT_JOB";
 const JOBISH_REPORT_ACK_TYPE = "JOBISH_EXTENSION_ACK";
 const JOBISH_EXTENSION_PING_TYPE = "JOBISH_EXTENSION_PING";
 const JOBISH_EXTENSION_PONG_TYPE = "JOBISH_EXTENSION_PONG";
+const EXTENSION_DETECTION_TIMEOUT_MS = 900;
+const EXTENSION_DETECTION_RETRY_DELAY_MS = 250;
+const EXTENSION_DETECTION_RETRY_COUNT = 3;
+
+function delay(ms: number) {
+  return new Promise((resolve) => {
+    globalThis.setTimeout(resolve, ms);
+  });
+}
+
+function isCurrentPageBridgeEvent(event: MessageEvent, currentWindow: Window) {
+  return (
+    event.origin === currentWindow.location.origin &&
+    (event.source === currentWindow || event.source === null)
+  );
+}
 
 async function detectActivityReportExtension() {
   const currentWindow = globalThis.window;
 
-  return await new Promise<boolean>((resolve) => {
-    let resolved = false;
+  for (let attempt = 0; attempt < EXTENSION_DETECTION_RETRY_COUNT; attempt += 1) {
+    const installed = await new Promise<boolean>((resolve) => {
+      let resolved = false;
 
-    const cleanup = (value: boolean) => {
-      if (resolved) {
-        return;
-      }
+      const cleanup = (value: boolean) => {
+        if (resolved) {
+          return;
+        }
 
-      resolved = true;
-      globalThis.clearTimeout(timeoutId);
-      currentWindow.removeEventListener("message", handleMessage);
-      resolve(value);
-    };
+        resolved = true;
+        globalThis.clearTimeout(timeoutId);
+        currentWindow.removeEventListener("message", handleMessage);
+        resolve(value);
+      };
 
-    const handleMessage = (event: MessageEvent) => {
-      if (event.source !== currentWindow || event.origin !== currentWindow.location.origin) {
-        return;
-      }
+      const handleMessage = (event: MessageEvent) => {
+        if (!isCurrentPageBridgeEvent(event, currentWindow)) {
+          return;
+        }
 
-      if (event.data?.type !== JOBISH_EXTENSION_PONG_TYPE) {
-        return;
-      }
+        if (event.data?.type !== JOBISH_EXTENSION_PONG_TYPE) {
+          return;
+        }
 
-      cleanup(true);
-    };
+        cleanup(true);
+      };
 
-    const timeoutId = currentWindow.setTimeout(() => cleanup(false), 900);
+      const timeoutId = currentWindow.setTimeout(
+        () => cleanup(false),
+        EXTENSION_DETECTION_TIMEOUT_MS,
+      );
 
-    currentWindow.addEventListener("message", handleMessage);
-    currentWindow.postMessage({ type: JOBISH_EXTENSION_PING_TYPE }, currentWindow.location.origin);
-  });
+      currentWindow.addEventListener("message", handleMessage);
+      currentWindow.postMessage(
+        { type: JOBISH_EXTENSION_PING_TYPE },
+        currentWindow.location.origin,
+      );
+    });
+
+    if (installed) {
+      return true;
+    }
+
+    if (attempt < EXTENSION_DETECTION_RETRY_COUNT - 1) {
+      await delay(EXTENSION_DETECTION_RETRY_DELAY_MS);
+    }
+  }
+
+  return false;
 }
 
 function buildActivityReportPayload(job: ReportJobEntry): ActivityReportBridgePayload {
@@ -110,7 +149,7 @@ async function sendJobToActivityReportExtension(payload: ActivityReportBridgePay
     };
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.source !== currentWindow || event.origin !== currentWindow.location.origin) {
+      if (!isCurrentPageBridgeEvent(event, currentWindow)) {
         return;
       }
 
@@ -140,6 +179,25 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
   const [isExtensionInstalled, setIsExtensionInstalled] = useState<boolean | null>(null);
   const [isInstallDrawerOpen, setIsInstallDrawerOpen] = useState(false);
   const installTarget = useMemo(() => getBrowserInstallTarget(), []);
+  const t = useTranslations("report");
+  const extensionT = useTranslations("extension");
+  const locale = useLocale();
+
+  const installCopyByBrowser: Record<
+    BrowserInstallTarget["browserKey"],
+    { installLabel: string; installDescription: string }
+  > = {
+    chrome: {
+      installLabel: extensionT("chromeInstall"),
+      installDescription: extensionT("chromeDesc"),
+    },
+    firefox: {
+      installLabel: extensionT("firefoxInstall"),
+      installDescription: extensionT("firefoxDesc"),
+    },
+  };
+
+  const installCopy = installCopyByBrowser[installTarget.browserKey];
 
   const filteredJobs = useMemo(
     () => jobs.filter((job) => job.monthKey === selectedMonth),
@@ -155,7 +213,6 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
       }
 
       setIsExtensionInstalled(installed);
-      setIsInstallDrawerOpen(!installed);
     });
 
     return () => {
@@ -168,10 +225,16 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
   }
 
   async function handleReportClick(job: ReportJobEntry) {
-    if (isExtensionInstalled === false) {
+    const installed =
+      isExtensionInstalled === true ? true : await detectActivityReportExtension();
+
+    if (!installed) {
+      setIsExtensionInstalled(false);
       setIsInstallDrawerOpen(true);
       return;
     }
+
+    setIsExtensionInstalled(true);
 
     setPendingJobId(job.id);
 
@@ -181,25 +244,34 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
 
     if (delivered) {
       setIsExtensionInstalled(true);
-      toast.success("Jobbet skickades till extensionen och AF-sidan öppnas.");
+      setIsInstallDrawerOpen(false);
+      toast.success(t("reportSuccess"));
       return;
     }
 
-    setIsExtensionInstalled(false);
-    setIsInstallDrawerOpen(true);
-    toast.error("Extensionen svarade inte. Öppna extensionsidan och installera rätt version för din webbläsare.");
+    const stillInstalled = await detectActivityReportExtension();
+
+    setIsExtensionInstalled(stillInstalled);
+
+    if (!stillInstalled) {
+      setIsInstallDrawerOpen(true);
+      toast.error(t("reportError"));
+      return;
+    }
+
+    toast.error(t("reportDeliveryError"));
   }
 
   if (options.length === 0) {
     return (
       <main className="min-h-svh pt-4">
         <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-5 sm:p-8 md:max-w-none">
-          <h1 className="font-display text-4xl md:text-[2.4rem]">Aktivitetsrapport</h1>
+          <h1 className="font-display text-4xl md:text-[2.4rem]">{t("title")}</h1>
           <p className="text-lg text-app-muted">
-            Det finns inga registrerade ansökningsdatum att rapportera ännu.
+            {t("empty")}
           </p>
           <Btn href="/" variant="secondary">
-            Tillbaka
+            {t("back")}
           </Btn>
         </section>
       </main>
@@ -212,9 +284,9 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
         <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:max-w-none">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="font-display text-4xl md:text-[2.4rem]">Aktivitetsrapport</h1>
+              <h1 className="font-display text-4xl md:text-[2.4rem]">{t("title")}</h1>
               <p className="text-lg text-app-muted">
-                Välj månad för att se vilka jobb du sökte under perioden.
+                {t("selectMonth")}
               </p>
             </div>
 
@@ -243,16 +315,16 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                 <div className="min-w-0 flex-1 px-4 py-4 md:px-5">
                   <div className="flex h-full flex-col justify-center gap-3 md:flex-row md:items-center md:justify-between md:gap-5">
                     <div className="min-w-0 flex-1">
-                      <span className="font-bold">{job.title}</span> hos <span className="font-bold">{job.company}</span>
+                      <span className="font-bold">{job.title}</span> {t("companyConnector")} <span className="font-bold">{job.company}</span>
                       <div className="mt-2 flex flex-col gap-1.5 text-sm text-app-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
                         <p className="whitespace-nowrap">
-                          <strong className="text-app-ink">Ort:</strong> {job.location}
+                          <strong className="text-app-ink">{t("locationLabel")}:</strong> {job.location}
                         </p>
                         <p className="whitespace-nowrap">
-                          <strong className="text-app-ink">Omfattning:</strong> {job.workload}
+                          <strong className="text-app-ink">{t("workloadLabel")}:</strong> {displayWorkload(job.workload, locale)}
                         </p>
                         <p className="whitespace-nowrap">
-                          <strong className="text-app-ink">Sökt:</strong> {job.applicationDate}
+                          <strong className="text-app-ink">{t("appliedLabel")}:</strong> {formatStoredDate(job.applicationDate, locale)}
                         </p>
                       </div>
                     </div>
@@ -266,7 +338,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                     disabled={pendingJobId === job.id}
                     onClick={() => void handleReportClick(job)}
                   >
-                    {pendingJobId === job.id ? "Aktivitetsrapporterar..." : "Aktivitetsrapportera"}
+                    {pendingJobId === job.id ? t("reportingBtn") : t("reportBtn")}
                   </button>
                 </div>
               </article>
@@ -287,7 +359,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
         }}
       >
         <DrawerContent>
-          <DrawerTitle className="sr-only">Installera Jobi.sh Extensionen</DrawerTitle>
+          <DrawerTitle className="sr-only">{t("drawerTitle")}</DrawerTitle>
           <div className="mx-auto flex w-full max-w-[75vw] flex-col gap-6">
             <div className="flex items-start justify-between gap-4">
               <DrawerHeader className="min-w-0 gap-0">
@@ -295,18 +367,17 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                   {installTarget.browserLabel} Extension
                 </p>
                 <DrawerTitle id="extension-drawer-title" className="mt-1">
-                  Installera Jobi.sh Extensionen
+                  {t("drawerTitle")}
                 </DrawerTitle>
                 <DrawerDescription className="mt-2">
-                  För att skicka jobb direkt till Arbetsförmedlingen från den här sidan behöver du ha
-                  Jobi.sh Extensionen installerad i {installTarget.browserLabel}.
+                  {t("drawerDescription", { browser: installTarget.browserLabel })}
                 </DrawerDescription>
               </DrawerHeader>
 
               <DrawerClose asChild>
                 <button
                   type="button"
-                  aria-label="Stäng drawer"
+                  aria-label={t("closeDrawer")}
                   className="inline-flex size-11 items-center justify-center rounded-2xl border border-app-stroke bg-white text-app-muted transition hover:text-app-ink"
                 >
                   <X aria-hidden="true" size={18} strokeWidth={2.1} />
@@ -315,7 +386,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
             </div>
 
             <div className="rounded-3xl bg-app-surface p-4 text-sm leading-6 text-app-muted">
-              {installTarget.installDescription}
+              {installCopy.installDescription}
             </div>
 
             <DrawerFooter>
@@ -324,7 +395,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                   type="button"
                   className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-app-stroke bg-white px-5 text-base font-semibold text-app-ink transition hover:border-app-primary/35 hover:text-app-primary"
                 >
-                  Inte nu
+                  {t("notNow")}
                 </button>
               </DrawerClose>
 
@@ -333,9 +404,8 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
                 target="_blank"
                 rel="noreferrer"
                 icon={{ component: ExternalLink, position: "right", size: 18 }}
-                track="install_extension_click"
               >
-                {installTarget.installLabel}
+                {installCopy.installLabel}
               </Btn>
             </DrawerFooter>
           </div>
