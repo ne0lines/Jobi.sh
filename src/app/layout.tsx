@@ -7,6 +7,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import Script from "next/script";
 import "./globals.css";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
+import { NavigationTracker } from "@/components/navigation/navigation-tracker";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -111,6 +112,7 @@ export default async function RootLayout({
                 <QueryProvider>
                   <ThemeProvider>
                     <RegisterServiceWorker />
+                    <NavigationTracker />
                     <AppNavigationShell>{children}</AppNavigationShell>
                     <Toaster />
                     <CookieNotice />

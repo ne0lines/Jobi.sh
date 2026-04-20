@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Btn } from "@/components/ui/btn";
+import { IN_APP_NAV_KEY } from "@/components/navigation/navigation-tracker";
 import { trackButtonEvent, type TrackableEvent } from "@/lib/analytics";
 
 type BackButtonProps = {
@@ -26,12 +27,17 @@ export function BackButton({
   function handleClick() {
     if (track) trackButtonEvent(track);
 
-    const sameOriginReferrer =
+    const hasInAppNav =
       typeof window !== "undefined" &&
-      document.referrer !== "" &&
-      new URL(document.referrer, window.location.href).origin === window.location.origin;
+      (() => {
+        try {
+          return window.sessionStorage.getItem(IN_APP_NAV_KEY) === "1";
+        } catch {
+          return false;
+        }
+      })();
 
-    if (sameOriginReferrer && window.history.length > 1) {
+    if (hasInAppNav) {
       router.back();
     } else {
       router.push(fallbackHref);
