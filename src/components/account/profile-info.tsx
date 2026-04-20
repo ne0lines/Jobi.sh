@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Btn } from "@/components/ui/btn";
+import { Input } from "@/components/ui/input";
 import { UserProfile } from "@/app/types";
 import { useTranslations } from "next-intl";
 
@@ -33,7 +34,7 @@ async function updateUserProfile(
   return res.json();
 }
 
-export default function ProfileInfo({ profile }: Props) {
+export default function ProfileInfo({ profile }: Readonly<Props>) {
   const t = useTranslations("account");
 
   const [profileInfo, setProfileInfo] = useState(profile);
@@ -75,8 +76,9 @@ export default function ProfileInfo({ profile }: Props) {
                     {t(field.label)}
                   </dt>
 
-                  <input
-                    className='w-full px-2 py-1 rounded border border-blue-500 bg-white text-black outline-none focus:ring-2 focus:ring-blue-400'
+                  <Input
+                    autoComplete='off'
+                    className='mt-2'
                     type={field.type}
                     value={draftProfile[field.key]}
                     onChange={(e) =>
@@ -89,15 +91,14 @@ export default function ProfileInfo({ profile }: Props) {
                 </div>
               ))}
 
-              <div className='flex justify-end mt-4'>
-                <Button onClick={cancelEditing}>Avbryt</Button>
-                <Button
-                  className='ml-2'
+              <div className='mt-4 flex justify-end gap-2'>
+                <Btn onClick={cancelEditing} variant='secondary'>Avbryt</Btn>
+                <Btn
                   onClick={handleSave}
                   disabled={!isChanged}
                 >
                   Spara
-                </Button>
+                </Btn>
               </div>
             </div>
           ) : (
@@ -113,7 +114,7 @@ export default function ProfileInfo({ profile }: Props) {
             </div>
           )}
 
-          {!isEditing && <Button onClick={startEditing}>Ändra</Button>}
+          {!isEditing && <Btn className='self-start' onClick={startEditing}>Ändra</Btn>}
         </div>
       </dl>
     </section>
