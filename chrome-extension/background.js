@@ -12,8 +12,6 @@ const AF_REPORT_URL = "https://arbetsformedlingen.se/for-arbetssokande/mina-sido
 const DEFAULT_JOBISH_ORIGIN = "https://jobi.sh";
 const IMPORT_CONTEXT_MENU_ID = "jobish-import-platsbanken-link";
 const JOBISH_URL_PATTERNS = [
-  "http://localhost:3000/*",
-  "http://127.0.0.1:3000/*",
   "https://jobi.sh/*",
   "https://*.jobi.sh/*",
 ];
