@@ -185,6 +185,9 @@
     "changeSuccess": "Статус змінено на {status}.",
     "changeError": "Наразі не вдалося оновити роботу."
   },
+  "common": {
+    "back": "Назад"
+  },
   "confirm": {
     "cancel": "Скасувати",
     "defaultConfirm": "Підтвердити",

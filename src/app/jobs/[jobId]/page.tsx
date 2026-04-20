@@ -1,5 +1,6 @@
 "use client";
 
+import { BackButton } from "@/components/ui/back-button";
 import { Btn } from "@/components/ui/btn";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Loader } from "@/components/ui/loader";
@@ -33,7 +34,7 @@ export default function JobDetailPage({
       onSuccess: () => {
         toast.success(t("deleteSuccess"));
         setConfirmOpen(false);
-        router.push("/");
+        router.push("/dashboard");
       },
       onError: (error) => {
         toast.error(
@@ -64,9 +65,7 @@ export default function JobDetailPage({
           <p className="text-base text-app-muted sm:text-lg">
             {t("notFound")}
           </p>
-          <Btn href="/" variant="secondary">
-            {t("back")}
-          </Btn>
+          <BackButton label={t("back")} />
         </section>
       </main>
     );
@@ -195,9 +194,7 @@ export default function JobDetailPage({
           <StatusSelect jobId={job.id} initialStatus={job.status} />
         </div>
         <div className="flex w-full gap-4">
-          <Btn variant="secondary" className="w-1/2" href="/">
-            {t("back")}
-          </Btn>
+          <BackButton className="w-1/2" label={t("back")} />
           <Btn
             type="button"
             variant="red"

@@ -185,6 +185,9 @@
     "changeSuccess": "تم تغيير الحالة إلى {status}.",
     "changeError": "تعذّر تحديث الوظيفة الآن."
   },
+  "common": {
+    "back": "رجوع"
+  },
   "confirm": {
     "cancel": "إلغاء",
     "defaultConfirm": "تأكيد",

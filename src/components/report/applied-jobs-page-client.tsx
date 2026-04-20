@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReportJobEntry } from "@/app/report/report-page-data";
-import { Btn } from "@/components/ui/btn";
+import { BackButton } from "@/components/ui/back-button";
 import Link from "next/link";
 
 type AppliedJobsPageClientProps = {
@@ -17,9 +17,7 @@ export function AppliedJobsPageClient({ jobs }: Readonly<AppliedJobsPageClientPr
           <p className="text-lg text-app-muted">
             Det finns inga registrerade ansökningar att visa ännu.
           </p>
-          <Btn href="/dashboard" variant="secondary" track="back_click">
-            Tillbaka
-          </Btn>
+          <BackButton track="back_click" />
         </section>
       </main>
     );

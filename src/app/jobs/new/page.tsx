@@ -2,6 +2,7 @@
 
 import { useCreateJob } from "@/lib/hooks/jobs";
 import { trackEvent } from "@/lib/analytics";
+import { BackButton } from "@/components/ui/back-button";
 import { Btn } from "@/components/ui/btn";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
@@ -563,9 +564,7 @@ export default function NewJobPage() {
               </label>
 
                 <div className="flex gap-4">
-                  <Btn href="/" variant="secondary" className="w-1/2">
-                    {t("cancelBtn")}
-                  </Btn>
+                  <BackButton className="w-1/2" label={t("cancelBtn")} />
                   <Btn disabled={createJob.isPending} type="submit" className="w-full" icon={Plus}>
                     {createJob.isPending ? t("saving") : t("addBtn")}
                   </Btn>
