@@ -185,6 +185,9 @@
     "changeSuccess": "Status changed to {status}.",
     "changeError": "The job could not be updated right now."
   },
+  "common": {
+    "back": "Back"
+  },
   "confirm": {
     "cancel": "Cancel",
     "defaultConfirm": "Confirm",

@@ -2,6 +2,7 @@
 "use client";
 
 import type { ReportJobEntry, ReportOption } from "@/app/report/report-page-data";
+import { BackButton } from "@/components/ui/back-button";
 import { Btn } from "@/components/ui/btn";
 import {
   Drawer,
@@ -270,9 +271,7 @@ export function ReportPageClient({ jobs, options }: Readonly<ReportPageClientPro
           <p className="text-lg text-app-muted">
             {t("empty")}
           </p>
-          <Btn href="/" variant="secondary">
-            {t("back")}
-          </Btn>
+          <BackButton label={t("back")} />
         </section>
       </main>
     );

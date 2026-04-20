@@ -2,6 +2,7 @@ import { ColorScheme, UserRole } from "@/app/generated/prisma/enums";
 import { TERMS_VERSION } from "@/lib/legal";
 import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { ensurePromotedUser } from "@/lib/auth/ensurePromotedUser";
 import * as Sentry from "@sentry/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
@@ -42,6 +43,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (!clerkUser) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
+
+  await ensurePromotedUser();
 
   const email = clerkUser.emailAddresses[0]?.emailAddress;
 
@@ -90,6 +93,8 @@ export async function POST(
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
+  await ensurePromotedUser();
+
   const email = clerkUser.emailAddresses[0]?.emailAddress;
 
   if (!email) {
@@ -132,6 +137,7 @@ export async function POST(
       where: { email },
       create: {
         id: clerkUser.id,
+        externalId: clerkUser.externalId ?? null,
         email,
         name,
         profession,
@@ -178,6 +184,8 @@ export async function PATCH(
   if (!clerkUser) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
+
+  await ensurePromotedUser();
 
   // id is always the Clerk user ID — POST /api/user sets it explicitly on create
   const body = (await req.json()) as PatchUserInput;

@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { ensurePromotedUser } from "@/lib/auth/ensurePromotedUser";
 import type { ContactPerson as PrismaContactPerson, Job as PrismaJobModel, Prisma, TimelineItem as PrismaTimelineItem } from "@/app/generated/prisma/client";
 import type { Job, UpdateJobInput } from "@/app/types";
 import { JobStatus } from "@/app/types";
@@ -201,6 +202,8 @@ export async function GET(
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
+  await ensurePromotedUser();
+
   let job;
   try {
     job = await prisma.job.findFirst({
@@ -230,6 +233,8 @@ export async function PATCH(
   if (!userId) {
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
+
+  await ensurePromotedUser();
 
   const updates = (await request.json()) as UpdateJobInput;
   const nextArchivedAt = hasDefinedValue(updates.archivedAt)
@@ -294,6 +299,8 @@ export async function DELETE(
   if (!userId) {
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
+
+  await ensurePromotedUser();
 
   let existing;
   try {

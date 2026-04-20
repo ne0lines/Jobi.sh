@@ -185,6 +185,9 @@
     "changeSuccess": "Status ändrad till {status}.",
     "changeError": "Jobbet kunde inte uppdateras just nu."
   },
+  "common": {
+    "back": "Tillbaka"
+  },
   "confirm": {
     "cancel": "Avbryt",
     "defaultConfirm": "Bekräfta",

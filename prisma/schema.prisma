@@ -32,6 +32,7 @@ enum JobStatus {
 
 model User {
   id              String    @id @default(uuid())
+  externalId      String?   @unique
   email           String    @unique
   name            String    @default("")
   role            UserRole  @default(user)
@@ -71,7 +72,7 @@ model Job {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   contactPerson ContactPerson?
   timeline      TimelineItem[]
   tasks         Task[]
@@ -109,7 +110,7 @@ model Task {
   updatedAt   DateTime  @updatedAt
 
   job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model PushSubscription {
@@ -121,7 +122,7 @@ model PushSubscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId])
 }
@@ -132,7 +133,7 @@ model TodoPushNotification {
   todoId    String
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([userId, todoId])
   @@index([userId])

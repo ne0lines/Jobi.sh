@@ -52,14 +52,14 @@ function NotificationToggleCard({
       </div>
       <span
         className={cn(
-          "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition",
+          "relative inline-block h-7 w-12 shrink-0 rounded-full transition",
           checked ? "bg-app-primary" : "bg-app-stroke",
         )}
       >
         <span
           className={cn(
-            "inline-block size-5 rounded-full bg-white transition",
-            checked ? "translate-x-6" : "translate-x-1",
+            "absolute top-1 size-5 rounded-full bg-white transition-all",
+            checked ? "start-6" : "start-1",
           )}
         />
       </span>
