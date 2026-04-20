@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import type { Job, UserOnboardingFlags } from "@/app/types";
 import { JobStatus } from "@/app/types";
 import { auth } from "@clerk/nextjs/server";
+import { ensurePromotedUser } from "@/lib/auth/ensurePromotedUser";
 
 const prismaStatusToAppStatus: Record<string, JobStatus> = {
   saved: JobStatus.SAVED,
@@ -66,6 +67,8 @@ export async function getJobsServer(options: GetJobsServerOptions = {}): Promise
   const { userId } = await auth();
   if (!userId) return [];
 
+  await ensurePromotedUser();
+
   const jobs = await prisma.job.findMany({
     where: {
       userId,
@@ -117,6 +120,8 @@ export async function getLandingJobsServer(): Promise<Job[]> {
 export async function getUserOnboardingFlags(): Promise<UserOnboardingFlags | null> {
   const { userId } = await auth();
   if (!userId) return null;
+
+  await ensurePromotedUser();
 
   const user = await prisma.user.findUnique({
     where: { id: userId },

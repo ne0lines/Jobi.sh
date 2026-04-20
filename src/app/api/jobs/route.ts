@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { ensurePromotedUser } from "@/lib/auth/ensurePromotedUser";
 import { getPostHogServer } from "@/lib/posthog-server";
 import type { CreateJobInput, Job } from "@/app/types";
 import { JobStatus } from "@/app/types";
@@ -35,6 +36,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<JobsRespon
   if (!userId) {
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
+
+  await ensurePromotedUser();
 
   const includeArchived = request.nextUrl.searchParams.get("includeArchived") === "true";
 
@@ -78,6 +81,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
   if (!userId) {
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
+
+  await ensurePromotedUser();
 
   const payload = (await req.json()) as CreateJobInput;
 

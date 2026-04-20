@@ -8,6 +8,7 @@ import type {
 } from "@/app/types";
 import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
+import { ensurePromotedUser } from "@/lib/auth/ensurePromotedUser";
 import {
   deletePushSubscription,
   getPushNotificationSettings,
@@ -21,6 +22,8 @@ type PushSubscriptionDeleteInput = {
 };
 
 async function requireExistingUser(userId: string): Promise<boolean> {
+  await ensurePromotedUser();
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true },
