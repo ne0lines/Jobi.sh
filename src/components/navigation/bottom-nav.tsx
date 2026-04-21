@@ -3,15 +3,12 @@
 import { LogoutBtn } from "@/components/auth/logout-btn";
 import { Btn } from "@/components/ui/btn";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { hasRmAccess } from "@/lib/rm-access";
 import { cn } from "@/lib/utils";
 import { BriefcaseBusiness, House, LucideIcon, Plus, Puzzle, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser } from "@/lib/hooks/user";
-import { UserRole } from "@/app/types";
 
 type NavItem =
   | {
@@ -60,15 +57,18 @@ function getNavIconClasses(isActive: boolean, isActivityReport: boolean) {
 }
 
 type AppNavigationShellProps = {
+  canAccessAdmin: boolean;
+  canAccessRm: boolean;
   children: React.ReactNode;
 };
 
 export function AppNavigationShell({
+  canAccessAdmin,
+  canAccessRm,
   children,
 }: Readonly<AppNavigationShellProps>) {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const { data: user } = useUser();
 
   const navItems: NavItem[] = [
     {
@@ -95,7 +95,7 @@ export function AppNavigationShell({
       label: t("activityReport"),
       match: (p: string) => p.startsWith("/activity-report"),
     },
-    ...(hasRmAccess(user)
+    ...(canAccessRm
       ? [
           {
             href: "/rm",
@@ -105,7 +105,7 @@ export function AppNavigationShell({
           },
         ]
       : []),
-    ...(user?.role === UserRole.ADMIN
+    ...(canAccessAdmin
       ? [
           {
             href: "/admin",
