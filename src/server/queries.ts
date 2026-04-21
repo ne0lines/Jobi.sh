@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import type { Job, UserOnboardingFlags } from "@/app/types";
 import { JobStatus } from "@/app/types";
 import { auth } from "@clerk/nextjs/server";
+import { getCurrentDbUser } from "@/lib/auth/current-db-user";
 
 const prismaStatusToAppStatus: Record<string, JobStatus> = {
   saved: JobStatus.SAVED,
@@ -66,9 +67,15 @@ export async function getJobsServer(options: GetJobsServerOptions = {}): Promise
   const { userId } = await auth();
   if (!userId) return [];
 
+  const dbUser = await getCurrentDbUser({ id: true });
+
+  if (!dbUser) {
+    return [];
+  }
+
   const jobs = await prisma.job.findMany({
     where: {
-      userId,
+      userId: dbUser.id,
       ...(options.includeArchived ? {} : { archivedAt: null }),
     },
     include: { contactPerson: true, timeline: true },
@@ -115,16 +122,10 @@ export async function getLandingJobsServer(): Promise<Job[]> {
 }
 
 export async function getUserOnboardingFlags(): Promise<UserOnboardingFlags | null> {
-  const { userId } = await auth();
-  if (!userId) return null;
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      onboardingDismissed: true,
-      onboardingPipelineExplored: true,
-      onboardingReportViewed: true,
-    },
+  const user = await getCurrentDbUser({
+    onboardingDismissed: true,
+    onboardingPipelineExplored: true,
+    onboardingReportViewed: true,
   });
 
   return user ?? null;

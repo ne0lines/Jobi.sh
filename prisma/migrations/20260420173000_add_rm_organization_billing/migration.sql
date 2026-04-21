@@ -1,0 +1,11 @@
+ALTER TABLE "RmOrganization"
+ADD COLUMN "billingName" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingOrganizationNumber" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingVatNumber" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingEmail" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingReference" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingAddressLine1" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingAddressLine2" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingPostalCode" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingCity" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "billingCountry" TEXT NOT NULL DEFAULT 'Sverige';

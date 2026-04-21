@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ClerkProvider } from "@clerk/nextjs";
-import { Bricolage_Grotesque, Inter, Geist } from "next/font/google";
+import { Bricolage_Grotesque, Inter, Geist, Noto_Sans_Arabic } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import Script from "next/script";
@@ -21,8 +21,6 @@ import {
 } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
-
-import { Noto_Sans_Arabic } from "next/font/google";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -86,41 +84,39 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <>
-      <SpeedInsights />
-      <PostHogProvider>
-        <html
-          lang={locale}
-          dir={locale === "ar" ? "rtl" : "ltr"}
-          className={cn("font-sans", geist.variable, notoSansArabic.variable)}
-          style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
-          suppressHydrationWarning
-        >
-          <body
-            className={`${bricolageGrotesque.variable} ${inter.variable} ${notoSansArabic.variable} min-h-svh antialiased p-3 md:p-4`}
-          >
-            <Script id="theme-preference-init" strategy="beforeInteractive">
-              {themeInitializationScript}
-            </Script>
-            <PostHogServerPageView />
-            <Suspense fallback={null}>
-              <PostHogPageView />
-            </Suspense>
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <ClerkProvider>
-                <QueryProvider>
-                  <ThemeProvider>
-                    <RegisterServiceWorker />
-                    <AppNavigationShell>{children}</AppNavigationShell>
-                    <Toaster />
-                    <CookieNotice />
-                  </ThemeProvider>
-                </QueryProvider>
-              </ClerkProvider>
-            </NextIntlClientProvider>
-          </body>
-        </html>
-      </PostHogProvider>
-    </>
+    <html
+      lang={locale}
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      className={cn("font-sans", geist.variable, notoSansArabic.variable)}
+      style={{ colorScheme: DEFAULT_THEME_PREFERENCE }}
+      suppressHydrationWarning
+    >
+      <body
+        className={`${bricolageGrotesque.variable} ${inter.variable} ${notoSansArabic.variable} min-h-svh antialiased p-3 md:p-4`}
+      >
+        <Script id="theme-preference-init" strategy="beforeInteractive">
+          {themeInitializationScript}
+        </Script>
+        <PostHogProvider>
+          <PostHogServerPageView />
+          <Suspense fallback={null}>
+            <PostHogPageView />
+          </Suspense>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ClerkProvider>
+              <QueryProvider>
+                <ThemeProvider>
+                  <RegisterServiceWorker />
+                  <AppNavigationShell>{children}</AppNavigationShell>
+                  <Toaster />
+                  <CookieNotice />
+                  <SpeedInsights />
+                </ThemeProvider>
+              </QueryProvider>
+            </ClerkProvider>
+          </NextIntlClientProvider>
+        </PostHogProvider>
+      </body>
+    </html>
   );
 }

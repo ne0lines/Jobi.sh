@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getCurrentDbUser } from "@/lib/auth/current-db-user";
 import { logger } from "@/lib/logger";
 import type { ContactPerson as PrismaContactPerson, Job as PrismaJobModel, Prisma, TimelineItem as PrismaTimelineItem } from "@/app/generated/prisma/client";
 import type { Job, UpdateJobInput } from "@/app/types";
@@ -201,10 +202,16 @@ export async function GET(
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
+  const dbUser = await getCurrentDbUser({ id: true });
+
+  if (!dbUser) {
+    return NextResponse.json({ error: "Skapa din profil innan du använder jobbspårningen." }, { status: 404 });
+  }
+
   let job;
   try {
     job = await prisma.job.findFirst({
-      where: { id: jobId, userId },
+      where: { id: jobId, userId: dbUser.id },
       include: { contactPerson: true, timeline: true },
     });
   } catch (err) {
@@ -231,6 +238,12 @@ export async function PATCH(
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
+  const dbUser = await getCurrentDbUser({ id: true });
+
+  if (!dbUser) {
+    return NextResponse.json({ error: "Skapa din profil innan du använder jobbspårningen." }, { status: 404 });
+  }
+
   const updates = (await request.json()) as UpdateJobInput;
   const nextArchivedAt = hasDefinedValue(updates.archivedAt)
     ? normalizeArchivedAt(updates.archivedAt)
@@ -242,7 +255,7 @@ export async function PATCH(
 
   let existing;
   try {
-    existing = await prisma.job.findFirst({ where: { id: jobId, userId } });
+    existing = await prisma.job.findFirst({ where: { id: jobId, userId: dbUser.id } });
   } catch (err) {
     logger.error("Failed to fetch job for update", { userId, jobId });
     Sentry.captureException(err, { tags: { route: "PATCH /api/jobs/[jobId]" } });
@@ -295,9 +308,15 @@ export async function DELETE(
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
+  const dbUser = await getCurrentDbUser({ id: true });
+
+  if (!dbUser) {
+    return NextResponse.json({ error: "Skapa din profil innan du använder jobbspårningen." }, { status: 404 });
+  }
+
   let existing;
   try {
-    existing = await prisma.job.findFirst({ where: { id: jobId, userId } });
+    existing = await prisma.job.findFirst({ where: { id: jobId, userId: dbUser.id } });
   } catch (err) {
     logger.error("Failed to fetch job for deletion", { userId, jobId });
     Sentry.captureException(err, { tags: { route: "DELETE /api/jobs/[jobId]" } });

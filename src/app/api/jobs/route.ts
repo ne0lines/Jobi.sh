@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getCurrentDbUser } from "@/lib/auth/current-db-user";
 import { logger } from "@/lib/logger";
 import { getPostHogServer } from "@/lib/posthog-server";
 import type { CreateJobInput, Job } from "@/app/types";
@@ -36,13 +37,19 @@ export async function GET(request: NextRequest): Promise<NextResponse<JobsRespon
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
+  const dbUser = await getCurrentDbUser({ id: true });
+
+  if (!dbUser) {
+    return NextResponse.json({ error: "Skapa din profil innan du använder jobbspårningen." }, { status: 404 });
+  }
+
   const includeArchived = request.nextUrl.searchParams.get("includeArchived") === "true";
 
   let jobs;
   try {
     jobs = await prisma.job.findMany({
       where: {
-        userId,
+        userId: dbUser.id,
         ...(includeArchived ? {} : { archivedAt: null }),
       },
       include: { contactPerson: true, timeline: true },
@@ -79,6 +86,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
     return NextResponse.json({ error: "Kunde inte identifiera användaren." }, { status: 401 });
   }
 
+  const dbUser = await getCurrentDbUser({ id: true });
+
+  if (!dbUser) {
+    return NextResponse.json({ error: "Skapa din profil innan du sparar jobb." }, { status: 404 });
+  }
+
   const payload = (await req.json()) as CreateJobInput;
 
   if (!payload.title || !payload.company) {
@@ -89,7 +102,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<Job | { error
   try {
     job = await prisma.job.create({
       data: {
-        userId,
+        userId: dbUser.id,
         title: payload.title,
         company: payload.company,
         location: payload.location ?? "",

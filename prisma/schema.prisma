@@ -7,11 +7,206 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── Types ────────────────────────────────────────────────────
+model User {
+  id                           String                 @id @default(uuid())
+  email                        String                 @unique
+  name                         String                 @default("")
+  role                         UserRole               @default(user)
+  createdAt                    DateTime               @default(now())
+  updatedAt                    DateTime               @updatedAt
+  complete                     Boolean                @default(false)
+  profession                   String                 @default("")
+  termsAcceptedAt              DateTime?
+  termsVersion                 String?
+  todoNotificationsEnabled     Boolean                @default(true)
+  tipNotificationsEnabled      Boolean                @default(true)
+  onboardingDismissed          Boolean                @default(false)
+  onboardingReportViewed       Boolean                @default(false)
+  onboardingPipelineExplored   Boolean                @default(false)
+  colorScheme                  ColorScheme            @default(light)
+  rmOrganizationId             String?
+  externalId                   String?                @unique
+  jobs                         Job[]
+  pushSubscriptions            PushSubscription[]
+  advisorConnections           RmConnection[]         @relation("RmConnectionAdvisor")
+  candidateConnections         RmConnection[]         @relation("RmConnectionCandidate")
+  sentRmConnectionRequests     RmConnectionRequest[]  @relation("RmConnectionRequestAdvisor")
+  receivedRmConnectionRequests RmConnectionRequest[]  @relation("RmConnectionRequestCandidate")
+  receivedRmInvitations        RmInvitation[]         @relation("RmInvitationInvitee")
+  sentRmInvitations            RmInvitation[]         @relation("RmInvitationInviter")
+  tasks                        Task[]
+  todoNotifications            TodoPushNotification[]
+  rmOrganization               RmOrganization?        @relation(fields: [rmOrganizationId], references: [id])
+}
+
+model RmOrganization {
+  id                        String                @id @default(cuid())
+  name                      String
+  slug                      String                @unique @default(cuid())
+  billingName               String                @default("")
+  billingOrganizationNumber String                @default("")
+  billingVatNumber          String                @default("")
+  billingEmail              String                @default("")
+  billingReference          String                @default("")
+  billingAddressLine1       String                @default("")
+  billingAddressLine2       String                @default("")
+  billingPostalCode         String                @default("")
+  billingCity               String                @default("")
+  billingCountry            String                @default("Sverige")
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
+  archivedAt                DateTime?
+  connections               RmConnection[]
+  connectionRequests        RmConnectionRequest[]
+  invitations               RmInvitation[]
+  members                   User[]
+
+  @@index([archivedAt])
+}
+
+model RmConnection {
+  id              String         @id @default(cuid())
+  organizationId  String
+  advisorUserId   String
+  candidateUserId String
+  createdAt       DateTime       @default(now())
+  archivedAt      DateTime?
+  advisor         User           @relation("RmConnectionAdvisor", fields: [advisorUserId], references: [id], onDelete: Cascade)
+  candidateUser   User           @relation("RmConnectionCandidate", fields: [candidateUserId], references: [id], onDelete: Cascade)
+  organization    RmOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, advisorUserId, candidateUserId])
+  @@index([archivedAt])
+  @@index([organizationId, advisorUserId])
+  @@index([candidateUserId])
+}
+
+model RmInvitation {
+  id                 String                @id @default(cuid())
+  token              String                @unique
+  organizationId     String
+  inviterUserId      String
+  invitedUserId      String?
+  recipientEmail     String
+  status             RmInvitationStatus    @default(pending)
+  createdAt          DateTime              @default(now())
+  registeredAt       DateTime?
+  updatedAt          DateTime              @updatedAt
+  connectionRequests RmConnectionRequest[]
+  invitedUser        User?                 @relation("RmInvitationInvitee", fields: [invitedUserId], references: [id])
+  inviter            User                  @relation("RmInvitationInviter", fields: [inviterUserId], references: [id], onDelete: Cascade)
+  organization       RmOrganization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@index([inviterUserId, status])
+  @@index([recipientEmail, status])
+}
+
+model RmConnectionRequest {
+  id              String                    @id @default(cuid())
+  token           String                    @unique
+  organizationId  String
+  advisorUserId   String
+  candidateUserId String?
+  invitationId    String?
+  recipientEmail  String
+  status          RmConnectionRequestStatus @default(pending)
+  createdAt       DateTime                  @default(now())
+  respondedAt     DateTime?
+  updatedAt       DateTime                  @updatedAt
+  advisor         User                      @relation("RmConnectionRequestAdvisor", fields: [advisorUserId], references: [id], onDelete: Cascade)
+  candidateUser   User?                     @relation("RmConnectionRequestCandidate", fields: [candidateUserId], references: [id])
+  invitation      RmInvitation?             @relation(fields: [invitationId], references: [id])
+  organization    RmOrganization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@index([advisorUserId, status])
+  @@index([candidateUserId, status])
+  @@index([recipientEmail, status])
+}
+
+model Job {
+  id             String         @id @default(cuid())
+  userId         String
+  title          String
+  company        String
+  location       String         @default("")
+  employmentType String         @default("")
+  workload       String         @default("")
+  jobUrl         String         @default("")
+  status         JobStatus      @default(saved)
+  notes          String         @default("")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  closingDate    DateTime?
+  startDate      DateTime?
+  archivedAt     DateTime?
+  contactPerson  ContactPerson?
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks          Task[]
+  timeline       TimelineItem[]
+}
+
+model ContactPerson {
+  id    String @id @default(cuid())
+  jobId String @unique
+  name  String @default("")
+  role  String @default("")
+  email String @default("")
+  phone String @default("")
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model TimelineItem {
+  id    String @id @default(cuid())
+  jobId String
+  date  String
+  event String
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  jobId       String
+  userId      String
+  title       String
+  description String    @default("")
+  dueDate     DateTime?
+  completed   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  job         Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model TodoPushNotification {
+  id        String   @id @default(cuid())
+  userId    String
+  todoId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, todoId])
+  @@index([userId])
+}
 
 enum UserRole {
   user
   admin
+  rm
 }
 
 enum ColorScheme {
@@ -28,112 +223,15 @@ enum JobStatus {
   closed
 }
 
-// ─── Models ───────────────────────────────────────────────────
-
-model User {
-  id              String    @id @default(uuid())
-  email           String    @unique
-  name            String    @default("")
-  role            UserRole  @default(user)
-  profession      String    @default("")
-  complete        Boolean   @default(false)
-  todoNotificationsEnabled Boolean @default(true)
-  tipNotificationsEnabled  Boolean @default(true)
-  termsAcceptedAt DateTime?
-  termsVersion    String?
-  onboardingDismissed        Boolean  @default(false)
-  onboardingPipelineExplored Boolean  @default(false)
-  onboardingReportViewed     Boolean  @default(false)
-  colorScheme     ColorScheme @default(light)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  jobs              Job[]
-  tasks             Task[]
-  pushSubscriptions PushSubscription[]
-  todoNotifications TodoPushNotification[]
+enum RmInvitationStatus {
+  pending
+  registered
+  cancelled
 }
 
-model Job {
-  id             String    @id @default(cuid())
-  userId         String
-  title          String
-  company        String
-  location       String    @default("")
-  employmentType String    @default("")
-  workload       String    @default("")
-  jobUrl         String    @default("")
-  status         JobStatus @default(saved)
-  notes          String    @default("")
-  startDate      DateTime?
-  closingDate    DateTime?
-  archivedAt     DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  contactPerson ContactPerson?
-  timeline      TimelineItem[]
-  tasks         Task[]
-}
-
-model ContactPerson {
-  id    String @id @default(cuid())
-  jobId String @unique
-  name  String @default("")
-  role  String @default("")
-  email String @default("")
-  phone String @default("")
-
-  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
-}
-
-model TimelineItem {
-  id    String @id @default(cuid())
-  jobId String
-  date  String // display string, e.g. "19 februari 2026"
-  event String
-
-  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
-}
-
-model Task {
-  id          String    @id @default(cuid())
-  jobId       String
-  userId      String
-  title       String
-  description String    @default("")
-  dueDate     DateTime?
-  completed   Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model PushSubscription {
-  id        String   @id @default(cuid())
-  userId    String
-  endpoint  String   @unique
-  p256dh    String
-  auth      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model TodoPushNotification {
-  id        String   @id @default(cuid())
-  userId    String
-  todoId    String
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, todoId])
-  @@index([userId])
+enum RmConnectionRequestStatus {
+  pending
+  accepted
+  declined
+  cancelled
 }

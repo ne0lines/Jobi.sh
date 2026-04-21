@@ -1,9 +1,15 @@
 import { ColorScheme, UserRole } from "@/app/generated/prisma/enums";
+import {
+  findDbUserByClerkIdentity,
+  getCurrentClerkIdentity,
+  getCurrentDbUser,
+} from "@/lib/auth/current-db-user";
 import { TERMS_VERSION } from "@/lib/legal";
 import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { syncRmInvitationsForRegisteredUser } from "@/lib/rm";
 import * as Sentry from "@sentry/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 type User = {
@@ -12,6 +18,7 @@ type User = {
   name: string;
   profession: string;
   role: UserRole;
+  rmOrganizationId: string | null;
   id: string;
   termsAcceptedAt: Date | null;
   termsVersion: string | null;
@@ -28,6 +35,7 @@ const userSelect = {
   name: true,
   profession: true,
   role: true,
+  rmOrganizationId: true,
   termsAcceptedAt: true,
   termsVersion: true,
   onboardingDismissed: true,
@@ -36,30 +44,44 @@ const userSelect = {
   colorScheme: true,
 } as const;
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
-  const clerkUser = await currentUser();
+const PROFILE_TEXT_MAX_LENGTH = 120;
+const PROFILE_TEXT_PATTERN = /^[\p{L}\p{M}\p{N} .,'’\-()/&+]+$/u;
 
-  if (!clerkUser) {
-    return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
+function normalizeProfileText(value: string | undefined): string {
+  return value?.normalize("NFC").trim().replaceAll(/\s+/g, " ") ?? "";
+}
+
+function getProfileTextError(label: string, value: string): string | null {
+  if (!value) {
+    return `${label} måste anges.`;
   }
 
-  const email = clerkUser.emailAddresses[0]?.emailAddress;
+  if (value.length > PROFILE_TEXT_MAX_LENGTH) {
+    return `${label} får vara högst ${PROFILE_TEXT_MAX_LENGTH} tecken.`;
+  }
 
-  if (!email) {
-    return NextResponse.json(
-      { error: "Ingen e-postadress hittades." },
-      { status: 400 },
-    );
+  if (!PROFILE_TEXT_PATTERN.test(value)) {
+    return `${label} får innehålla bokstäver som å, ä och ö samt vanliga namn- och yrkesrollstecken.`;
+  }
+
+  return null;
+}
+
+export async function GET(_req: NextRequest): Promise<NextResponse> {
+  const identity = await getCurrentClerkIdentity();
+
+  if (!identity) {
+    return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
   let dbData;
   try {
-    dbData = await prisma.user.findUnique({
-      where: { email },
-      select: userSelect,
-    });
+    dbData = await findDbUserByClerkIdentity(
+      identity,
+      userSelect,
+    );
   } catch (err) {
-    logger.error("Failed to fetch user profile", { userId: clerkUser.id });
+    logger.error("Failed to fetch user profile", { userId: identity.clerkUserId });
     Sentry.captureException(err, { tags: { route: "GET /api/user" } });
     return NextResponse.json(
       { error: "Det gick inte att hämta profilen." },
@@ -68,7 +90,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   if (!dbData) {
-    return NextResponse.redirect(new URL("/account/create-profile", req.url));
+    return NextResponse.json(
+      { error: "Skapa din profil innan du fortsätter." },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json(dbData as User);
@@ -84,13 +109,19 @@ type CreateProfileInput = {
 export async function POST(
   req: NextRequest,
 ): Promise<NextResponse<User | { error: string }>> {
-  const clerkUser = await currentUser();
+  const { userId } = await auth();
 
-  if (!clerkUser) {
+  if (!userId) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
-  const email = clerkUser.emailAddresses[0]?.emailAddress;
+  const identity = await getCurrentClerkIdentity();
+  let email = identity?.email ?? null;
+
+  if (!email) {
+    const clerkUser = await currentUser();
+    email = clerkUser?.emailAddresses[0]?.emailAddress ?? null;
+  }
 
   if (!email) {
     return NextResponse.json(
@@ -101,12 +132,26 @@ export async function POST(
 
   const { name, profession, termsAccepted, termsVersion } =
     (await req.json()) as CreateProfileInput;
+  const normalizedName = normalizeProfileText(name);
+  const normalizedProfession = normalizeProfileText(profession);
 
-  if (!name || !profession) {
+  if (!normalizedName || !normalizedProfession) {
     return NextResponse.json(
       { error: "Namn och yrke måste anges." },
       { status: 400 },
     );
+  }
+
+  const nameError = getProfileTextError("Namn", normalizedName);
+
+  if (nameError) {
+    return NextResponse.json({ error: nameError }, { status: 400 });
+  }
+
+  const professionError = getProfileTextError("Yrkesroll", normalizedProfession);
+
+  if (professionError) {
+    return NextResponse.json({ error: professionError }, { status: 400 });
   }
 
   if (!termsAccepted) {
@@ -131,17 +176,18 @@ export async function POST(
     userData = await prisma.user.upsert({
       where: { email },
       create: {
-        id: clerkUser.id,
         email,
-        name,
-        profession,
+        externalId: userId,
+        name: normalizedName,
+        profession: normalizedProfession,
         complete: true,
         termsAcceptedAt: new Date(),
         termsVersion: TERMS_VERSION,
       },
       update: {
-        name,
-        profession,
+        externalId: userId,
+        name: normalizedName,
+        profession: normalizedProfession,
         complete: true,
         termsAcceptedAt: new Date(),
         termsVersion: TERMS_VERSION,
@@ -149,12 +195,25 @@ export async function POST(
       select: userSelect,
     });
   } catch (err) {
-    logger.error("Failed to upsert user profile", { userId: clerkUser.id });
+    logger.error("Failed to upsert user profile", { userId });
     Sentry.captureException(err, { tags: { route: "POST /api/user" } });
     return NextResponse.json(
       { error: "Det gick inte att spara profilen." },
       { status: 500 },
     );
+  }
+
+  try {
+    await syncRmInvitationsForRegisteredUser({
+      email: userData.email,
+      id: userData.id,
+      name: userData.name,
+    });
+  } catch (err) {
+    logger.warn("Failed to sync RM invitations after profile creation", {
+      userId: userData.id,
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 
   return NextResponse.json(userData as User, { status: 201 });
@@ -173,26 +232,43 @@ type PatchUserInput = {
 export async function PATCH(
   req: NextRequest,
 ): Promise<NextResponse<User | { error: string }>> {
-  const clerkUser = await currentUser();
+  const { userId } = await auth();
 
-  if (!clerkUser) {
+  if (!userId) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
-  // id is always the Clerk user ID — POST /api/user sets it explicitly on create
   const body = (await req.json()) as PatchUserInput;
   const update: Partial<PatchUserInput> = {};
 
-  if (typeof body.name !== "undefined") update.name = body.name;
-  if (typeof body.profession !== "undefined") update.profession = body.profession;
-  if (typeof body.email !== "undefined") update.email = body.email;
-  if (typeof body.onboardingDismissed === "boolean") {
+  if (body.name !== undefined) {
+    const normalizedName = normalizeProfileText(body.name);
+    const nameError = getProfileTextError("Namn", normalizedName);
+
+    if (nameError) {
+      return NextResponse.json({ error: nameError }, { status: 400 });
+    }
+
+    update.name = normalizedName;
+  }
+  if (body.profession !== undefined) {
+    const normalizedProfession = normalizeProfileText(body.profession);
+    const professionError = getProfileTextError("Yrkesroll", normalizedProfession);
+
+    if (professionError) {
+      return NextResponse.json({ error: professionError }, { status: 400 });
+    }
+
+    update.profession = normalizedProfession;
+  }
+  if (body.email !== undefined) update.email = body.email;
+  if (body.onboardingDismissed !== undefined) {
     update.onboardingDismissed = body.onboardingDismissed;
   }
-  if (typeof body.onboardingPipelineExplored === "boolean") {
+  if (body.onboardingPipelineExplored !== undefined) {
     update.onboardingPipelineExplored = body.onboardingPipelineExplored;
   }
-  if (typeof body.onboardingReportViewed === "boolean") {
+  if (body.onboardingReportViewed !== undefined) {
     update.onboardingReportViewed = body.onboardingReportViewed;
   }
   if (
@@ -209,21 +285,24 @@ export async function PATCH(
     );
   }
 
-  const select = {
-    email: true,
-    name: true,
-    profession: true,
-  } as const;
+  const dbUser = await getCurrentDbUser({ id: true });
+
+  if (!dbUser) {
+    return NextResponse.json(
+      { error: "Skapa din profil innan du uppdaterar den." },
+      { status: 404 },
+    );
+  }
 
   let data;
   try {
     data = await prisma.user.update({
-      where: { id: clerkUser.id },
+      where: { id: dbUser.id },
       data: update,
-      select: select,
+      select: userSelect,
     });
   } catch (err) {
-    logger.error("Failed to update user preferences", { userId: clerkUser.id });
+    logger.error("Failed to update user preferences", { userId });
     Sentry.captureException(err, { tags: { route: "PATCH /api/user" } });
     return NextResponse.json(
       { error: "Det gick inte att uppdatera profilen." },

@@ -3,8 +3,9 @@
 import { LogoutBtn } from "@/components/auth/logout-btn";
 import { Btn } from "@/components/ui/btn";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { hasRmAccess } from "@/lib/rm-access";
 import { cn } from "@/lib/utils";
-import { BriefcaseBusiness, House, LucideIcon, Plus, Puzzle, ShieldCheck, UserRound } from "lucide-react";
+import { BriefcaseBusiness, House, LucideIcon, Plus, Puzzle, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -94,6 +95,16 @@ export function AppNavigationShell({
       label: t("activityReport"),
       match: (p: string) => p.startsWith("/activity-report"),
     },
+    ...(hasRmAccess(user)
+      ? [
+          {
+            href: "/rm",
+            icon: Users,
+            label: t("rm"),
+            match: (p: string) => p.startsWith("/rm"),
+          },
+        ]
+      : []),
     ...(user?.role === UserRole.ADMIN
       ? [
           {
