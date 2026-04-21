@@ -4,17 +4,22 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+const isSentryEnabled =
+  process.env.NODE_ENV === "production" && Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN);
+const sentryTraceSampleRate = isSentryEnabled ? 1 / 10 : 0;
+
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  enabled: isSentryEnabled,
 
   // Do not send PII — no user identity, no IP addresses stored
   sendDefaultPii: false,
 
   // Performance: 100% in dev, 10% in production to stay within quota
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+  tracesSampleRate: sentryTraceSampleRate,
 
   // Enable logs to be sent to Sentry
-  enableLogs: true,
+  enableLogs: isSentryEnabled,
 
   // Filter out expected conditions that are not bugs
   beforeSend(event) {

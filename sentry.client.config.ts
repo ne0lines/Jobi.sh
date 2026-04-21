@@ -4,27 +4,36 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+const isSentryEnabled =
+  process.env.NODE_ENV === "production" && Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN);
+const sentryTraceSampleRate = isSentryEnabled ? 1 / 10 : 0;
+const sentryReplaySessionSampleRate = isSentryEnabled ? 1 / 10 : 0;
+const sentryReplayOnErrorSampleRate = isSentryEnabled ? 1 : 0;
+
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  enabled: isSentryEnabled,
 
   // Do not send PII — no user identity, no IP addresses stored
   sendDefaultPii: false,
 
   // Performance: 100% in dev, 10% in production to stay within quota
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+  tracesSampleRate: sentryTraceSampleRate,
 
   // Session Replay: 10% of all sessions, 100% when an error occurs
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: sentryReplaySessionSampleRate,
+  replaysOnErrorSampleRate: sentryReplayOnErrorSampleRate,
 
-  integrations: [
-    Sentry.replayIntegration({
-      // Mask all text and block all media — required for GDPR compliance
-      // since replays would otherwise capture job application data
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
-  ],
+  integrations: isSentryEnabled
+    ? [
+        Sentry.replayIntegration({
+          // Mask all text and block all media — required for GDPR compliance
+          // since replays would otherwise capture job application data
+          maskAllText: true,
+          blockAllMedia: true,
+        }),
+      ]
+    : [],
 
   // Filter out known noise
   ignoreErrors: ["ResizeObserver loop limit exceeded"],
