@@ -28,8 +28,8 @@ export function ConfirmDialog({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[9998] bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
-        <Dialog.Popup className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <Dialog.Backdrop className="fixed inset-0 z-9998 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+        <Dialog.Popup className="fixed inset-0 z-9999 flex items-center justify-center p-4">
           <div className="w-full max-w-sm rounded-3xl border border-app-stroke bg-white p-6 shadow-xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <Dialog.Title className="font-display text-xl text-app-ink">
               {title}

@@ -29,6 +29,7 @@ const isPublicRoute = createRouteMatcher([
   "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
+  "/rm/request(.*)",
 ]);
 
 // Routes that don't require a DB profile (auth + the profile creation flow itself)
@@ -41,6 +42,7 @@ const isProfileExempt = createRouteMatcher([
   "/terms(.*)",
   "/gdpr(.*)",
   "/account/create-profile(.*)",
+  "/rm/request(.*)",
   "/api/user",
 ]);
 
@@ -79,7 +81,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    String.raw`/((?!_next|[^?]*\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)`,
     "/(api|trpc)(.*)",
   ],
 };

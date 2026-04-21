@@ -6,7 +6,7 @@ import { TERMS_VERSION } from '@/lib/legal';
 import { useUser } from '@clerk/nextjs';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 type FormState = {
@@ -20,12 +20,28 @@ type ExistingProfile = {
   termsVersion: string | null;
 };
 
+function normalizeProfileField(value: string): string {
+  return value.normalize('NFC');
+}
+
 export default function CreateProfilePage() {
   const { user } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('createProfile');
 
+  const redirectPath = (() => {
+    const requested = searchParams.get('next');
+
+    if (requested && requested.startsWith('/') && !requested.startsWith('//')) {
+      return requested;
+    }
+
+    return '/dashboard';
+  })();
+
   const email = user?.emailAddresses[0]?.emailAddress ?? '';
+  const namePrefill = normalizeProfileField(searchParams.get('name') ?? '').trim();
 
   const [form, setForm] = useState<FormState>({ name: '', profession: '' });
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -42,7 +58,7 @@ export default function CreateProfilePage() {
         if (res.ok) {
           const data = (await res.json()) as ExistingProfile;
           if (data.termsVersion === TERMS_VERSION) {
-            router.replace('/dashboard');
+            router.replace(redirectPath);
             return;
           }
           setExistingProfile(data);
@@ -55,16 +71,32 @@ export default function CreateProfilePage() {
       }
     }
     void fetchProfile();
-  }, [router]);
+  }, [redirectPath, router]);
+
+  useEffect(() => {
+    if (!existingProfile && namePrefill && !form.name) {
+      setForm((currentForm) => ({ ...currentForm, name: namePrefill }));
+    }
+  }, [existingProfile, form.name, namePrefill]);
 
   const needsTermsUpdate =
     existingProfile !== null && existingProfile.termsVersion !== TERMS_VERSION;
+  let submitButtonLabel = t('submitBtn');
+
+  if (isSubmitting) {
+    submitButtonLabel = t('saving');
+  } else if (needsTermsUpdate) {
+    submitButtonLabel = t('acceptBtn');
+  }
 
   function updateField<K extends keyof FormState>(
     field: K,
     value: FormState[K],
   ) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    const normalizedValue =
+      typeof value === 'string' ? normalizeProfileField(value) : value;
+
+    setForm((prev) => ({ ...prev, [field]: normalizedValue }));
   }
 
   async function submitProfile() {
@@ -89,7 +121,7 @@ export default function CreateProfilePage() {
         return;
       }
 
-      router.push('/dashboard');
+      router.push(redirectPath);
       router.refresh();
     } catch {
       setFeedback(t('saveError'));
@@ -163,6 +195,11 @@ export default function CreateProfilePage() {
             <label className='app-form-field font-semibold text-app-muted'>
               <span className='block'>{t('nameLabel')}</span>
               <Input
+                autoCapitalize='words'
+                autoComplete='name'
+                enterKeyHint='next'
+                inputMode='text'
+                lang='sv-SE'
                 name='name'
                 placeholder={t('namePlaceholder')}
                 required
@@ -175,6 +212,11 @@ export default function CreateProfilePage() {
             <label className='app-form-field font-semibold text-app-muted'>
               <span className='block'>{t('professionLabel')}</span>
               <Input
+                autoCapitalize='words'
+                autoComplete='organization-title'
+                enterKeyHint='done'
+                inputMode='text'
+                lang='sv-SE'
                 name='profession'
                 placeholder={t('professionPlaceholder')}
                 required
@@ -217,11 +259,7 @@ export default function CreateProfilePage() {
             </label>
 
             <Btn className='w-full' disabled={isSubmitting} type='submit'>
-              {isSubmitting
-                ? t('saving')
-                : needsTermsUpdate
-                  ? t('acceptBtn')
-                  : t('submitBtn')}
+              {submitButtonLabel}
             </Btn>
           </form>
         </div>

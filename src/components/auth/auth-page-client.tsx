@@ -4,8 +4,8 @@ import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useAuth, useSignIn, useSignUp } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Btn } from "../ui/btn";
 
 export default function AuthPageClient() {
@@ -13,15 +13,31 @@ export default function AuthPageClient() {
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("auth");
 
-  const [emailAddress, setEmailAddress] = useState("");
+  const redirectPath = (() => {
+    const requested = searchParams.get("next");
+
+    if (requested && requested.startsWith("/") && !requested.startsWith("//")) {
+      return requested;
+    }
+
+    return process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || "/dashboard";
+  })();
+  const emailPrefill = searchParams.get("email")?.trim() ?? "";
+
+  const [emailAddress, setEmailAddress] = useState(emailPrefill);
   const [code, setCode] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState<"submit" | "verify" | "resend" | null>(
     null,
   );
+
+  useEffect(() => {
+    setEmailAddress(emailPrefill);
+  }, [emailPrefill]);
 
   function clerkErrorMessage(errorCode: string | undefined): string {
     if (!errorCode) return t("errors.unknown");
@@ -35,7 +51,7 @@ export default function AuthPageClient() {
   }
 
   const navigate = (decorateUrl: (url: string) => string) => {
-    const url = decorateUrl(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || "/dashboard");
+    const url = decorateUrl(redirectPath);
     if (url.startsWith("http")) {
       globalThis.location.href = url;
     } else {
@@ -97,7 +113,7 @@ export default function AuthPageClient() {
 
     if (error) {
       if (isSignedIn) {
-        router.push("/dashboard");
+        router.push(redirectPath);
         return;
       }
 
@@ -250,8 +266,10 @@ export default function AuthPageClient() {
             <label className="app-form-field font-semibold text-app-muted">
               <span className="block">{t("emailLabel")}</span>
               <input
+                autoComplete="email"
                 className="w-full rounded-2xl border border-app-stroke bg-white px-4 py-3.5 text-base text-app-ink outline-none transition focus:border-app-primary focus:ring-2 focus:ring-app-primary/20"
                 id="email"
+                inputMode="email"
                 name="email"
                 placeholder={t("emailPlaceholder")}
                 required

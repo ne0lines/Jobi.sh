@@ -1,17 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
 import { UserRole } from "@/app/generated/prisma/enums";
-import { ensurePromotedUser } from "@/lib/auth/ensurePromotedUser";
+import { getCurrentDbUser } from "@/lib/auth/current-db-user";
 
 export async function requireAdmin() {
-  const { userId } = await auth();
-  if (!userId) notFound();
-
-  await ensurePromotedUser();
-
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user || user.role !== UserRole.admin) notFound();
+  const user = await getCurrentDbUser({ id: true, role: true });
+  if (user?.role !== UserRole.admin) notFound();
 
   return user;
 }
