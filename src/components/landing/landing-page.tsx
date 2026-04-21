@@ -1,5 +1,6 @@
 "use client";
 
+import { appLocales, type AppLocale } from "@/i18n/locales";
 import type { HeroHighlight } from "@/lib/job-insights";
 import jobSearchTips from "@/data/job-search-tips.json";
 import jobSearchTipsEn from "@/data/job-search-tips.en.json";
@@ -318,7 +319,7 @@ export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPagePr
     setIsTestimonialAutoRotationEnabled((currentValue) => !currentValue);
   };
 
-  const applyLanguageChoice = (nextLocale: "sv" | "en" | "uk") => {
+  const applyLanguageChoice = (nextLocale: AppLocale) => {
     document.cookie = `locale=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
     setIsLanguagePromptOpen(false);
     router.refresh();
@@ -347,28 +348,18 @@ export function LandingPage({ heroHighlights, signedIn }: Readonly<LandingPagePr
                 {tLanding("languagePromptDescription")}
               </Dialog.Description>
 
-              <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={() => applyLanguageChoice("sv")}
-                  className={`${focusRingClassName} min-h-12 rounded-2xl border border-app-stroke bg-white px-4 text-sm font-semibold text-app-ink transition hover:border-app-primary/35 hover:text-app-primary dark:bg-white/8`}
-                >
-                  {tLanguage("sv")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyLanguageChoice("en")}
-                  className={`${focusRingClassName} min-h-12 rounded-2xl border border-app-stroke bg-white px-4 text-sm font-semibold text-app-ink transition hover:border-app-primary/35 hover:text-app-primary dark:bg-white/8`}
-                >
-                  {tLanguage("en")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyLanguageChoice("uk")}
-                  className={`${focusRingClassName} min-h-12 rounded-2xl border border-app-stroke bg-white px-4 text-sm font-semibold text-app-ink transition hover:border-app-primary/35 hover:text-app-primary dark:bg-white/8`}
-                >
-                  {tLanguage("uk")}
-                </button>
+              <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {appLocales.map((supportedLocale) => (
+                  <button
+                    key={supportedLocale}
+                    type="button"
+                    onClick={() => applyLanguageChoice(supportedLocale)}
+                    aria-pressed={locale === supportedLocale}
+                    className={`${focusRingClassName} min-h-12 rounded-2xl border border-app-stroke bg-white px-4 text-sm font-semibold text-app-ink transition hover:border-app-primary/35 hover:text-app-primary dark:bg-white/8`}
+                  >
+                    {tLanguage(supportedLocale)}
+                  </button>
+                ))}
               </div>
             </div>
           </Dialog.Popup>
