@@ -8,5 +8,8 @@ export function useUser() {
   return useQuery({
     queryKey: userKeys.profile,
     queryFn: getUser,
+    staleTime: 300_000,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 }

@@ -41,10 +41,15 @@ export default function AuthPageClient() {
 
   function clerkErrorMessage(errorCode: string | undefined): string {
     if (!errorCode) return t("errors.unknown");
-    const key = `errors.${errorCode}` as Parameters<typeof t>[0];
+    const key = `errors.${errorCode}`;
     try {
       const msg = t(key);
-      return msg !== key ? msg : t("errors.unknown", { code: errorCode });
+
+      if (msg === key) {
+        return t("errors.unknown", { code: errorCode });
+      }
+
+      return msg;
     } catch {
       return t("errors.unknown");
     }
@@ -71,77 +76,83 @@ export default function AuthPageClient() {
     });
   };
 
-  const handleSubmit: React.ComponentProps<"form">["onSubmit"] = async (e) => {
+  const handleSubmit: React.ComponentProps<"form">["onSubmit"] = (e) => {
     e.preventDefault();
-    setFeedback("");
-    setLoading("submit");
-    try {
-      const { error: createError } = await signIn.create({
-        identifier: emailAddress,
-        signUpIfMissing: true,
-      });
+    void (async () => {
+      setFeedback("");
+      setLoading("submit");
+      try {
+        const { error: createError } = await signIn.create({
+          identifier: emailAddress,
+          signUpIfMissing: true,
+        });
 
-      if (createError) {
-        const code = isClerkAPIResponseError(createError) ? createError.errors[0]?.code : undefined;
-        setFeedback(clerkErrorMessage(code));
-        return;
+        if (createError) {
+          const code = isClerkAPIResponseError(createError) ? createError.errors[0]?.code : undefined;
+          setFeedback(clerkErrorMessage(code));
+          return;
+        }
+
+        const { error: sendError } = await signIn.emailCode.sendCode();
+
+        if (sendError) {
+          const code = isClerkAPIResponseError(sendError) ? sendError.errors[0]?.code : undefined;
+          setFeedback(clerkErrorMessage(code));
+          return;
+        }
+
+        setVerifying(true);
+      } finally {
+        setLoading(null);
       }
-
-      const { error: sendError } = await signIn.emailCode.sendCode();
-
-      if (sendError) {
-        const code = isClerkAPIResponseError(sendError) ? sendError.errors[0]?.code : undefined;
-        setFeedback(clerkErrorMessage(code));
-        return;
-      }
-
-      setVerifying(true);
-    } finally {
-      setLoading(null);
-    }
+    })();
   };
 
-  const handleVerify: React.ComponentProps<"form">["onSubmit"] = async (e) => {
+  const handleVerify: React.ComponentProps<"form">["onSubmit"] = (e) => {
     e.preventDefault();
-    setFeedback("");
-    setLoading("verify");
-    const { error } = await signIn.emailCode.verifyCode({ code });
-    const clerkCode =
-      error && isClerkAPIResponseError(error)
-        ? error.errors[0]?.code
-        : undefined;
+    void (async () => {
+      setFeedback("");
+      setLoading("verify");
+      const { error } = await signIn.emailCode.verifyCode({ code });
+      const clerkCode =
+        error && isClerkAPIResponseError(error)
+          ? error.errors[0]?.code
+          : undefined;
 
-    if (error) {
-      if (isSignedIn) {
-        router.push(redirectPath);
-        return;
-      }
+      if (error) {
+        if (isSignedIn) {
+          router.push(redirectPath);
+          setLoading(null);
+          return;
+        }
 
-      if (clerkCode === "sign_up_if_missing_transfer") {
-        await handleTransfer();
+        if (clerkCode === "sign_up_if_missing_transfer") {
+          await handleTransfer();
+          setLoading(null);
+          return;
+        }
+
+        setFeedback(clerkErrorMessage(clerkCode));
         setLoading(null);
         return;
       }
 
-      setFeedback(clerkErrorMessage(clerkCode));
-      setLoading(null);
-      return;
-    }
+      if (signIn.status === "complete") {
+        await finalizeSignIn();
+      } else if (signIn.status === "needs_client_trust") {
+        const emailCodeFactor = signIn.supportedSecondFactors.find(
+          (factor) => factor.strategy === "email_code",
+        );
 
-    if (signIn.status === "complete") {
-      await finalizeSignIn();
-    } else if (signIn.status === "needs_client_trust") {
-      const emailCodeFactor = signIn.supportedSecondFactors.find(
-        (factor) => factor.strategy === "email_code",
-      );
-
-      if (emailCodeFactor) {
-        await signIn.mfa.sendEmailCode();
+        if (emailCodeFactor) {
+          await signIn.mfa.sendEmailCode();
+        }
+      } else {
+        setFeedback(clerkErrorMessage(undefined));
       }
-    } else {
-      setFeedback(clerkErrorMessage(undefined));
-    }
-    setLoading(null);
+
+      setLoading(null);
+    })();
   };
 
   const handleTransfer = async () => {

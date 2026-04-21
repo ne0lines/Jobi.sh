@@ -3,6 +3,8 @@ import createNextIntlPlugin from "next-intl/plugin";
 import type { NextConfig } from "next";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+const isSentryTunnelEnabled =
+  process.env.NODE_ENV === "production" && Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN);
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -27,9 +29,11 @@ export default withNextIntl(withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
-  org: process.env.NEXT_PUBLIC_SENTRY_ORG,
+  org: process.env.SENTRY_ORG ?? process.env.NEXT_PUBLIC_SENTRY_ORG,
 
-  project: process.env.NEXT_PUBLIC_SENTRY_PROJECT,
+  project: process.env.SENTRY_PROJECT ?? process.env.NEXT_PUBLIC_SENTRY_PROJECT,
+
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
@@ -44,7 +48,7 @@ export default withNextIntl(withSentryConfig(nextConfig, {
   // This can increase your server load as well as your hosting bill.
   // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
   // side errors will fail.
-  tunnelRoute: "/monitoring",
+  tunnelRoute: isSentryTunnelEnabled ? "/monitoring" : undefined,
 
   webpack: {
     // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
