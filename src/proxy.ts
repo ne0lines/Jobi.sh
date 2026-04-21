@@ -21,6 +21,21 @@ function getLegacyRoutePath(pathname: string): string | null {
   return null;
 }
 
+function isDocumentNavigationRequest(request: Request): boolean {
+  if (request.method !== "GET") {
+    return false;
+  }
+
+  const acceptHeader = request.headers.get("accept") ?? "";
+  return acceptHeader.includes("text/html");
+}
+
+function isPrefetchRequest(request: Request): boolean {
+  const purposeHeader = request.headers.get("purpose") ?? request.headers.get("x-purpose") ?? "";
+
+  return request.headers.has("next-router-prefetch") || purposeHeader.toLowerCase() === "prefetch";
+}
+
 const isPublicRoute = createRouteMatcher([
   "/",
   "/auth(.*)",
@@ -29,6 +44,9 @@ const isPublicRoute = createRouteMatcher([
   "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
+  "/manifest.webmanifest",
+  "/monitoring(.*)",
+  "/rm/request(.*)",
 ]);
 
 // Routes that don't require a DB profile (auth + the profile creation flow itself)
@@ -40,7 +58,10 @@ const isProfileExempt = createRouteMatcher([
   "/privacy(.*)",
   "/terms(.*)",
   "/gdpr(.*)",
+  "/manifest.webmanifest",
+  "/monitoring(.*)",
   "/account/create-profile(.*)",
+  "/rm/request(.*)",
   "/api/user",
 ]);
 
@@ -57,7 +78,7 @@ export default clerkMiddleware(async (auth, req) => {
     await auth.protect();
   }
 
-  if (!isProfileExempt(req)) {
+  if (!isProfileExempt(req) && isDocumentNavigationRequest(req) && !isPrefetchRequest(req)) {
     const { userId } = await auth();
 
     if (userId) {
@@ -79,7 +100,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/((?!_next|[^?]*[.](?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
 };

@@ -107,6 +107,7 @@ export type UserOnboardingFlags = {
 export enum UserRole {
   USER = "user",
   ADMIN = "admin",
+  RM = "rm",
 }
 
 export enum ColorScheme {
@@ -120,10 +121,138 @@ export type User = UserOnboardingFlags & {
   name: string;
   profession: string;
   role: UserRole;
+  rmOrganizationId: string | null;
   complete: boolean;
   termsAcceptedAt: string | null;
   termsVersion: string | null;
   colorScheme: ColorScheme;
+};
+
+export type RmConnectionIntentResponse = {
+  message: string;
+  mode: "invitation_sent" | "request_sent";
+};
+
+export type RmConnectionIntentLookupResponse = {
+  exists: boolean;
+};
+
+export type RmCandidateSummary = {
+  advisorNames: string[];
+  appliedJobs: number;
+  candidateUserId: string;
+  candidateEmail: string;
+  candidateName: string;
+  closedJobs: number;
+  interviewJobs: number;
+  lastJobUpdateAt: string | null;
+  organizationLinkedAt: string;
+  offerJobs: number;
+  recentJobs: Array<{
+    company: string;
+    id: string;
+    status: JobStatus;
+    title: string;
+    updatedAt: string;
+  }>;
+  totalJobs: number;
+  viewerCanReadProfile: boolean;
+  viewerConnectionId: string | null;
+};
+
+export type RmPendingRequest = {
+  advisorName: string;
+  candidateEmail: string;
+  candidateName: string | null;
+  createdAt: string;
+  invitationSource: boolean;
+  invitationId: string | null;
+  requestId: string;
+  token: string;
+};
+
+export type RmInvitationSummary = {
+  canManage: boolean;
+  createdAt: string;
+  hasActiveConnection: boolean;
+  invitationId: string;
+  invitedUserId: string | null;
+  invitedUserName: string | null;
+  recipientEmail: string;
+  registeredAt: string | null;
+};
+
+export type RmAdvisorSummary = {
+  advisorName: string;
+  advisorUserId: string;
+  linkedUsers: number;
+  pendingRequests: number;
+};
+
+export type RmPanelData = {
+  advisorSummary: RmAdvisorSummary[];
+  linkedCandidates: RmCandidateSummary[];
+  organizationName: string | null;
+  pendingInvitations: RmInvitationSummary[];
+  pendingRequests: RmPendingRequest[];
+  readyInvitations: RmInvitationSummary[];
+  summary: {
+    appliedJobs: number;
+    interviewJobs: number;
+    linkedUsers: number;
+    offers: number;
+    pendingInvitations: number;
+    pendingRequests: number;
+    totalJobs: number;
+  };
+  viewerRole: UserRole.ADMIN | UserRole.RM;
+};
+
+export type RmRequestDecision = "accept" | "decline";
+
+export type RmRequestDecisionPageData = {
+  advisorName: string;
+  candidateEmail: string;
+  candidateName: string | null;
+  canRespond: boolean;
+  organizationName: string;
+  status: "accepted" | "cancelled" | "declined" | "pending";
+  token: string;
+  viewerState: "anonymous" | "needs-profile" | "ready" | "wrong-account";
+};
+
+export type AdminRmOrganizationSummary = {
+  archivedAt: string | null;
+  billingAddressLine1: string;
+  billingAddressLine2: string;
+  billingCity: string;
+  billingCountry: string;
+  billingEmail: string;
+  billingName: string;
+  billingOrganizationNumber: string;
+  billingPostalCode: string;
+  billingReference: string;
+  billingVatNumber: string;
+  connectionRequestCount: number;
+  createdAt: string;
+  id: string;
+  invitationCount: number;
+  linkedUserCount: number;
+  memberCount: number;
+  name: string;
+  slug: string;
+  updatedAt: string;
+};
+
+export type AdminRmUserSummary = {
+  complete: boolean;
+  createdAt: string;
+  email: string;
+  id: string;
+  name: string;
+  rmOrganizationId: string | null;
+  rmOrganizationName: string | null;
+  role: UserRole;
 };
 
 export type UserProfile = {

@@ -135,6 +135,8 @@ Utgå från `.example.env`.
 | `SENTRY_AUTH_TOKEN` | Auth token för source map-upload vid build |
 | `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project key |
 | `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host, normalt `https://eu.i.posthog.com` |
+| `RESEND_API_KEY` | API-nyckel för Resend när RM-mail ska skickas |
+| `RM_FROM_EMAIL` | Basadress för RM-mail. Domänen måste vara verifierad i Resend. När ett RM-företag har slug används den som lokal del, t.ex. `guldjobbet-ab@updates.jobi.sh` |
 | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY` | Publik VAPID-nyckel för browser subscriptions |
 | `WEB_PUSH_VAPID_PRIVATE_KEY` | Privat VAPID-nyckel som servern använder vid utskick |
 | `WEB_PUSH_CONTACT_EMAIL` | Kontaktmail som skickas med VAPID-signaturen, t.ex. `you@example.com` |

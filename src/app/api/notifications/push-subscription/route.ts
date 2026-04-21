@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import type {
@@ -6,9 +5,8 @@ import type {
   PushSubscriptionInput,
   UpdatePushNotificationSettingsInput,
 } from "@/app/types";
+import { getCurrentClerkIdentity, findDbUserByClerkIdentity } from "@/lib/auth/current-db-user";
 import { logger } from "@/lib/logger";
-import prisma from "@/lib/prisma";
-import { ensurePromotedUser } from "@/lib/auth/ensurePromotedUser";
 import {
   deletePushSubscription,
   getPushNotificationSettings,
@@ -20,17 +18,6 @@ import {
 type PushSubscriptionDeleteInput = {
   endpoint?: string;
 };
-
-async function requireExistingUser(userId: string): Promise<boolean> {
-  await ensurePromotedUser();
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { id: true },
-  });
-
-  return Boolean(user);
-}
 
 function isValidPushSubscriptionInput(input: PushSubscriptionInput): boolean {
   return Boolean(
@@ -47,23 +34,23 @@ function isValidPushNotificationSettingsInput(
 }
 
 export async function GET(): Promise<NextResponse<PushNotificationSettings | { error: string }>> {
-  const { userId } = await auth();
+  const identity = await getCurrentClerkIdentity();
 
-  if (!userId) {
+  if (!identity) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
   try {
-    const userExists = await requireExistingUser(userId);
+    const dbUser = await findDbUserByClerkIdentity(identity, { id: true });
 
-    if (!userExists) {
+    if (!dbUser) {
       return NextResponse.json({ error: "Skapa din profil innan du aktiverar pushnotiser." }, { status: 404 });
     }
 
-    const settings = await getPushNotificationSettings(userId);
+    const settings = await getPushNotificationSettings(dbUser.id);
     return NextResponse.json(settings);
   } catch (error) {
-    logger.error("Failed to fetch push notification settings", { userId });
+    logger.error("Failed to fetch push notification settings", { userId: identity.clerkUserId });
     Sentry.captureException(error, { tags: { route: "GET /api/notifications/push-subscription" } });
     return NextResponse.json({ error: "Det gick inte att hämta pushinställningarna." }, { status: 500 });
   }
@@ -72,9 +59,9 @@ export async function GET(): Promise<NextResponse<PushNotificationSettings | { e
 export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<PushNotificationSettings | { error: string }>> {
-  const { userId } = await auth();
+  const identity = await getCurrentClerkIdentity();
 
-  if (!userId) {
+  if (!identity) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
@@ -89,18 +76,18 @@ export async function POST(
   }
 
   try {
-    const userExists = await requireExistingUser(userId);
+    const dbUser = await findDbUserByClerkIdentity(identity, { id: true });
 
-    if (!userExists) {
+    if (!dbUser) {
       return NextResponse.json({ error: "Skapa din profil innan du aktiverar pushnotiser." }, { status: 404 });
     }
 
-    await upsertPushSubscription(userId, input);
-    const settings = await getPushNotificationSettings(userId);
+    await upsertPushSubscription(dbUser.id, input);
+    const settings = await getPushNotificationSettings(dbUser.id);
 
     return NextResponse.json(settings, { status: 201 });
   } catch (error) {
-    logger.error("Failed to save push subscription", { userId, endpoint: input.endpoint });
+    logger.error("Failed to save push subscription", { userId: identity.clerkUserId, endpoint: input.endpoint });
     Sentry.captureException(error, { tags: { route: "POST /api/notifications/push-subscription" } });
     return NextResponse.json({ error: "Det gick inte att spara pushnotiserna." }, { status: 500 });
   }
@@ -109,9 +96,9 @@ export async function POST(
 export async function DELETE(
   request: NextRequest,
 ): Promise<NextResponse<PushNotificationSettings | { error: string }>> {
-  const { userId } = await auth();
+  const identity = await getCurrentClerkIdentity();
 
-  if (!userId) {
+  if (!identity) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
@@ -122,18 +109,18 @@ export async function DELETE(
   }
 
   try {
-    const userExists = await requireExistingUser(userId);
+    const dbUser = await findDbUserByClerkIdentity(identity, { id: true });
 
-    if (!userExists) {
+    if (!dbUser) {
       return NextResponse.json({ error: "Skapa din profil innan du ändrar pushnotiser." }, { status: 404 });
     }
 
-    await deletePushSubscription(userId, input.endpoint);
-    const settings = await getPushNotificationSettings(userId);
+    await deletePushSubscription(dbUser.id, input.endpoint);
+    const settings = await getPushNotificationSettings(dbUser.id);
 
     return NextResponse.json(settings);
   } catch (error) {
-    logger.error("Failed to delete push subscription", { userId, endpoint: input.endpoint });
+    logger.error("Failed to delete push subscription", { userId: identity.clerkUserId, endpoint: input.endpoint });
     Sentry.captureException(error, { tags: { route: "DELETE /api/notifications/push-subscription" } });
     return NextResponse.json({ error: "Det gick inte att stänga av pushnotiserna." }, { status: 500 });
   }
@@ -142,9 +129,9 @@ export async function DELETE(
 export async function PATCH(
   request: NextRequest,
 ): Promise<NextResponse<PushNotificationSettings | { error: string }>> {
-  const { userId } = await auth();
+  const identity = await getCurrentClerkIdentity();
 
-  if (!userId) {
+  if (!identity) {
     return NextResponse.json({ error: "Inte autentiserad." }, { status: 401 });
   }
 
@@ -155,18 +142,18 @@ export async function PATCH(
   }
 
   try {
-    const userExists = await requireExistingUser(userId);
+    const dbUser = await findDbUserByClerkIdentity(identity, { id: true });
 
-    if (!userExists) {
+    if (!dbUser) {
       return NextResponse.json({ error: "Skapa din profil innan du ändrar pushnotiser." }, { status: 404 });
     }
 
-    await updatePushNotificationSettings(userId, input);
-    const settings = await getPushNotificationSettings(userId);
+    await updatePushNotificationSettings(dbUser.id, input);
+    const settings = await getPushNotificationSettings(dbUser.id);
 
     return NextResponse.json(settings);
   } catch (error) {
-    logger.error("Failed to update push notification settings", { userId });
+    logger.error("Failed to update push notification settings", { userId: identity.clerkUserId });
     Sentry.captureException(error, { tags: { route: "PATCH /api/notifications/push-subscription" } });
     return NextResponse.json({ error: "Det gick inte att spara notisinställningarna." }, { status: 500 });
   }

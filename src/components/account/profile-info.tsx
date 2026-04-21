@@ -10,6 +10,10 @@ type Props = {
   profile: UserProfile;
 };
 
+function normalizeProfileField(value: string): string {
+  return value.normalize("NFC");
+}
+
 const fields = [
   { key: "name", label: "nameLabel", type: "text" },
   { key: "email", label: "emailLabel", type: "email" },
@@ -79,12 +83,17 @@ export default function ProfileInfo({ profile }: Readonly<Props>) {
                   <Input
                     autoComplete='off'
                     className='mt-2'
+                    inputMode={field.type === 'email' ? 'email' : 'text'}
+                    lang={field.type === 'text' ? 'sv-SE' : undefined}
                     type={field.type}
                     value={draftProfile[field.key]}
                     onChange={(e) =>
                       setDraftProfile({
                         ...draftProfile,
-                        [field.key]: e.target.value,
+                        [field.key]:
+                          typeof e.target.value === 'string'
+                            ? normalizeProfileField(e.target.value)
+                            : e.target.value,
                       })
                     }
                   />
