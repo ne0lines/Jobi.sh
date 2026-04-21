@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import Script from "next/script";
 import "./globals.css";
+import { UserRole } from "@/app/generated/prisma/enums";
 import { AppNavigationShell } from "@/components/navigation/bottom-nav";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
@@ -19,6 +20,8 @@ import {
   DEFAULT_THEME_PREFERENCE,
   themeInitializationScript,
 } from "@/lib/theme";
+import { getCurrentDbUser } from "@/lib/auth/current-db-user";
+import { hasRmAccess } from "@/lib/rm-access";
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 
@@ -82,6 +85,12 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const navUser = await getCurrentDbUser({
+    role: true,
+    rmOrganizationId: true,
+  });
+  const canAccessAdmin = navUser?.role === UserRole.admin;
+  const canAccessRm = hasRmAccess(navUser);
 
   return (
     <html
@@ -107,7 +116,12 @@ export default async function RootLayout({
               <QueryProvider>
                 <ThemeProvider>
                   <RegisterServiceWorker />
-                  <AppNavigationShell>{children}</AppNavigationShell>
+                  <AppNavigationShell
+                    canAccessAdmin={canAccessAdmin}
+                    canAccessRm={canAccessRm}
+                  >
+                    {children}
+                  </AppNavigationShell>
                   <Toaster />
                   <CookieNotice />
                   <SpeedInsights />
